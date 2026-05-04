@@ -3,359 +3,382 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestão de Espaços — Semana Cultural Tomar 2027</title>
+<title>Semana Cultural — Tomar 2027</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --surface2: #f0efe9;
+  --border: rgba(0,0,0,0.10);
+  --border2: rgba(0,0,0,0.20);
+  --text: #181816;
+  --text2: #65655f;
+  --text3: #a0a09a;
+  --accent: #2a5fa5;
+  --accent-bg: #eaf0fb;
+  --green: #1a9e6e;
+  --green-bg: #e6f5ee;
+  --amber: #b87314;
+  --amber-bg: #fdf0d8;
+  --red: #d94040;
+  --red-bg: #fceaea;
+  --radius: 8px;
+  --radius-lg: 14px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  :root {
-    --bg: #ffffff;
-    --bg2: #f5f4f0;
-    --bg3: #eeede8;
-    --text: #1a1a18;
-    --text2: #6b6b67;
-    --text3: #9a9a96;
-    --border: rgba(0,0,0,0.12);
-    --border2: rgba(0,0,0,0.22);
-    --radius: 8px;
-    --radius-lg: 12px;
-    --green: #1D9E75;
-    --amber: #BA7517;
-    --red: #E24B4A;
-    --green-bg: #EAF3DE;
-    --amber-bg: #FAEEDA;
-    --red-bg: #FCEBEB;
-  }
+/* ---- Layout ---- */
+.page { display: none; }
+.page.active { display: block; }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-    background: var(--bg2);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 2rem 1rem;
-  }
+/* ---- Top bar ---- */
+.topbar { background: var(--surface); border-bottom: 0.5px solid var(--border2); padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; }
+.topbar-title { font-size: 15px; font-weight: 600; color: var(--text); }
+.topbar-sub { font-size: 12px; color: var(--text3); margin-top: 1px; }
+.topbar-left { display: flex; flex-direction: column; }
+.topbar-right { display: flex; gap: 8px; align-items: center; }
 
-  .container {
-    max-width: 760px;
-    margin: 0 auto;
-  }
+/* ---- Buttons ---- */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; border: 0.5px solid var(--border2); background: var(--surface); color: var(--text); font-family: inherit; transition: background 0.15s; }
+.btn:hover { background: var(--surface2); }
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-primary:hover { background: #1e4f94; }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn-danger { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+.btn-danger:hover { background: #f8d5d5; }
+.btn-ghost { border-color: transparent; background: transparent; color: var(--text2); }
+.btn-ghost:hover { background: var(--surface2); }
 
-  header {
-    margin-bottom: 2rem;
-    padding-bottom: 1.25rem;
-    border-bottom: 0.5px solid var(--border2);
-  }
+/* ---- Home / Landing ---- */
+#page-home { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1rem; text-align: center; }
+.home-logo { font-size: 40px; margin-bottom: 1rem; }
+.home-title { font-size: 26px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.home-sub { font-size: 15px; color: var(--text2); margin-bottom: 2.5rem; }
+.home-cards { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; max-width: 480px; }
+.home-card { flex: 1; min-width: 180px; background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 1.5rem 1.25rem; cursor: pointer; transition: box-shadow 0.15s, transform 0.15s; text-align: left; }
+.home-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+.home-card-icon { font-size: 28px; margin-bottom: 10px; }
+.home-card-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.home-card-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
 
-  header h1 {
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--text);
-    letter-spacing: -0.3px;
-  }
+/* ---- Login ---- */
+#page-login { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+.login-box { background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 2rem; width: 100%; max-width: 340px; }
+.login-title { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+.login-sub { font-size: 13px; color: var(--text2); margin-bottom: 1.5rem; }
+.form-group { margin-bottom: 1rem; }
+.form-label { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 0.04em; }
+.form-input { width: 100%; border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 9px 12px; font-size: 14px; color: var(--text); background: var(--surface2); font-family: inherit; transition: border-color 0.15s, background 0.15s; }
+.form-input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+.form-select { width: 100%; border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 9px 12px; font-size: 14px; color: var(--text); background: var(--surface2); font-family: inherit; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+.form-select:focus { outline: none; border-color: var(--accent); background-color: var(--surface); }
+.error-msg { font-size: 12px; color: var(--red); margin-top: 8px; display: none; }
+.error-msg.show { display: block; }
 
-  header p {
-    font-size: 14px;
-    color: var(--text2);
-    margin-top: 4px;
-  }
+/* ---- Admin layout ---- */
+#page-admin { min-height: 100vh; }
+.admin-body { max-width: 820px; margin: 0 auto; padding: 1.5rem 1rem; }
+.section-title { font-size: 16px; font-weight: 600; margin-bottom: 1rem; }
 
-  .days-tabs {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 1.5rem;
-  }
+/* Days tabs */
+.days-tabs { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.day-tab { flex: 1; min-width: 90px; padding: 9px 8px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--surface); cursor: pointer; font-size: 13px; color: var(--text2); text-align: center; font-family: inherit; transition: all 0.15s; }
+.day-tab.active { background: var(--text); border-color: var(--text); color: #fff; font-weight: 500; }
+.day-tab:hover:not(.active) { background: var(--surface2); }
 
-  .day-tab {
-    flex: 1;
-    padding: 10px 8px;
-    border: 0.5px solid var(--border2);
-    border-radius: var(--radius);
-    background: var(--bg);
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--text2);
-    text-align: center;
-    transition: all 0.15s;
-    font-family: inherit;
-  }
+/* Space accordion */
+.space-block { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 10px; overflow: hidden; }
+.space-head { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; cursor: pointer; gap: 12px; }
+.space-head:hover { background: var(--surface2); }
+.space-head-left { display: flex; flex-direction: column; }
+.space-head-name { font-size: 14px; font-weight: 600; }
+.space-head-cap { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.space-head-right { display: flex; align-items: center; gap: 10px; }
+.space-stats { font-size: 12px; color: var(--text2); }
+.chevron { font-size: 11px; color: var(--text3); transition: transform 0.2s; }
+.space-block.open .chevron { transform: rotate(180deg); }
+.space-body { display: none; border-top: 0.5px solid var(--border); padding: 1rem 1.25rem; }
+.space-block.open .space-body { display: block; }
 
-  .day-tab.active {
-    background: var(--text);
-    border-color: var(--text);
-    color: #fff;
-    font-weight: 500;
-  }
+/* Event list in admin */
+.event-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.event-item { background: var(--surface2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
+.event-item-info { flex: 1; }
+.event-item-name { font-size: 13px; font-weight: 500; }
+.event-item-meta { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.event-item-badge { font-size: 11px; padding: 2px 8px; border-radius: 100px; font-weight: 500; }
+.badge-ok   { background: var(--green-bg); color: var(--green); }
+.badge-warn { background: var(--amber-bg); color: var(--amber); }
+.badge-full { background: var(--red-bg); color: var(--red); }
+.empty-state { font-size: 13px; color: var(--text3); font-style: italic; padding: 4px 0 10px; }
 
-  .day-tab:hover:not(.active) {
-    background: var(--bg3);
-    border-color: var(--border2);
-  }
+/* Add event form */
+.add-event-form { border-top: 0.5px solid var(--border); padding-top: 12px; margin-top: 4px; }
+.form-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.form-row .form-group { flex: 1; min-width: 130px; }
+.form-group-sm { max-width: 120px; }
 
-  .legend {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 1.25rem;
-    flex-wrap: wrap;
-  }
+/* ---- Participant page ---- */
+#page-participant { min-height: 100vh; }
+.participant-body { max-width: 700px; margin: 0 auto; padding: 1.5rem 1rem; }
 
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--text2);
-  }
+/* Step indicator */
+.steps { display: flex; align-items: center; gap: 0; margin-bottom: 2rem; }
+.step { display: flex; align-items: center; gap: 8px; }
+.step-num { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--border2); background: var(--surface); font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; color: var(--text3); flex-shrink: 0; }
+.step.active .step-num { background: var(--accent); border-color: var(--accent); color: #fff; }
+.step.done .step-num { background: var(--green); border-color: var(--green); color: #fff; }
+.step-label { font-size: 12px; color: var(--text3); font-weight: 500; }
+.step.active .step-label { color: var(--accent); }
+.step.done .step-label { color: var(--green); }
+.step-line { flex: 1; height: 1px; background: var(--border2); margin: 0 8px; min-width: 20px; }
 
-  .legend-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
+/* Event cards for participants */
+.events-filter { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
+.filter-btn { padding: 6px 12px; border-radius: 100px; font-size: 12px; border: 0.5px solid var(--border2); background: var(--surface); cursor: pointer; font-family: inherit; color: var(--text2); transition: all 0.15s; }
+.filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-  .spaces-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
+.events-grid { display: flex; flex-direction: column; gap: 10px; }
+.event-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.1rem 1.25rem; display: flex; align-items: flex-start; gap: 14px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+.event-card:hover:not(.full) { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-bg); }
+.event-card.selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-bg); }
+.event-card.full { opacity: 0.55; cursor: not-allowed; }
+.event-card-check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border2); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.event-card.selected .event-card-check { background: var(--accent); border-color: var(--accent); }
+.event-card.selected .event-card-check::after { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: #fff; }
+.event-card-body { flex: 1; }
+.event-card-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.event-card-meta { font-size: 12px; color: var(--text2); display: flex; gap: 10px; flex-wrap: wrap; }
+.event-card-meta span { display: flex; align-items: center; gap: 4px; }
+.event-card-badge { margin-left: auto; flex-shrink: 0; }
 
-  .space-card {
-    background: var(--bg);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem;
-  }
+/* Registration form */
+.reg-form { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; }
+.reg-form h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.reg-form .reg-sub { font-size: 13px; color: var(--text2); margin-bottom: 1.25rem; }
+.selected-events-summary { background: var(--accent-bg); border: 0.5px solid var(--accent); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 1.25rem; }
+.selected-events-summary h4 { font-size: 12px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+.selected-events-summary ul { list-style: none; }
+.selected-events-summary li { font-size: 13px; color: var(--text); padding: 2px 0; }
 
-  .space-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
+/* Success */
+.success-box { text-align: center; padding: 3rem 1rem; }
+.success-icon { font-size: 52px; margin-bottom: 1rem; }
+.success-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.success-sub { font-size: 14px; color: var(--text2); }
 
-  .space-name {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text);
-    line-height: 1.3;
-  }
+/* Config alert */
+.config-alert { background: var(--amber-bg); border: 0.5px solid var(--amber); border-radius: var(--radius); padding: 12px 16px; font-size: 13px; color: var(--amber); margin-bottom: 1rem; line-height: 1.6; }
+.config-alert strong { font-weight: 600; }
+.config-alert code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 4px; font-family: monospace; font-size: 12px; }
 
-  .cap-badge {
-    display: inline-flex;
-    align-items: center;
-    background: var(--bg2);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 3px 10px;
-    font-size: 12px;
-    color: var(--text2);
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
+/* Toast */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: #fff; padding: 10px 18px; border-radius: var(--radius); font-size: 13px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 9999; }
+.toast.show { opacity: 1; }
 
-  .slots-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
+/* Util */
+.mt1 { margin-top: 0.5rem; }
+.mt2 { margin-top: 1rem; }
+.flex-end { display: flex; justify-content: flex-end; gap: 8px; }
+.divider { border: none; border-top: 0.5px solid var(--border); margin: 1.25rem 0; }
+.tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 100px; background: var(--surface2); color: var(--text2); border: 0.5px solid var(--border); margin-right: 4px; }
 
-  .slot-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .slot-time {
-    width: 78px;
-    flex-shrink: 0;
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 7px 9px;
-    font-size: 13px;
-    color: var(--text);
-    background: var(--bg2);
-    font-family: inherit;
-    transition: border-color 0.15s, background 0.15s;
-  }
-
-  .slot-event {
-    flex: 1;
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 7px 9px;
-    font-size: 13px;
-    color: var(--text);
-    background: var(--bg2);
-    font-family: inherit;
-    transition: border-color 0.15s, background 0.15s;
-  }
-
-  .slot-pax {
-    width: 68px;
-    flex-shrink: 0;
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 7px 9px;
-    font-size: 13px;
-    color: var(--text);
-    background: var(--bg2);
-    font-family: inherit;
-    text-align: right;
-    transition: border-color 0.15s, background 0.15s;
-  }
-
-  .slot-time:focus, .slot-event:focus, .slot-pax:focus {
-    outline: none;
-    border-color: var(--border2);
-    background: var(--bg);
-  }
-
-  .slot-pax.over {
-    border-color: var(--red);
-    color: var(--red);
-    background: var(--red-bg);
-  }
-
-  .slot-remove {
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-    color: var(--text3);
-    font-size: 18px;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius);
-    transition: background 0.15s, color 0.15s;
-  }
-
-  .slot-remove:hover {
-    background: var(--red-bg);
-    color: var(--red);
-  }
-
-  .empty-slot {
-    font-size: 13px;
-    color: var(--text3);
-    font-style: italic;
-    padding: 4px 0;
-  }
-
-  .add-slot-btn {
-    margin-top: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    background: none;
-    border: 0.5px dashed var(--border2);
-    border-radius: var(--radius);
-    padding: 8px 12px;
-    font-size: 13px;
-    color: var(--text2);
-    cursor: pointer;
-    width: 100%;
-    font-family: inherit;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
-  }
-
-  .add-slot-btn:hover {
-    background: var(--bg2);
-    color: var(--text);
-    border-color: var(--border2);
-  }
-
-  .bar-wrap {
-    height: 4px;
-    background: var(--bg2);
-    border-radius: 2px;
-    margin-top: 14px;
-    overflow: hidden;
-  }
-
-  .bar-fill {
-    height: 100%;
-    border-radius: 2px;
-    transition: width 0.3s ease, background 0.3s ease;
-  }
-
-  .bar-ok   { background: var(--green); }
-  .bar-warn { background: var(--amber); }
-  .bar-over { background: var(--red); }
-
-  .occ-row {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 5px;
-  }
-
-  .occ-text {
-    font-size: 11px;
-    color: var(--text3);
-  }
-
-  .occ-text.over { color: var(--red); font-weight: 500; }
-  .occ-text.warn { color: var(--amber); }
-
-  .col-labels {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 4px;
-    padding: 0 0;
-  }
-
-  .col-label {
-    font-size: 11px;
-    color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-
-  .col-label-time  { width: 78px; flex-shrink: 0; }
-  .col-label-event { flex: 1; }
-  .col-label-pax   { width: 68px; flex-shrink: 0; text-align: right; }
-  .col-label-rm    { width: 28px; flex-shrink: 0; }
-
-  @media (max-width: 480px) {
-    body { padding: 1rem 0.75rem; }
-    header h1 { font-size: 18px; }
-    .space-header { flex-direction: column; align-items: flex-start; }
-    .slot-time { width: 66px; }
-    .slot-pax  { width: 58px; }
-  }
+@media (max-width: 480px) {
+  .home-cards { flex-direction: column; }
+  .home-card { min-width: unset; }
+  .topbar { padding: 0 1rem; }
+  .admin-body, .participant-body { padding: 1rem 0.75rem; }
+  .form-row { flex-direction: column; }
+  .form-row .form-group { min-width: unset; }
+}
 </style>
 </head>
 <body>
 
-<div class="container">
-  <header>
-    <h1>Gestão de Espaços — Semana Cultural</h1>
-    <p>Tomar · 22, 23 e 24 de março de 2027</p>
-  </header>
-
-  <div class="days-tabs" id="dayTabs"></div>
-
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Dentro da lotação</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Acima de 80%</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> Excede a lotação</div>
+<!-- ========== HOME ========== -->
+<div id="page-home" class="page active">
+  <div class="home-logo">🎭</div>
+  <div class="home-title">Semana Cultural</div>
+  <div class="home-sub">Tomar · 22, 23 e 24 de março de 2027</div>
+  <div class="home-cards">
+    <div class="home-card" onclick="goParticipant()">
+      <div class="home-card-icon">🎟️</div>
+      <div class="home-card-title">Inscrever-me</div>
+      <div class="home-card-desc">Ver atividades disponíveis e fazer a minha inscrição</div>
+    </div>
+    <div class="home-card" onclick="goLogin()">
+      <div class="home-card-icon">⚙️</div>
+      <div class="home-card-title">Organizador</div>
+      <div class="home-card-desc">Gerir espaços, eventos e ver inscrições</div>
+    </div>
   </div>
-
-  <div class="spaces-grid" id="spacesGrid"></div>
 </div>
 
+<!-- ========== LOGIN ========== -->
+<div id="page-login" class="page">
+  <div class="login-box">
+    <div class="login-title">Área do Organizador</div>
+    <div class="login-sub">Introduz a palavra-passe para aceder</div>
+    <div class="form-group">
+      <label class="form-label">Palavra-passe</label>
+      <input type="password" id="pw-input" class="form-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Entrar</button>
+    <div class="error-msg" id="pw-error">Palavra-passe incorreta.</div>
+    <div class="mt2">
+      <button class="btn btn-ghost btn-sm" onclick="showPage('page-home')">← Voltar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ADMIN ========== -->
+<div id="page-admin" class="page">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-title">🎭 Organizador</span>
+      <span class="topbar-sub">Semana Cultural · Tomar 2027</span>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-sm" onclick="showPage('page-home')">Sair</button>
+    </div>
+  </div>
+  <div class="admin-body">
+    <div id="admin-config-alert" class="config-alert" style="display:none">
+      ⚠️ <strong>Configuração necessária:</strong> Cola o URL do teu Google Apps Script na variável <code>SCRIPT_URL</code> no topo do código HTML. Sem isso os dados não são guardados.
+    </div>
+    <div class="days-tabs" id="admin-day-tabs"></div>
+    <div id="admin-spaces"></div>
+  </div>
+</div>
+
+<!-- ========== PARTICIPANT ========== -->
+<div id="page-participant" class="page">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-title">🎭 Semana Cultural · Tomar 2027</span>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-ghost btn-sm" onclick="showPage('page-home')">← Voltar</button>
+    </div>
+  </div>
+  <div class="participant-body">
+
+    <!-- Steps -->
+    <div class="steps" id="steps-bar">
+      <div class="step active" id="step1">
+        <div class="step-num">1</div>
+        <div class="step-label">Escolher atividades</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step2">
+        <div class="step-num">2</div>
+        <div class="step-label">Os meus dados</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step3">
+        <div class="step-num">3</div>
+        <div class="step-label">Confirmação</div>
+      </div>
+    </div>
+
+    <!-- Step 1: choose events -->
+    <div id="p-step1">
+      <div style="margin-bottom:1rem;">
+        <div style="font-size:16px;font-weight:600;margin-bottom:4px">Atividades disponíveis</div>
+        <div style="font-size:13px;color:var(--text2)">Seleciona as atividades em que queres participar</div>
+      </div>
+      <div class="events-filter" id="events-filter"></div>
+      <div class="events-grid" id="events-grid"></div>
+      <div id="no-events" style="display:none;font-size:13px;color:var(--text3);font-style:italic;padding:1rem 0">Sem atividades para este filtro.</div>
+      <div class="flex-end mt2">
+        <button class="btn btn-primary" onclick="goStep2()" id="btn-next-step1" disabled>Continuar →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: fill form -->
+    <div id="p-step2" style="display:none">
+      <div class="reg-form">
+        <h3>Os meus dados</h3>
+        <div class="reg-sub">Preenche os teus dados para completar a inscrição</div>
+
+        <div id="step2-summary" class="selected-events-summary"></div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nome completo *</label>
+            <input type="text" id="r-name" class="form-input" placeholder="O teu nome">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input type="email" id="r-email" class="form-input" placeholder="email@exemplo.pt">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Escola *</label>
+            <select id="r-school" class="form-select">
+              <option value="">Selecionar...</option>
+              <option value="Jácome Ratton">Jácome Ratton</option>
+              <option value="Gualdim Pais">Gualdim Pais</option>
+              <option value="Santa Iria">Santa Iria</option>
+            </select>
+          </div>
+          <div class="form-group form-group-sm">
+            <label class="form-label">Ano *</label>
+            <select id="r-year" class="form-select">
+              <option value="">Ano...</option>
+              <option>5.º</option><option>6.º</option><option>7.º</option>
+              <option>8.º</option><option>9.º</option><option>10.º</option>
+              <option>11.º</option><option>12.º</option>
+            </select>
+          </div>
+          <div class="form-group form-group-sm">
+            <label class="form-label">Turma *</label>
+            <input type="text" id="r-class" class="form-input" placeholder="Ex: A" maxlength="3" style="text-transform:uppercase">
+          </div>
+        </div>
+
+        <div id="reg-error" class="error-msg">Por favor preenche todos os campos obrigatórios.</div>
+        <hr class="divider">
+        <div class="flex-end">
+          <button class="btn" onclick="goStep1Back()">← Voltar</button>
+          <button class="btn btn-primary" onclick="submitRegistration()">Confirmar inscrição ✓</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: success -->
+    <div id="p-step3" style="display:none">
+      <div class="success-box">
+        <div class="success-icon">✅</div>
+        <div class="success-title">Inscrição confirmada!</div>
+        <div class="success-sub" id="success-msg"></div>
+        <div class="mt2">
+          <button class="btn btn-primary" onclick="resetParticipant()">Nova inscrição</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
+// ============================================================
+// CONFIGURAÇÃO — EDITA AQUI
+// ============================================================
+const ADMIN_PASSWORD = "semana2027";   // ← muda esta palavra-passe
+const SCRIPT_URL = "https://script.google.com/u/0/home/projects/1qHreWYauP3uctsf4vrIOjJWx3FMIoydsOGeuCn8GdlD1k3KD-VqldF6e/edit";                  // ← cola aqui o URL do teu Google Apps Script
+// ============================================================
+
 const DAYS = [
   { key: 'd22', label: '22 mar', full: '22 de março de 2027' },
   { key: 'd23', label: '23 mar', full: '23 de março de 2027' },
   { key: 'd24', label: '24 mar', full: '24 de março de 2027' },
 ];
-
 const SPACES = [
   { id: 's1', name: 'Cineteatro Paraíso', cap: 300 },
   { id: 's2', name: 'Biblioteca Municipal de Tomar', cap: 150 },
@@ -365,211 +388,323 @@ const SPACES = [
 ];
 
 // ---- State ----
-const data = {};
-DAYS.forEach(d => {
-  data[d.key] = {};
-  SPACES.forEach(s => { data[d.key][s.id] = []; });
-});
-let activeDay = 'd22';
+let events = [];       // [{id, day, spaceId, time, name, maxPax, registrations}]
+let adminDay = 'd22';
+let selectedEvents = [];
+let openSpaces = {};
 
-// ---- Persistence ----
-function save() {
-  try { localStorage.setItem('tomar_espacos_2027', JSON.stringify({ data, activeDay })); } catch(e) {}
-}
-function load() {
+// ---- Persistence (local fallback) ----
+function saveLocal() { try { localStorage.setItem('sc_tomar_events', JSON.stringify(events)); } catch(e){} }
+function loadLocal() { try { const r = localStorage.getItem('sc_tomar_events'); if(r) events = JSON.parse(r); } catch(e){} }
+
+// ---- API calls ----
+async function apiCall(action, payload={}) {
+  if (!SCRIPT_URL) return null;
   try {
-    const raw = localStorage.getItem('tomar_espacos_2027');
-    if (!raw) return;
-    const p = JSON.parse(raw);
-    if (p.data) {
-      DAYS.forEach(d => SPACES.forEach(s => {
-        if (p.data[d.key] && Array.isArray(p.data[d.key][s.id]))
-          data[d.key][s.id] = p.data[d.key][s.id];
-      }));
-    }
-    if (p.activeDay) activeDay = p.activeDay;
-  } catch(e) {}
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action, ...payload }),
+    });
+    return await res.json();
+  } catch(e) { return null; }
 }
 
-// ---- Helpers ----
-function totalPax(dayKey, spaceId) {
-  return data[dayKey][spaceId].reduce((s, sl) => s + (parseInt(sl.pax) || 0), 0);
-}
-function barClass(pct) {
-  if (pct > 100) return 'bar-over';
-  if (pct > 80)  return 'bar-warn';
-  return 'bar-ok';
-}
-function occClass(pct) {
-  if (pct > 100) return 'over';
-  if (pct > 80)  return 'warn';
-  return '';
+async function loadEvents() {
+  const res = await apiCall('getEvents');
+  if (res && res.events) { events = res.events; saveLocal(); }
+  else { loadLocal(); }
 }
 
-// ---- Render Tabs ----
-function renderTabs() {
-  const el = document.getElementById('dayTabs');
-  el.innerHTML = '';
+// ---- Navigation ----
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function goLogin() { showPage('page-login'); document.getElementById('pw-input').value=''; document.getElementById('pw-error').classList.remove('show'); }
+function doLogin() {
+  const pw = document.getElementById('pw-input').value;
+  if (pw === ADMIN_PASSWORD) { showPage('page-admin'); renderAdmin(); }
+  else { document.getElementById('pw-error').classList.add('show'); }
+}
+async function goParticipant() {
+  showPage('page-participant');
+  await loadEvents();
+  resetParticipant();
+}
+
+// ---- Toast ----
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ---- ADMIN ----
+function renderAdmin() {
+  if (!SCRIPT_URL) document.getElementById('admin-config-alert').style.display='block';
+  else document.getElementById('admin-config-alert').style.display='none';
+
+  // Tabs
+  const tabs = document.getElementById('admin-day-tabs');
+  tabs.innerHTML = '';
   DAYS.forEach(d => {
     const btn = document.createElement('button');
-    btn.className = 'day-tab' + (d.key === activeDay ? ' active' : '');
+    btn.className = 'day-tab' + (d.key===adminDay?' active':'');
     btn.textContent = d.label;
-    btn.onclick = () => { activeDay = d.key; save(); renderTabs(); renderSpaces(); };
-    el.appendChild(btn);
+    btn.onclick = () => { adminDay=d.key; renderAdmin(); };
+    tabs.appendChild(btn);
   });
-}
 
-// ---- Render Spaces ----
-function renderSpaces() {
-  const grid = document.getElementById('spacesGrid');
-  grid.innerHTML = '';
-
+  // Spaces
+  const container = document.getElementById('admin-spaces');
+  container.innerHTML = '';
   SPACES.forEach(space => {
-    const slots = data[activeDay][space.id];
-    const tot = totalPax(activeDay, space.id);
-    const pct = space.cap > 0 ? Math.round((tot / space.cap) * 100) : 0;
+    const dayEvents = events.filter(e => e.day===adminDay && e.spaceId===space.id);
+    const totalReg = dayEvents.reduce((s,e)=>s+(e.registrations||0),0);
+    const isOpen = openSpaces[space.id+adminDay];
 
-    const card = document.createElement('div');
-    card.className = 'space-card';
+    const block = document.createElement('div');
+    block.className = 'space-block' + (isOpen?' open':'');
 
-    // Header
-    const hdr = document.createElement('div');
-    hdr.className = 'space-header';
-    hdr.innerHTML = `<span class="space-name">${space.name}</span><span class="cap-badge">Lotação: ${space.cap} pessoas</span>`;
-    card.appendChild(hdr);
+    block.innerHTML = `
+      <div class="space-head" onclick="toggleSpace('${space.id}')">
+        <div class="space-head-left">
+          <span class="space-head-name">${space.name}</span>
+          <span class="space-head-cap">Lotação: ${space.cap} pessoas</span>
+        </div>
+        <div class="space-head-right">
+          <span class="space-stats">${dayEvents.length} evento${dayEvents.length!==1?'s':''} · ${totalReg} inscrição${totalReg!==1?'ões':''}</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="space-body">
+        <div class="event-list" id="elist-${space.id}"></div>
+        <div class="add-event-form">
+          <div style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px">Adicionar evento</div>
+          <div class="form-row">
+            <div class="form-group form-group-sm">
+              <label class="form-label">Hora</label>
+              <input type="text" class="form-input" placeholder="09:00" id="ne-time-${space.id}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nome da atividade</label>
+              <input type="text" class="form-input" placeholder="Ex: Visita guiada" id="ne-name-${space.id}">
+            </div>
+            <div class="form-group form-group-sm">
+              <label class="form-label">Vagas máx.</label>
+              <input type="number" class="form-input" placeholder="${space.cap}" id="ne-pax-${space.id}" min="1" max="${space.cap}">
+            </div>
+          </div>
+          <div class="flex-end mt1">
+            <button class="btn btn-primary btn-sm" onclick="addEvent('${space.id}','${adminDay}')">+ Adicionar</button>
+          </div>
+        </div>
+      </div>
+    `;
+    container.appendChild(block);
 
-    // Column labels
-    if (slots.length > 0) {
-      const labels = document.createElement('div');
-      labels.className = 'col-labels';
-      labels.innerHTML = `
-        <span class="col-label col-label-time">Hora</span>
-        <span class="col-label col-label-event">Evento</span>
-        <span class="col-label col-label-pax">Pax</span>
-        <span class="col-label col-label-rm"></span>
-      `;
-      card.appendChild(labels);
+    // Fill event list
+    const elist = block.querySelector(`#elist-${space.id}`);
+    if (dayEvents.length===0) {
+      elist.innerHTML = '<div class="empty-state">Sem eventos para este dia.</div>';
+    } else {
+      dayEvents.forEach(ev => {
+        const pct = ev.maxPax>0 ? Math.round((ev.registrations||0)/ev.maxPax*100) : 0;
+        const bc = pct>=100?'badge-full':pct>=80?'badge-warn':'badge-ok';
+        const bl = pct>=100?'Esgotado':pct>=80?`${ev.registrations}/${ev.maxPax} vagas`:`${ev.registrations||0}/${ev.maxPax} inscritos`;
+        const item = document.createElement('div');
+        item.className = 'event-item';
+        item.innerHTML = `
+          <div class="event-item-info">
+            <div class="event-item-name">${ev.time ? ev.time+' — ':''} ${ev.name}</div>
+            <div class="event-item-meta">${space.name}</div>
+          </div>
+          <span class="event-item-badge ${bc}">${bl}</span>
+          <button class="btn btn-danger btn-sm" onclick="deleteEvent('${ev.id}')">Remover</button>
+        `;
+        elist.appendChild(item);
+      });
     }
-
-    // Slots
-    const slotsList = document.createElement('div');
-    slotsList.className = 'slots-list';
-
-    if (slots.length === 0) {
-      const empty = document.createElement('div');
-      empty.className = 'empty-slot';
-      empty.textContent = 'Sem eventos adicionados.';
-      slotsList.appendChild(empty);
-    }
-
-    slots.forEach((sl, idx) => {
-      const row = document.createElement('div');
-      row.className = 'slot-row';
-
-      const timeInp = document.createElement('input');
-      timeInp.type = 'text';
-      timeInp.className = 'slot-time';
-      timeInp.placeholder = '00:00';
-      timeInp.value = sl.time || '';
-      timeInp.oninput = e => { data[activeDay][space.id][idx].time = e.target.value; save(); };
-
-      const evInp = document.createElement('input');
-      evInp.type = 'text';
-      evInp.className = 'slot-event';
-      evInp.placeholder = 'Nome do evento';
-      evInp.value = sl.event || '';
-      evInp.oninput = e => { data[activeDay][space.id][idx].event = e.target.value; save(); };
-
-      const paxInp = document.createElement('input');
-      paxInp.type = 'number';
-      paxInp.className = 'slot-pax';
-      paxInp.placeholder = 'Pax';
-      paxInp.min = 0;
-      paxInp.value = sl.pax || '';
-      if ((parseInt(sl.pax) || 0) > space.cap) paxInp.classList.add('over');
-      paxInp.oninput = e => {
-        data[activeDay][space.id][idx].pax = e.target.value;
-        save();
-        paxInp.classList.toggle('over', (parseInt(e.target.value) || 0) > space.cap);
-        refreshBar(card, space.cap, space.id);
-      };
-
-      const rmBtn = document.createElement('button');
-      rmBtn.className = 'slot-remove';
-      rmBtn.innerHTML = '&times;';
-      rmBtn.title = 'Remover evento';
-      rmBtn.onclick = () => {
-        data[activeDay][space.id].splice(idx, 1);
-        save();
-        renderSpaces();
-      };
-
-      row.appendChild(timeInp);
-      row.appendChild(evInp);
-      row.appendChild(paxInp);
-      row.appendChild(rmBtn);
-      slotsList.appendChild(row);
-    });
-
-    // Add button
-    const addBtn = document.createElement('button');
-    addBtn.className = 'add-slot-btn';
-    addBtn.innerHTML = '+ Adicionar evento';
-    addBtn.onclick = () => {
-      data[activeDay][space.id].push({ time: '', event: '', pax: '' });
-      save();
-      renderSpaces();
-    };
-    slotsList.appendChild(addBtn);
-
-    card.appendChild(slotsList);
-
-    // Bar
-    const barWrap = document.createElement('div');
-    barWrap.className = 'bar-wrap';
-    const barFill = document.createElement('div');
-    barFill.className = 'bar-fill ' + barClass(pct);
-    barFill.style.width = Math.min(pct, 100) + '%';
-    barWrap.appendChild(barFill);
-    card.appendChild(barWrap);
-
-    // Occupancy text
-    const occRow = document.createElement('div');
-    occRow.className = 'occ-row';
-    const occText = document.createElement('span');
-    const cls = occClass(pct);
-    occText.className = 'occ-text' + (cls ? ' ' + cls : '');
-    occText.textContent = slots.length > 0 ? `${tot} / ${space.cap} pessoas · ${pct}%` : '';
-    occRow.appendChild(occText);
-    card.appendChild(occRow);
-
-    grid.appendChild(card);
   });
 }
 
-function refreshBar(card, cap, spaceId) {
-  const paxInputs = card.querySelectorAll('.slot-pax');
-  let tot = 0;
-  paxInputs.forEach(p => tot += parseInt(p.value) || 0);
-  const pct = cap > 0 ? Math.round((tot / cap) * 100) : 0;
+function toggleSpace(spaceId) {
+  const key = spaceId+adminDay;
+  openSpaces[key] = !openSpaces[key];
+  renderAdmin();
+}
 
-  const fill = card.querySelector('.bar-fill');
-  if (fill) {
-    fill.className = 'bar-fill ' + barClass(pct);
-    fill.style.width = Math.min(pct, 100) + '%';
+async function addEvent(spaceId, dayKey) {
+  const name = document.getElementById(`ne-name-${spaceId}`).value.trim();
+  const time = document.getElementById(`ne-time-${spaceId}`).value.trim();
+  const pax  = parseInt(document.getElementById(`ne-pax-${spaceId}`).value) || SPACES.find(s=>s.id===spaceId).cap;
+  if (!name) { toast('Escreve o nome da atividade'); return; }
+  const ev = { id: 'ev_'+Date.now()+'_'+Math.random().toString(36).slice(2,6), day: dayKey, spaceId, time, name, maxPax: pax, registrations: 0 };
+  events.push(ev);
+  saveLocal();
+  await apiCall('addEvent', { event: ev });
+  toast('Evento adicionado ✓');
+  renderAdmin();
+}
+
+async function deleteEvent(evId) {
+  if (!confirm('Remover este evento? As inscrições existentes serão apagadas.')) return;
+  events = events.filter(e => e.id!==evId);
+  saveLocal();
+  await apiCall('deleteEvent', { eventId: evId });
+  toast('Evento removido');
+  renderAdmin();
+}
+
+// ---- PARTICIPANT ----
+function resetParticipant() {
+  selectedEvents = [];
+  document.getElementById('p-step1').style.display='block';
+  document.getElementById('p-step2').style.display='none';
+  document.getElementById('p-step3').style.display='none';
+  document.getElementById('step1').className='step active';
+  document.getElementById('step2').className='step';
+  document.getElementById('step3').className='step';
+  renderEventsList('all');
+  updateNextBtn();
+}
+
+let currentFilter = 'all';
+function renderEventsList(filter) {
+  currentFilter = filter;
+  // Filter buttons
+  const filterEl = document.getElementById('events-filter');
+  filterEl.innerHTML = '';
+  const filters = [{ key:'all', label:'Todos os dias' }, ...DAYS.map(d=>({key:d.key, label:d.label}))];
+  filters.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn'+(f.key===filter?' active':'');
+    btn.textContent = f.label;
+    btn.onclick = () => renderEventsList(f.key);
+    filterEl.appendChild(btn);
+  });
+
+  // Events
+  const grid = document.getElementById('events-grid');
+  const noEv = document.getElementById('no-events');
+  grid.innerHTML = '';
+  const visible = events.filter(e => filter==='all' || e.day===filter);
+  if (visible.length===0) { noEv.style.display='block'; return; }
+  noEv.style.display='none';
+
+  // Group by day
+  const byDay = {};
+  DAYS.forEach(d => { byDay[d.key] = []; });
+  visible.forEach(e => { if(byDay[e.day]) byDay[e.day].push(e); });
+
+  DAYS.forEach(d => {
+    if (!byDay[d.key].length) return;
+    if (filter==='all') {
+      const hdr = document.createElement('div');
+      hdr.style.cssText = 'font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin:1rem 0 6px;';
+      hdr.textContent = d.full;
+      grid.appendChild(hdr);
+    }
+    byDay[d.key].forEach(ev => {
+      const space = SPACES.find(s=>s.id===ev.spaceId);
+      const isFull = (ev.registrations||0) >= ev.maxPax;
+      const isSelected = selectedEvents.includes(ev.id);
+      const pct = ev.maxPax>0 ? Math.round((ev.registrations||0)/ev.maxPax*100) : 0;
+      const bc = isFull?'badge-full':pct>=80?'badge-warn':'badge-ok';
+      const bl = isFull?'Esgotado':`${ev.maxPax-(ev.registrations||0)} vagas livres`;
+
+      const card = document.createElement('div');
+      card.className = 'event-card'+(isSelected?' selected':'')+(isFull?' full':'');
+      card.onclick = () => { if(!isFull) toggleSelect(ev.id); };
+      card.innerHTML = `
+        <div class="event-card-check"></div>
+        <div class="event-card-body">
+          <div class="event-card-name">${ev.time?ev.time+' — ':''}${ev.name}</div>
+          <div class="event-card-meta">
+            <span>📍 ${space?.name||''}</span>
+            <span>📅 ${DAYS.find(d=>d.key===ev.day)?.full||''}</span>
+          </div>
+        </div>
+        <span class="event-item-badge ${bc} event-card-badge">${bl}</span>
+      `;
+      grid.appendChild(card);
+    });
+  });
+}
+
+function toggleSelect(evId) {
+  const idx = selectedEvents.indexOf(evId);
+  if (idx>=0) selectedEvents.splice(idx,1);
+  else selectedEvents.push(evId);
+  renderEventsList(currentFilter);
+  updateNextBtn();
+}
+
+function updateNextBtn() {
+  document.getElementById('btn-next-step1').disabled = selectedEvents.length===0;
+}
+
+function goStep2() {
+  if (selectedEvents.length===0) return;
+  document.getElementById('p-step1').style.display='none';
+  document.getElementById('p-step2').style.display='block';
+  document.getElementById('step1').className='step done';
+  document.getElementById('step2').className='step active';
+
+  // Summary
+  const ul = selectedEvents.map(id => {
+    const ev = events.find(e=>e.id===id);
+    const sp = SPACES.find(s=>s.id===ev?.spaceId);
+    return `<li>• ${ev?.time?ev.time+' — ':''}${ev?.name} <span style="color:var(--text2)">(${sp?.name})</span></li>`;
+  }).join('');
+  document.getElementById('step2-summary').innerHTML = `<h4>Atividades selecionadas (${selectedEvents.length})</h4><ul>${ul}</ul>`;
+  document.getElementById('reg-error').classList.remove('show');
+}
+
+function goStep1Back() {
+  document.getElementById('p-step1').style.display='block';
+  document.getElementById('p-step2').style.display='none';
+  document.getElementById('step1').className='step active';
+  document.getElementById('step2').className='step';
+}
+
+async function submitRegistration() {
+  const name   = document.getElementById('r-name').value.trim();
+  const email  = document.getElementById('r-email').value.trim();
+  const school = document.getElementById('r-school').value;
+  const year   = document.getElementById('r-year').value;
+  const cls    = document.getElementById('r-class').value.trim().toUpperCase();
+
+  if (!name||!email||!school||!year||!cls) {
+    document.getElementById('reg-error').classList.add('show');
+    return;
   }
-  const occ = card.querySelector('.occ-text');
-  if (occ) {
-    const cls = occClass(pct);
-    occ.className = 'occ-text' + (cls ? ' ' + cls : '');
-    occ.textContent = tot > 0 ? `${tot} / ${cap} pessoas · ${pct}%` : '';
-  }
+
+  const payload = {
+    name, email, school, year, class: cls,
+    eventIds: selectedEvents,
+    timestamp: new Date().toISOString(),
+  };
+
+  // Optimistic update
+  selectedEvents.forEach(id => {
+    const ev = events.find(e=>e.id===id);
+    if(ev) ev.registrations = (ev.registrations||0)+1;
+  });
+  saveLocal();
+
+  await apiCall('register', payload);
+
+  document.getElementById('p-step2').style.display='none';
+  document.getElementById('p-step3').style.display='block';
+  document.getElementById('step2').className='step done';
+  document.getElementById('step3').className='step active done';
+  document.getElementById('success-msg').innerHTML = `Olá <strong>${name}</strong>, a tua inscrição em ${selectedEvents.length} atividade${selectedEvents.length!==1?'s':''} foi registada com sucesso!<br>Guarda este email: <strong>${email}</strong>`;
 }
 
 // ---- Init ----
-load();
-renderTabs();
-renderSpaces();
+loadLocal();
 </script>
 </body>
 </html>
