@@ -220,8 +220,13 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
           <label class="fl">Turma *</label>
           <input type="text" id="r-class" class="fi" placeholder="Ex: A" maxlength="3" style="text-transform:uppercase">
         </div>
+        <div class="fg fg-sm">
+          <label class="fl">Nº de alunos *</label>
+          <input type="number" id="r-students" class="fi" placeholder="Ex: 25" min="1" max="30">
+          <span style="font-size:11px;color:var(--text3);font-family:'Courier New',monospace;">máx. 30</span>
+        </div>
       </div>
-      <div class="form-error" id="form-error">Por favor preenche todos os campos.</div>
+      <div class="form-error" id="form-error">Por favor preenche todos os campos. O nº de alunos deve ser entre 1 e 30.</div>
       <hr class="form-divider">
       <div class="form-actions">
         <button class="btn-back" onclick="goToStep1()">← Voltar</button>
@@ -396,26 +401,40 @@ function goToStep1() {
 
 // ── Submit ──
 async function submitForm() {
-  const name   = document.getElementById('r-name').value.trim();
-  const email  = document.getElementById('r-email').value.trim();
-  const school = document.getElementById('r-school').value;
-  const year   = document.getElementById('r-year').value;
-  const cls    = document.getElementById('r-class').value.trim().toUpperCase();
+  const name     = document.getElementById('r-name').value.trim();
+  const email    = document.getElementById('r-email').value.trim();
+  const school   = document.getElementById('r-school').value;
+  const year     = document.getElementById('r-year').value;
+  const cls      = document.getElementById('r-class').value.trim().toUpperCase();
+  const students = parseInt(document.getElementById('r-students').value);
 
-  if (!name||!email||!school||!year||!cls) {
+  if (!name||!email||!school||!year||!cls||!students||students<1||students>30) {
     document.getElementById('form-error').classList.add('show');
     return;
   }
 
-  // Optimistic update
+  // Verificar se há vagas suficientes em todos os eventos
+  for (const id of selected) {
+    const ev = events.find(e=>e.id===id);
+    if (ev) {
+      const vagas = (parseInt(ev.maxPax)||0) - (parseInt(ev.registrations)||0);
+      if (students > vagas) {
+        document.getElementById('form-error').textContent = `Não há vagas suficientes em "${ev.name}". Vagas disponíveis: ${vagas}`;
+        document.getElementById('form-error').classList.add('show');
+        return;
+      }
+    }
+  }
+
+  // Optimistic update — ocupa "students" lugares
   selected.forEach(id => {
     const ev = events.find(e=>e.id===id);
-    if(ev) ev.registrations = (parseInt(ev.registrations)||0)+1;
+    if(ev) ev.registrations = (parseInt(ev.registrations)||0) + students;
   });
   try { localStorage.setItem('sc27_events', JSON.stringify(events)); } catch(e){}
 
   await api('register', {
-    name, email, school, year, class: cls,
+    name, email, school, year, class: cls, students,
     eventIds: selected,
     timestamp: new Date().toISOString()
   });
@@ -432,6 +451,7 @@ async function submitForm() {
     <div class="success-detail-row"><span>Email</span><span>${email}</span></div>
     <div class="success-detail-row"><span>Escola</span><span>${school}</span></div>
     <div class="success-detail-row"><span>Ano / Turma</span><span>${year} ${cls}</span></div>
+    <div class="success-detail-row"><span>Nº de alunos</span><span>${students}</span></div>
     <div class="success-detail-row"><span>Atividades</span><span>${selected.length} inscrição${selected.length!==1?'ões':''}</span></div>`;
 }
 
@@ -450,6 +470,7 @@ function resetAll() {
   document.getElementById('r-school').value='';
   document.getElementById('r-year').value='';
   document.getElementById('r-class').value='';
+  document.getElementById('r-students').value='';
   renderFilter();
   renderEvents();
   updateBottomBar();
