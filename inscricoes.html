@@ -8,22 +8,25 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   --bg: #faf9f6; --surface: #ffffff; --surface2: #f3f2ee; --surface3: #eae9e4;
-  --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.16);
+  --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.18);
   --text: #1c1c1a; --text2: #6a6a64; --text3: #a8a8a0;
-  --accent: #2563eb; --accent-light: #eff4ff; --accent2: #1d4ed8;
-  --green: #16a34a; --green-bg: #f0fdf4;
-  --amber: #d97706; --amber-bg: #fffbeb;
-  --red: #dc2626; --red-bg: #fef2f2;
+  --accent: #2563eb; --accent-light: #dbeafe; --accent2: #1d4ed8;
+  --selected-bg: #1e40af; --selected-text: #ffffff;
+  --green: #16a34a; --green-bg: #dcfce7;
+  --amber: #d97706; --amber-bg: #fef3c7;
+  --red: #dc2626; --red-bg: #fee2e2;
   --radius: 8px; --radius-lg: 16px;
 }
 body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-.site-header { background: var(--surface); border-bottom: 1px solid var(--border2); padding: 1.25rem 1.5rem; }
-.site-header-inner { max-width: 720px; margin: 0 auto; }
+
+.site-header { background: var(--surface); border-bottom: 1px solid var(--border2); padding: 1rem 1.5rem; }
+.site-header-inner { max-width: 900px; margin: 0 auto; }
 .site-title { font-size: 17px; font-weight: 400; }
 .site-title strong { font-weight: 700; }
 .site-dates { font-size: 12px; color: var(--text3); font-family: monospace; margin-top: 2px; }
+
 .steps-wrap { background: var(--surface); border-bottom: 1px solid var(--border); }
-.steps-inner { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; height: 52px; }
+.steps-inner { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; height: 50px; }
 .step-item { display: flex; align-items: center; gap: 8px; }
 .step-num { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--border2); font-size: 11px; font-weight: 700; font-family: monospace; display: flex; align-items: center; justify-content: center; color: var(--text3); transition: all .2s; }
 .step-item.active .step-num { background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -32,41 +35,65 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .step-item.active .step-label { color: var(--accent); }
 .step-item.done .step-label { color: var(--green); }
 .step-line { flex: 1; height: 1px; background: var(--border2); margin: 0 12px; min-width: 16px; }
-.main { max-width: 720px; margin: 0 auto; padding: 2rem 1rem; padding-bottom: 100px; }
-.filter-bar { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
-.filter-btn { padding: 7px 16px; border-radius: 100px; font-size: 13px; border: 1px solid var(--border2); background: var(--surface); cursor: pointer; font-family: monospace; color: var(--text2); transition: all .15s; }
-.filter-btn.active { background: var(--text); border-color: var(--text); color: #fff; }
-.filter-btn:hover:not(.active) { background: var(--surface2); }
-.day-label { font-family: monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); margin: 1.5rem 0 10px; }
-.event-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; display: flex; align-items: flex-start; gap: 14px; cursor: pointer; transition: border-color .15s, box-shadow .15s; margin-bottom: 8px; }
-.event-card:hover:not(.ev-full) { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
-.event-card.ev-selected { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
-.event-card.ev-full { opacity: .5; cursor: not-allowed; }
-.ev-check { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border2); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
-.event-card.ev-selected .ev-check { background: var(--accent); border-color: var(--accent); }
-.event-card.ev-selected .ev-check::after { content:''; display:block; width:7px; height:7px; border-radius:50%; background:#fff; }
+
+/* Layout step 1: sidebar + main */
+.step1-layout { display: flex; gap: 0; max-width: 900px; margin: 0 auto; min-height: calc(100vh - 160px); }
+
+.sidebar { width: 180px; flex-shrink: 0; border-right: 1px solid var(--border2); padding: 1.5rem 1rem; background: var(--surface); position: sticky; top: 0; height: calc(100vh - 160px); overflow-y: auto; }
+.sidebar-title { font-family: monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; }
+.day-filter { display: flex; flex-direction: column; gap: 4px; }
+.day-filter-btn { padding: 9px 12px; border-radius: var(--radius); font-size: 13px; border: 1px solid transparent; background: none; cursor: pointer; font-family: monospace; color: var(--text2); transition: all .15s; text-align: left; width: 100%; }
+.day-filter-btn:hover:not(.active) { background: var(--surface2); }
+.day-filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+.day-filter-btn .day-count { font-size: 10px; opacity: .7; display: block; margin-top: 2px; }
+
+.events-main { flex: 1; padding: 1.5rem 1.5rem 120px; min-width: 0; }
+.events-main-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.events-main-sub { font-size: 12px; color: var(--text2); font-family: monospace; margin-bottom: 1.25rem; }
+
+/* Event cards */
+.event-card { border: 2px solid var(--border2); border-radius: var(--radius-lg); padding: 1rem 1.25rem; display: flex; align-items: flex-start; gap: 14px; cursor: pointer; transition: all .15s; margin-bottom: 10px; background: var(--surface); }
+.event-card:hover:not(.ev-full) { border-color: var(--accent); background: var(--accent-light); }
+.event-card.ev-selected { border-color: var(--selected-bg); background: var(--selected-bg); color: var(--selected-text); }
+.event-card.ev-full { opacity: .5; cursor: not-allowed; background: var(--surface2); }
+.ev-check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border2); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+.event-card.ev-selected .ev-check { background: #fff; border-color: #fff; }
+.event-card.ev-selected .ev-check::after { content:'✓'; font-size: 12px; font-weight: 900; color: var(--selected-bg); }
 .ev-body { flex: 1; min-width: 0; }
-.ev-name { font-size: 15px; color: var(--text); margin-bottom: 5px; }
+.ev-name { font-size: 15px; margin-bottom: 4px; font-weight: 500; }
+.event-card.ev-selected .ev-name { color: #fff; }
 .ev-time-tag { font-family: monospace; font-size: 13px; color: var(--accent2); font-weight: 700; }
-.ev-meta { display: flex; gap: 14px; flex-wrap: wrap; }
+.event-card.ev-selected .ev-time-tag { color: #bfdbfe; }
+.ev-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 3px; }
 .ev-meta-item { font-size: 12px; color: var(--text2); font-family: monospace; }
-.ev-badge { font-family: monospace; font-size: 11px; padding: 3px 9px; border-radius: 4px; flex-shrink: 0; font-weight: 700; margin-left: auto; }
+.event-card.ev-selected .ev-meta-item { color: #bfdbfe; }
+.ev-synopsis-text { font-size: 12px; color: var(--text2); font-style: italic; margin-top: 6px; line-height: 1.5; }
+.event-card.ev-selected .ev-synopsis-text { color: #dbeafe; }
+.ev-badge { font-family: monospace; font-size: 11px; padding: 3px 9px; border-radius: 4px; flex-shrink: 0; font-weight: 700; margin-left: auto; white-space: nowrap; }
 .badge-ok { background: var(--green-bg); color: var(--green); }
 .badge-warn { background: var(--amber-bg); color: var(--amber); }
 .badge-full { background: var(--red-bg); color: var(--red); }
+.event-card.ev-selected .ev-badge { background: rgba(255,255,255,.2); color: #fff; }
+
 .no-events { font-size: 13px; color: var(--text3); font-style: italic; padding: 2rem 0; text-align: center; }
-.bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border2); padding: 1rem 1.5rem; z-index: 50; }
-.bottom-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.loading-state { text-align: center; padding: 3rem; font-family: monospace; font-size: 13px; color: var(--text3); }
+
+/* Bottom bar */
+.bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 2px solid var(--border2); padding: 1rem 1.5rem; z-index: 50; box-shadow: 0 -4px 16px rgba(0,0,0,.06); }
+.bottom-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .selected-count { font-size: 13px; color: var(--text2); font-family: monospace; }
-.selected-count strong { color: var(--accent); }
-.btn-next { background: var(--accent); color: #fff; border: none; border-radius: var(--radius); padding: 11px 24px; font-size: 14px; font-weight: 700; font-family: monospace; cursor: pointer; transition: background .15s; }
+.selected-count strong { color: var(--accent); font-size: 15px; }
+.btn-next { background: var(--accent); color: #fff; border: none; border-radius: var(--radius); padding: 12px 28px; font-size: 14px; font-weight: 700; font-family: monospace; cursor: pointer; transition: background .15s; }
 .btn-next:hover:not(:disabled) { background: var(--accent2); }
 .btn-next:disabled { opacity: .35; cursor: not-allowed; }
+
+/* Step 2 form */
+.form-wrap { max-width: 680px; margin: 0 auto; padding: 2rem 1rem 120px; }
 .form-card { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 1.75rem; }
 .form-card-title { font-size: 20px; font-weight: 400; margin-bottom: 4px; }
 .form-card-sub { font-size: 13px; color: var(--text2); margin-bottom: 1.5rem; font-family: monospace; }
-.selection-summary { background: var(--accent-light); border: 1px solid rgba(37,99,235,.2); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 1.5rem; }
-.selection-summary-title { font-family: monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.selection-summary { background: var(--accent-light); border: 1px solid rgba(37,99,235,.25); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 1.5rem; }
+.selection-summary-title { font-family: monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; font-weight: 700; }
 .selection-summary ul { list-style: none; }
 .selection-summary li { font-size: 13px; color: var(--text); padding: 2px 0; }
 .selection-summary li::before { content:'→ '; font-family: monospace; color: var(--accent); font-size: 11px; }
@@ -75,7 +102,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .fg-sm { min-width: 80px; max-width: 100px; flex: none; }
 .fg-xs { min-width: 70px; max-width: 85px; flex: none; }
 .fl { font-family: monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); }
-.fi { border: 1px solid var(--border2); border-radius: var(--radius); padding: 10px 12px; font-size: 14px; color: var(--text); background: var(--surface2); font-family: inherit; transition: border-color .15s, background .15s; width: 100%; }
+.fi { border: 1.5px solid var(--border2); border-radius: var(--radius); padding: 10px 12px; font-size: 14px; color: var(--text); background: var(--surface2); font-family: inherit; transition: border-color .15s, background .15s; width: 100%; }
 .fi:focus { outline: none; border-color: var(--accent); background: var(--surface); }
 .fi-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-color: var(--surface2); }
 .fi-select:focus { background-color: var(--surface); }
@@ -84,13 +111,14 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .form-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 .btn-back { background: none; border: 1px solid var(--border2); border-radius: var(--radius); padding: 10px 20px; font-size: 13px; color: var(--text2); cursor: pointer; font-family: monospace; transition: all .15s; }
 .btn-back:hover { background: var(--surface2); }
-.btn-submit { background: var(--green); color: #fff; border: none; border-radius: var(--radius); padding: 11px 28px; font-size: 14px; font-weight: 700; font-family: monospace; cursor: pointer; transition: background .15s, opacity .15s; }
+.btn-submit { background: var(--green); color: #fff; border: none; border-radius: var(--radius); padding: 12px 28px; font-size: 14px; font-weight: 700; font-family: monospace; cursor: pointer; transition: all .15s; }
 .btn-submit:hover:not(:disabled) { background: #15803d; }
 .btn-submit:disabled { opacity: .5; cursor: not-allowed; }
-.btn-submit.loading::after { content: ' ⏳'; }
-.form-error { font-size: 12px; color: var(--red); font-family: monospace; display: none; margin-top: 8px; }
+.form-error { font-size: 12px; color: var(--red); font-family: monospace; display: none; margin-top: 10px; background: var(--red-bg); border: 1px solid var(--red); border-radius: var(--radius); padding: 8px 12px; line-height: 1.5; }
 .form-error.show { display: block; }
-.success-wrap { text-align: center; padding: 4rem 1rem; }
+
+/* Success */
+.success-wrap { text-align: center; padding: 4rem 1rem; max-width: 680px; margin: 0 auto; }
 .success-icon { font-size: 56px; margin-bottom: 1.5rem; }
 .success-title { font-size: 24px; font-weight: 400; margin-bottom: 8px; }
 .success-sub { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 2rem; }
@@ -98,11 +126,20 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .success-detail-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px solid var(--border); gap: 12px; }
 .success-detail-row:last-child { border-bottom: none; }
 .success-detail-row span:first-child { color: var(--text3); font-family: monospace; font-size: 11px; white-space: nowrap; }
-.success-detail-row span:last-child { text-align: right; }
+.success-detail-row span:last-child { text-align: right; font-weight: 500; }
 .btn-new { background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); padding: 12px 28px; font-size: 14px; font-weight: 700; font-family: monospace; cursor: pointer; }
 .btn-new:hover { opacity: .8; }
-.loading-state { text-align: center; padding: 3rem; font-family: monospace; font-size: 13px; color: var(--text3); }
-@media (max-width:500px) { .step-label{display:none;} .form-row{flex-direction:column;} .fg-sm,.fg-xs{max-width:100%;} .bottom-inner{flex-direction:column;align-items:stretch;text-align:center;} }
+
+@media (max-width:600px) {
+  .step-label { display: none; }
+  .step1-layout { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border2); padding: 1rem; }
+  .day-filter { flex-direction: row; flex-wrap: wrap; }
+  .day-filter-btn { width: auto; flex: 1; text-align: center; }
+  .form-row { flex-direction: column; }
+  .fg-sm,.fg-xs { max-width: 100%; }
+  .bottom-inner { flex-direction: column; align-items: stretch; text-align: center; }
+}
 </style>
 </head>
 <body>
@@ -124,41 +161,37 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
   </div>
 </div>
 
-<div class="main" id="main-content">
+<!-- Step 1 -->
+<div id="step1-content">
   <div class="loading-state" id="loading-state">A carregar atividades...</div>
-
-  <!-- Step 1 -->
-  <div id="step1-content" style="display:none">
-    <div class="filter-bar" id="filter-bar"></div>
-    <div id="events-list"></div>
-    <div class="no-events" id="no-events" style="display:none">Sem atividades disponíveis.</div>
+  <div class="step1-layout" id="step1-layout" style="display:none">
+    <div class="sidebar">
+      <div class="sidebar-title">Filtrar por dia</div>
+      <div class="day-filter" id="day-filter"></div>
+    </div>
+    <div class="events-main">
+      <div class="events-main-title" id="events-main-title">22 de março de 2027</div>
+      <div class="events-main-sub">Seleciona as atividades em que queres participar</div>
+      <div id="events-list"></div>
+      <div class="no-events" id="no-events" style="display:none">Sem atividades disponíveis para este dia.</div>
+    </div>
   </div>
+</div>
 
-  <!-- Step 2 -->
-  <div id="step2-content" style="display:none">
+<!-- Step 2 -->
+<div id="step2-content" style="display:none">
+  <div class="form-wrap">
     <div class="form-card">
       <div class="form-card-title">Os meus dados</div>
       <div class="form-card-sub">Preenche os dados para confirmar a inscrição</div>
       <div class="selection-summary" id="sel-summary"></div>
-
       <div class="form-row">
-        <div class="fg">
-          <label class="fl">Nome do professor *</label>
-          <input type="text" id="r-name" class="fi" placeholder="Nome completo">
-        </div>
-        <div class="fg">
-          <label class="fl">Email *</label>
-          <input type="email" id="r-email" class="fi" placeholder="email@escola.pt">
-        </div>
+        <div class="fg"><label class="fl">Nome do professor *</label><input type="text" id="r-name" class="fi" placeholder="Nome completo"></div>
+        <div class="fg"><label class="fl">Email *</label><input type="email" id="r-email" class="fi" placeholder="email@escola.pt"></div>
       </div>
-
       <div class="form-row">
-        <div class="fg">
-          <label class="fl">Professor acompanhante</label>
-          <input type="text" id="r-companion" class="fi" placeholder="Nome (opcional)">
-        </div>
+        <div class="fg"><label class="fl">Professor acompanhante</label><input type="text" id="r-companion" class="fi" placeholder="Nome (opcional)"></div>
       </div>
-
       <div class="form-row">
         <div class="fg">
           <label class="fl">Escola *</label>
@@ -189,8 +222,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
           <span class="field-hint">máx. 30</span>
         </div>
       </div>
-
-      <div class="form-error" id="form-error">Por favor preenche todos os campos obrigatórios. O nº de alunos deve ser entre 1 e 30.</div>
+      <div class="form-error" id="form-error"></div>
       <hr class="form-divider">
       <div class="form-actions">
         <button class="btn-back" onclick="goToStep1()">← Voltar</button>
@@ -198,16 +230,16 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Step 3 -->
-  <div id="step3-content" style="display:none">
-    <div class="success-wrap">
-      <div class="success-icon">🎉</div>
-      <div class="success-title">Inscrição confirmada!</div>
-      <div class="success-sub" id="success-msg"></div>
-      <div class="success-detail" id="success-detail"></div>
-      <button class="btn-new" onclick="resetAll()">Nova inscrição</button>
-    </div>
+<!-- Step 3 -->
+<div id="step3-content" style="display:none">
+  <div class="success-wrap">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">Inscrição confirmada!</div>
+    <div class="success-sub" id="success-msg"></div>
+    <div class="success-detail" id="success-detail"></div>
+    <button class="btn-new" onclick="resetAll()">Nova inscrição</button>
   </div>
 </div>
 
@@ -234,7 +266,7 @@ const SPACES = [
   { id:'s5', name:'Biblioteca da Jácome', cap:60 },
 ];
 
-let events=[], selected=[], activeFilter='all';
+let events=[], selected=[], activeFilter='d22'; // começa sempre no dia 22
 
 async function api(action,data={}) {
   if (!SCRIPT_URL) return null;
@@ -243,68 +275,69 @@ async function api(action,data={}) {
 
 async function loadEvents() {
   const r=await api('getEvents');
-  if (r&&r.events) events=r.events.sort((a,b)=>(a.order||0)-(b.order||0));
+  if (r&&r.events) events=r.events;
   else { try{const s=localStorage.getItem('sc27_ev');if(s)events=JSON.parse(s);}catch(e){} }
   document.getElementById('loading-state').style.display='none';
-  document.getElementById('step1-content').style.display='block';
+  document.getElementById('step1-layout').style.display='flex';
   document.getElementById('bottom-bar').style.display='block';
-  renderFilter(); renderEvents();
+  renderSidebar(); renderEvents();
 }
 
-function renderFilter() {
-  const el=document.getElementById('filter-bar'); el.innerHTML='';
-  [{key:'all',label:'Todos os dias'},...DAYS].forEach(f=>{
+function renderSidebar() {
+  const el=document.getElementById('day-filter'); el.innerHTML='';
+  DAYS.forEach(d=>{
+    const evCount=events.filter(e=>e.day===d.key).length;
     const b=document.createElement('button');
-    b.className='filter-btn'+(f.key===activeFilter?' active':'');
-    b.textContent=f.label;
-    b.onclick=()=>{activeFilter=f.key;renderFilter();renderEvents();};
+    b.className='day-filter-btn'+(d.key===activeFilter?' active':'');
+    b.innerHTML=d.full+'<span class="day-count">'+evCount+' atividade'+(evCount!==1?'s':'')+'</span>';
+    b.onclick=()=>{ activeFilter=d.key; renderSidebar(); renderEvents(); };
     el.appendChild(b);
   });
+  const day=DAYS.find(d=>d.key===activeFilter);
+  document.getElementById('events-main-title').textContent=day?.full||'';
 }
 
 function renderEvents() {
   const container=document.getElementById('events-list');
   const noEv=document.getElementById('no-events');
   container.innerHTML='';
-  const visible=events.filter(e=>activeFilter==='all'||e.day===activeFilter);
+  // Ordenar por order, depois por hora
+  const visible=events
+    .filter(e=>e.day===activeFilter)
+    .sort((a,b)=>{
+      const ao=parseInt(a.order)||0, bo=parseInt(b.order)||0;
+      if (ao!==bo) return ao-bo;
+      return (a.time||'').localeCompare(b.time||'');
+    });
+
   if (visible.length===0){noEv.style.display='block';return;}
   noEv.style.display='none';
 
-  const byDay={};
-  DAYS.forEach(d=>byDay[d.key]=[]);
-  visible.forEach(e=>{if(byDay[e.day])byDay[e.day].push(e);});
+  visible.forEach(ev=>{
+    const space=SPACES.find(s=>s.id===ev.spaceId);
+    const reg=parseInt(ev.registrations)||0;
+    const max=parseInt(ev.maxPax)||0;
+    const isFull=reg>=max;
+    const pct=max>0?Math.round(reg/max*100):0;
+    const isSelected=selected.includes(ev.id);
+    const bc=isFull?'badge-full':pct>=80?'badge-warn':'badge-ok';
+    const bl=isFull?'ESGOTADO':`${max-reg} vagas`;
 
-  DAYS.forEach(d=>{
-    if (!byDay[d.key].length) return;
-    if (activeFilter==='all'){
-      const lbl=document.createElement('div'); lbl.className='day-label'; lbl.textContent=d.full;
-      container.appendChild(lbl);
-    }
-    byDay[d.key].sort((a,b)=>(a.order||0)-(b.order||0)).forEach(ev=>{
-      const space=SPACES.find(s=>s.id===ev.spaceId);
-      const reg=parseInt(ev.registrations)||0;
-      const max=parseInt(ev.maxPax)||0;
-      const isFull=reg>=max;
-      const pct=max>0?Math.round(reg/max*100):0;
-      const isSelected=selected.includes(ev.id);
-      const bc=isFull?'badge-full':pct>=80?'badge-warn':'badge-ok';
-      const bl=isFull?'ESGOTADO':`${max-reg} vagas`;
+    const card=document.createElement('div');
+    card.className='event-card'+(isSelected?' ev-selected':'')+(isFull?' ev-full':'');
+    card.onclick=()=>{ if(!isFull) toggleSelect(ev.id); };
 
-      const card=document.createElement('div');
-      card.className='event-card'+(isSelected?' ev-selected':'')+(isFull?' ev-full':'');
-      card.onclick=()=>{if(!isFull)toggleSelect(ev.id);};
-      card.innerHTML=`
-        <div class="ev-check"></div>
-        <div class="ev-body">
-          <div class="ev-name">${ev.time?'<span class="ev-time-tag">'+ev.time+'</span> — ':''}${ev.name}</div>
-          <div class="ev-meta">
-            <span class="ev-meta-item">📍 ${space?.name||''}</span>
-            <span class="ev-meta-item">📅 ${d.full}</span>
-          </div>
-        </div>
-        <span class="ev-badge ${bc}">${bl}</span>`;
-      container.appendChild(card);
-    });
+    let html=`
+      <div class="ev-check"></div>
+      <div class="ev-body">
+        <div class="ev-name">${ev.time?'<span class="ev-time-tag">'+ev.time+'</span> — ':''}${ev.name}</div>
+        <div class="ev-meta">
+          <span class="ev-meta-item">📍 ${space?.name||''}</span>
+        </div>`;
+    if (ev.synopsis) html+=`<div class="ev-synopsis-text">${ev.synopsis}</div>`;
+    html+=`</div><span class="ev-badge ${bc}">${bl}</span>`;
+    card.innerHTML=html;
+    container.appendChild(card);
   });
 }
 
@@ -313,6 +346,7 @@ function toggleSelect(evId) {
   if (i>=0) selected.splice(i,1); else selected.push(evId);
   renderEvents(); updateBottomBar();
 }
+
 function updateBottomBar() {
   const n=selected.length;
   document.getElementById('sel-count').innerHTML=`<strong>${n}</strong> atividade${n!==1?'s':''} selecionada${n!==1?'s':''}`;
@@ -326,16 +360,18 @@ function goToStep2() {
   document.getElementById('step2-content').style.display='block';
   document.getElementById('si1').className='step-item done';
   document.getElementById('si2').className='step-item active';
+
   const ul=selected.map(id=>{
     const ev=events.find(e=>e.id===id);
     const sp=SPACES.find(s=>s.id===ev?.spaceId);
-    return `<li>${ev?.time?ev.time+' — ':''}${ev?.name} <span style="color:var(--text2);font-size:12px">(${sp?.name})</span></li>`;
+    const day=DAYS.find(d=>d.key===ev?.day);
+    return `<li>${ev?.time?ev.time+' — ':''}${ev?.name} <span style="color:var(--text2);font-size:11px">(${sp?.name} · ${day?.label})</span></li>`;
   }).join('');
   document.getElementById('sel-summary').innerHTML=`<div class="selection-summary-title">Atividades selecionadas (${selected.length})</div><ul>${ul}</ul>`;
   document.getElementById('form-error').classList.remove('show');
-  // Re-enable submit button in case it was disabled
+
   const btn=document.getElementById('btn-submit');
-  btn.disabled=false; btn.textContent='Confirmar inscrição ✓'; btn.classList.remove('loading');
+  btn.disabled=false; btn.textContent='Confirmar inscrição ✓';
 }
 
 function goToStep1() {
@@ -354,31 +390,54 @@ async function submitForm() {
   const year      = document.getElementById('r-year').value;
   const cls       = document.getElementById('r-class').value.trim().toUpperCase();
   const students  = parseInt(document.getElementById('r-students').value);
+  const errEl     = document.getElementById('form-error');
+
+  errEl.classList.remove('show');
 
   if (!name||!email||!school||!year||!cls||!students||students<1||students>30) {
-    document.getElementById('form-error').textContent='Por favor preenche todos os campos obrigatórios. O nº de alunos deve ser entre 1 e 30.';
-    document.getElementById('form-error').classList.add('show');
-    return;
+    errEl.textContent='Por favor preenche todos os campos obrigatórios. O nº de alunos deve ser entre 1 e 30.';
+    errEl.classList.add('show'); return;
   }
 
-  // Verificar vagas suficientes
+  // ── Validação: vagas suficientes ──
   for (const id of selected) {
     const ev=events.find(e=>e.id===id);
     if (ev) {
       const vagas=(parseInt(ev.maxPax)||0)-(parseInt(ev.registrations)||0);
       if (students>vagas) {
-        document.getElementById('form-error').textContent=`Não há vagas suficientes em "${ev.name}". Vagas disponíveis: ${vagas}`;
-        document.getElementById('form-error').classList.add('show');
-        return;
+        errEl.textContent=`Não há vagas suficientes em "${ev.name}". Vagas disponíveis: ${vagas}`;
+        errEl.classList.add('show'); return;
       }
     }
   }
 
-  // ── Desativar botão imediatamente para evitar duplos cliques ──
-  const btn=document.getElementById('btn-submit');
-  btn.disabled=true; btn.textContent='A enviar...'; btn.classList.add('loading');
+  // ── Validação: mesma escola+ano+turma não pode ter dois eventos à mesma hora no mesmo dia ──
+  // Agrupa eventos selecionados por dia
+  const selectedEvs=selected.map(id=>events.find(e=>e.id===id)).filter(Boolean);
+  const byDay={};
+  selectedEvs.forEach(ev=>{
+    if (!byDay[ev.day]) byDay[ev.day]=[];
+    byDay[ev.day].push(ev);
+  });
 
-  // Atualização local optimista
+  for (const day of Object.keys(byDay)) {
+    const dayEvs=byDay[day];
+    // Verificar se há dois eventos no mesmo dia à mesma hora (qualquer espaço)
+    const times=dayEvs.map(e=>e.time);
+    const dupTimes=times.filter((t,i)=>times.indexOf(t)!==i);
+    if (dupTimes.length>0) {
+      const dup=dupTimes[0];
+      const dayLabel=DAYS.find(d=>d.key===day)?.full||day;
+      errEl.textContent=`Conflito: selecionaste dois eventos às ${dup} no dia ${dayLabel}. A mesma turma não pode estar em dois sítios à mesma hora.`;
+      errEl.classList.add('show'); return;
+    }
+  }
+
+  // ── Desativar botão ──
+  const btn=document.getElementById('btn-submit');
+  btn.disabled=true; btn.textContent='A enviar...';
+
+  // Atualização local
   selected.forEach(id=>{
     const ev=events.find(e=>e.id===id);
     if(ev) ev.registrations=(parseInt(ev.registrations)||0)+students;
@@ -405,7 +464,7 @@ async function submitForm() {
 }
 
 function resetAll() {
-  selected=[]; activeFilter='all';
+  selected=[]; activeFilter='d22';
   ['step3-content','step2-content'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('step1-content').style.display='block';
   document.getElementById('bottom-bar').style.display='block';
@@ -413,7 +472,7 @@ function resetAll() {
   document.getElementById('si2').className='step-item';
   document.getElementById('si3').className='step-item';
   ['r-name','r-email','r-companion','r-school','r-year','r-class','r-students'].forEach(id=>document.getElementById(id).value='');
-  renderFilter(); renderEvents(); updateBottomBar();
+  renderSidebar(); renderEvents(); updateBottomBar();
 }
 
 loadEvents();
