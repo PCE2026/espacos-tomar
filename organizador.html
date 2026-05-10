@@ -53,12 +53,14 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .space-card.open .space-body { display: block; }
 .events-section { padding: 1rem 1.25rem; }
 .drag-hint { font-family: monospace; font-size: 10px; color: var(--text3); margin-bottom: 8px; }
-.ev-row { display: flex; align-items: center; gap: 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 6px; cursor: grab; user-select: none; transition: opacity .15s, border-color .15s; }
+.ev-row { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 6px; cursor: grab; user-select: none; transition: opacity .15s, border-color .15s; }
+.ev-row-top { display: flex; align-items: center; gap: 10px; }
 .ev-row.dragging { opacity: .35; }
 .ev-row.drag-over { border-color: var(--accent); background: var(--surface3); }
 .drag-handle { color: var(--text3); font-size: 14px; flex-shrink: 0; }
 .ev-time { font-family: monospace; font-size: 12px; color: var(--accent); width: 48px; flex-shrink: 0; }
 .ev-name { flex: 1; font-size: 13px; color: var(--text); }
+.ev-synopsis { font-size: 12px; color: var(--text2); margin-top: 6px; padding: 6px 10px; background: var(--surface3); border-radius: 4px; border-left: 2px solid var(--accent2); font-style: italic; line-height: 1.5; margin-left: 24px; }
 .ev-badge { font-family: monospace; font-size: 11px; padding: 2px 8px; border-radius: 4px; flex-shrink: 0; }
 .badge-ok { background: var(--green-bg); color: var(--green); }
 .badge-warn { background: var(--amber-bg); color: var(--amber); }
@@ -71,14 +73,17 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .conflict-alert { background: var(--red-bg); border: 1px solid var(--red); border-radius: var(--radius); padding: 7px 11px; font-size: 11px; color: var(--red); font-family: monospace; margin-bottom: 8px; display: none; }
 .conflict-alert.show { display: block; }
 .form-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; }
+.form-row-full { margin-top: 8px; }
 .fg { display: flex; flex-direction: column; gap: 5px; }
 .fg-xs { width: 62px; }
 .fg-md { width: 120px; }
 .fg-lg { flex: 1; min-width: 180px; }
+.fg-full { width: 100%; }
 .fl { font-family: monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
 .fi { background: var(--surface3); border: 1px solid var(--border2); border-radius: var(--radius); padding: 8px 6px; font-size: 13px; color: var(--text); font-family: monospace; transition: border-color .15s; width: 100%; text-align: center; }
 .fi:focus { outline: none; border-color: var(--accent); }
 .fi-text { text-align: left; font-family: inherit; }
+.fi-area { text-align: left; font-family: inherit; resize: vertical; min-height: 60px; line-height: 1.5; }
 .time-sep { color: var(--accent); font-size: 20px; font-weight: bold; align-self: flex-end; padding-bottom: 7px; line-height: 1; }
 .btn-add { background: var(--accent); color: #0f0f0f; border: none; border-radius: var(--radius); padding: 9px 18px; font-size: 12px; font-weight: 700; font-family: monospace; text-transform: uppercase; cursor: pointer; white-space: nowrap; align-self: flex-end; }
 .btn-add:hover { background: var(--accent2); }
@@ -164,7 +169,7 @@ async function syncEvents() {
 }
 function toast(msg) {
   const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'),2500);
+  setTimeout(()=>el.classList.remove('show'),2800);
 }
 async function init() { await syncEvents(); renderTabs(); renderSpaces(); }
 
@@ -188,12 +193,27 @@ function getTimeStr(spaceId) {
 function checkConflict(spaceId) {
   const time=getTimeStr(spaceId);
   const alertEl=document.getElementById('conflict-'+spaceId);
-  const conflicts=events.filter(e=>e.day===activeDay&&e.time===time);
-  if (conflicts.length>0) {
-    const names=conflicts.map(e=>{const sp=SPACES.find(s=>s.id===e.spaceId);return '"'+e.name+'" ('+( sp?.name||'')+')';}).join(', ');
-    alertEl.textContent='⚠ Já existe evento às '+time+': '+names;
+
+  // Conflito no mesmo espaço à mesma hora
+  const sameSpaceConflict=events.filter(e=>e.day===activeDay&&e.spaceId===spaceId&&e.time===time);
+  // Conflito noutros espaços à mesma hora
+  const otherSpaceConflict=events.filter(e=>e.day===activeDay&&e.spaceId!==spaceId&&e.time===time);
+
+  if (sameSpaceConflict.length>0) {
+    alertEl.textContent='🚫 Já existe um evento às '+time+' neste espaço: "'+sameSpaceConflict[0].name+'"';
     alertEl.classList.add('show');
-  } else { alertEl.classList.remove('show'); }
+  } else if (otherSpaceConflict.length>0) {
+    const names=otherSpaceConflict.map(e=>{const sp=SPACES.find(s=>s.id===e.spaceId);return '"'+e.name+'" ('+( sp?.name||'')+')';}).join(', ');
+    alertEl.textContent='⚠ Atenção: já existem eventos às '+time+' noutros espaços: '+names;
+    alertEl.classList.add('show');
+  } else {
+    alertEl.classList.remove('show');
+  }
+}
+
+function hasBlockingConflict(spaceId, time) {
+  // Bloqueia apenas se houver evento à mesma hora NO MESMO espaço
+  return events.some(e=>e.day===activeDay&&e.spaceId===spaceId&&e.time===time);
 }
 
 function renderSpaces() {
@@ -205,8 +225,7 @@ function renderSpaces() {
     const card=document.createElement('div');
     card.className='space-card'+(isOpen?' open':'');
 
-    const head=document.createElement('div');
-    head.className='space-head';
+    const head=document.createElement('div'); head.className='space-head';
     head.innerHTML=`<span class="space-name">${space.name}</span><div class="space-right"><span class="space-stats">${evs.length} evento${evs.length!==1?'s':''} · ${totalReg} insc.</span><span class="space-cap-tag">${space.cap} pax</span><span class="chevron">▼</span></div>`;
     head.onclick=()=>{openCards[space.id+activeDay]=!isOpen;renderSpaces();};
     card.appendChild(head);
@@ -225,7 +244,17 @@ function renderSpaces() {
         const bl=pct>=100?'ESGOTADO':`${reg}/${ev.maxPax}`;
         const row=document.createElement('div');
         row.className='ev-row'; row.draggable=true; row.dataset.evId=ev.id;
-        row.innerHTML=`<span class="drag-handle" title="Arrastar">⠿</span><span class="ev-time">${ev.time||'--:--'}</span><span class="ev-name">${ev.name}</span><span class="ev-badge ${bc}">${bl}</span><button class="ev-del" onclick="delEvent('${ev.id}')">✕</button>`;
+
+        const topRow=document.createElement('div'); topRow.className='ev-row-top';
+        topRow.innerHTML=`<span class="drag-handle" title="Arrastar">⠿</span><span class="ev-time">${ev.time||'--:--'}</span><span class="ev-name">${ev.name}</span><span class="ev-badge ${bc}">${bl}</span><button class="ev-del" onclick="delEvent('${ev.id}')">✕</button>`;
+        row.appendChild(topRow);
+
+        if (ev.synopsis) {
+          const syn=document.createElement('div'); syn.className='ev-synopsis';
+          syn.textContent=ev.synopsis;
+          row.appendChild(syn);
+        }
+
         row.addEventListener('dragstart',e=>{dragSrcId=ev.id;e.dataTransfer.effectAllowed='move';setTimeout(()=>row.classList.add('dragging'),0);});
         row.addEventListener('dragend',()=>row.classList.remove('dragging'));
         row.addEventListener('dragover',e=>{e.preventDefault();row.classList.add('drag-over');});
@@ -256,6 +285,12 @@ function renderSpaces() {
         <div class="fg fg-lg"><label class="fl">Nome da atividade</label><input type="text" class="fi fi-text" placeholder="Ex: Visita guiada" id="n-${space.id}"></div>
         <div class="fg fg-md"><label class="fl">Vagas máx.</label><input type="number" class="fi" placeholder="${space.cap}" min="1" max="${space.cap}" id="p-${space.id}"></div>
         <button class="btn-add" onclick="addEvent('${space.id}')">+ Adicionar</button>
+      </div>
+      <div class="form-row form-row-full">
+        <div class="fg fg-full">
+          <label class="fl">+ Informação / Sinopse (opcional)</label>
+          <textarea class="fi fi-area fi-text" placeholder="Descrição breve do evento, artistas, programa..." id="syn-${space.id}"></textarea>
+        </div>
       </div>`;
     body.appendChild(form);
     card.appendChild(body);
@@ -266,10 +301,18 @@ function renderSpaces() {
 async function addEvent(spaceId) {
   const name=document.getElementById('n-'+spaceId).value.trim();
   const time=getTimeStr(spaceId);
+  const synopsis=document.getElementById('syn-'+spaceId).value.trim();
   const pax=parseInt(document.getElementById('p-'+spaceId).value)||SPACES.find(s=>s.id===spaceId).cap;
   if (!name){toast('Escreve o nome da atividade');return;}
+
+  // Bloquear se já existe evento à mesma hora no mesmo espaço
+  if (hasBlockingConflict(spaceId, time)) {
+    toast('🚫 Já existe um evento às '+time+' neste espaço!');
+    return;
+  }
+
   const order=events.filter(e=>e.day===activeDay&&e.spaceId===spaceId).length;
-  const ev={id:'ev_'+Date.now()+'_'+Math.random().toString(36).slice(2,5),day:activeDay,spaceId,time,name,maxPax:pax,registrations:0,order};
+  const ev={id:'ev_'+Date.now()+'_'+Math.random().toString(36).slice(2,5),day:activeDay,spaceId,time,name,synopsis,maxPax:pax,registrations:0,order};
   events.push(ev); save(); openCards[spaceId+activeDay]=true;
   await api('addEvent',{event:ev});
   toast('Evento adicionado ✓'); renderSpaces();
