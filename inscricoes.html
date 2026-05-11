@@ -67,8 +67,13 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .ev-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 3px; }
 .ev-meta-item { font-size: 12px; color: var(--text2); font-family: monospace; }
 .event-card.ev-selected .ev-meta-item { color: #bfdbfe; }
-.ev-synopsis-text { font-size: 12px; color: var(--text2); font-style: italic; margin-top: 6px; line-height: 1.5; }
-.event-card.ev-selected .ev-synopsis-text { color: #dbeafe; }
+.ev-synopsis-text { font-size: 12px; color: var(--text2); font-style: italic; margin-top: 8px; line-height: 1.6; background: var(--surface2); border-radius: var(--radius); padding: 10px 12px; border-left: 3px solid var(--accent); }
+.event-card.ev-selected .ev-synopsis-text { color: #dbeafe; background: rgba(255,255,255,0.1); border-left-color: #93c5fd; }
+.ev-info-wrap { margin-top: 6px; }
+.ev-info-btn { background: none; border: 1px solid var(--border2); border-radius: 100px; padding: 3px 10px; font-size: 11px; font-family: monospace; color: var(--accent); cursor: pointer; transition: all .15s; }
+.ev-info-btn:hover { background: var(--accent-light); }
+.event-card.ev-selected .ev-info-btn { border-color: rgba(255,255,255,0.4); color: #bfdbfe; }
+.event-card.ev-selected .ev-info-btn:hover { background: rgba(255,255,255,0.1); }
 .ev-badge { font-family: monospace; font-size: 11px; padding: 3px 9px; border-radius: 4px; flex-shrink: 0; font-weight: 700; margin-left: auto; white-space: nowrap; }
 .badge-ok { background: var(--green-bg); color: var(--green); }
 .badge-warn { background: var(--amber-bg); color: var(--amber); }
@@ -251,7 +256,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP2hhejRgth5XYCqYGt58TLpip6PDHJihCZmXm4MfB1NPOXcqMqdOVtvsplj1iCfh-/exec"; // ← cola aqui o URL do Google Apps Script
+const SCRIPT_URL = ""; // ← cola aqui o URL do Google Apps Script
 
 const DAYS = [
   { key:'d22', label:'22 Mar', full:'22 de março de 2027' },
@@ -334,7 +339,11 @@ function renderEvents() {
         <div class="ev-meta">
           <span class="ev-meta-item">📍 ${space?.name||''}</span>
         </div>`;
-    if (ev.synopsis) html+=`<div class="ev-synopsis-text">${ev.synopsis}</div>`;
+    if (ev.synopsis) html+=`
+      <div class="ev-info-wrap">
+        <button class="ev-info-btn" onclick="toggleInfo(event,'info-${ev.id}')">+ Info</button>
+        <div class="ev-synopsis-text" id="info-${ev.id}" style="display:none">${ev.synopsis}</div>
+      </div>`;
     html+=`</div><span class="ev-badge ${bc}">${bl}</span>`;
     card.innerHTML=html;
     container.appendChild(card);
@@ -499,6 +508,15 @@ function resetAll() {
   document.getElementById('si3').className='step-item';
   ['r-name','r-email','r-companion','r-school','r-year','r-class','r-students'].forEach(id=>document.getElementById(id).value='');
   renderSidebar(); renderEvents(); updateBottomBar();
+}
+
+function toggleInfo(e, id) {
+  e.stopPropagation(); // não seleciona o card ao clicar em + Info
+  var el = document.getElementById(id);
+  if (!el) return;
+  var isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  e.target.textContent = isOpen ? '+ Info' : '− Info';
 }
 
 loadEvents();
