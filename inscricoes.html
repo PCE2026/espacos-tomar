@@ -437,16 +437,42 @@ async function submitForm() {
   const btn=document.getElementById('btn-submit');
   btn.disabled=true; btn.textContent='A enviar...';
 
-  // Atualização local
+  // Atualização local optimista
   selected.forEach(id=>{
     const ev=events.find(e=>e.id===id);
     if(ev) ev.registrations=(parseInt(ev.registrations)||0)+students;
   });
   try{localStorage.setItem('sc27_ev',JSON.stringify(events));}catch(e){}
 
-  await api('register',{name,email,companion,school,year,class:cls,students,eventIds:selected,timestamp:new Date().toISOString()});
+  let result = null;
+  try {
+    result = await api('register',{name,email,companion,school,year,class:cls,students,eventIds:selected,timestamp:new Date().toISOString()});
+  } catch(err) { result = null; }
 
-  // Step 3
+  const revert = () => {
+    selected.forEach(id=>{
+      const ev=events.find(e=>e.id===id);
+      if(ev) ev.registrations=Math.max(0,(parseInt(ev.registrations)||0)-students);
+    });
+    try{localStorage.setItem('sc27_ev',JSON.stringify(events));}catch(e){}
+    btn.disabled=false; btn.textContent='Confirmar inscrição ✓';
+  };
+
+  if (!result) {
+    revert();
+    errEl.textContent='Erro de ligação. Verifica a tua ligação à internet e tenta novamente.';
+    errEl.classList.add('show');
+    return;
+  }
+
+  if (result.ok !== true) {
+    revert();
+    errEl.textContent=result.error||'Não foi possível registar a inscrição. Tenta novamente.';
+    errEl.classList.add('show');
+    return;
+  }
+
+  // Step 3 — só chega aqui se result.ok === true
   document.getElementById('step2-content').style.display='none';
   document.getElementById('step3-content').style.display='block';
   document.getElementById('si2').className='step-item done';
