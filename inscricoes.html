@@ -256,7 +256,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 </div>
 
 <script>
-const SCRIPT_URL = ""; // ← cola aqui o URL do Google Apps Script
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP2hhejRgth5XYCqYGt58TLpip6PDHJihCZmXm4MfB1NPOXcqMqdOVtvsplj1iCfh-/exec"; // ← cola aqui o URL do Google Apps Script
 
 const DAYS = [
   { key:'d22', label:'22 Mar', full:'22 de março de 2027' },
@@ -273,9 +273,28 @@ const SPACES = [
 
 let events=[], selected=[], activeFilter='d22'; // começa sempre no dia 22
 
-async function api(action,data={}) {
+async function api(action, data={}) {
   if (!SCRIPT_URL) return null;
-  try { const r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action,...data})}); return await r.json(); } catch(e){return null;}
+  try {
+    // GET para getEvents (evita problemas de CORS em mobile)
+    if (action === 'getEvents') {
+      const r = await fetch(SCRIPT_URL + '?action=getEvents&t=' + Date.now(), {
+        method: 'GET',
+        cache: 'no-cache'
+      });
+      return await r.json();
+    }
+    // POST para as restantes ações
+    const r = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      cache: 'no-cache',
+      body: JSON.stringify({action, ...data})
+    });
+    return await r.json();
+  } catch(e) {
+    console.error('API error:', e);
+    return null;
+  }
 }
 
 async function loadEvents() {
