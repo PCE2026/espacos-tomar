@@ -212,11 +212,20 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
   <div class="dt-form">
     <div class="fg">
       <label class="fl">Ano</label>
-      <select id="dt-year" class="fi fi-select">
+      <select id="dt-year" class="fi fi-select" onchange="dtYearChanged()">
         <option value="">Selecionar...</option>
         <option>5.º</option><option>6.º</option><option>7.º</option>
         <option>8.º</option><option>9.º</option><option>10.º</option>
         <option>11.º</option><option>12.º</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label class="fl">Escola</label>
+      <select id="dt-escola" class="fi fi-select">
+        <option value="">Selecionar...</option>
+        <option value="Jácome Ratton">Jácome Ratton</option>
+        <option value="Gualdim Pais">Gualdim Pais</option>
+        <option value="Santa Iria">Santa Iria</option>
       </select>
     </div>
     <div class="fg-xs">
@@ -368,20 +377,36 @@ function toggleConsultaDT() {
   }
 }
 
+function dtYearChanged() {
+  const year = document.getElementById('dt-year').value;
+  const escolaEl = document.getElementById('dt-escola');
+  const secundario = ['10.º','11.º','12.º'].includes(year);
+  if (secundario) {
+    escolaEl.value = 'Jácome Ratton';
+    escolaEl.disabled = true;
+  } else {
+    escolaEl.disabled = false;
+    if (escolaEl.value === 'Jácome Ratton' && year !== '') {
+      escolaEl.value = '';
+    }
+  }
+}
+
 async function consultarDT() {
-  const year  = document.getElementById('dt-year').value.trim();
-  const turma = document.getElementById('dt-turma').value.trim().toUpperCase();
+  const year   = document.getElementById('dt-year').value.trim();
+  const escola = document.getElementById('dt-escola').value.trim();
+  const turma  = document.getElementById('dt-turma').value.trim().toUpperCase();
   const area  = document.getElementById('dt-results-area');
 
-  if (!year || !turma) {
-    area.innerHTML = '<div class="dt-no-results">Por favor seleciona o ano e introduz a turma.</div>';
+  if (!year || !escola || !turma) {
+    area.innerHTML = '<div class="dt-no-results">Por favor seleciona o ano, a escola e introduz a turma.</div>';
     return;
   }
 
   area.innerHTML = '<div class="dt-loading">A consultar...</div>';
 
   try {
-    const url = SCRIPT_URL + '?action=getTurmaInscricoes&year=' + encodeURIComponent(year) + '&turma=' + encodeURIComponent(turma) + '&t=' + Date.now();
+    const url = SCRIPT_URL + '?action=getTurmaInscricoes&year=' + encodeURIComponent(year) + '&turma=' + encodeURIComponent(turma) + '&escola=' + encodeURIComponent(escola) + '&t=' + Date.now();
     const r = await fetch(url, { method: 'GET', cache: 'no-cache' });
     const data = await r.json();
 
@@ -395,7 +420,7 @@ async function consultarDT() {
     if (inscricoes.length === 0) {
       area.innerHTML = `
         <div class="dt-no-results">
-          Não foram encontradas inscrições para o <strong>${year} ${turma}</strong>.
+          Não foram encontradas inscrições para o <strong>${year} ${turma}</strong> de <strong>${escola}</strong>.
         </div>`;
       return;
     }
@@ -410,10 +435,7 @@ async function consultarDT() {
       byDay[d].sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
     });
 
-    // Escola (pode variar mas normalmente é a mesma)
-    const escola = inscricoes[0].escola || '';
-
-    let html = `<div class="dt-turma-badge">📚 ${year} ${turma}${escola ? ' · ' + escola : ''} — ${inscricoes.length} atividade${inscricoes.length!==1?'s':''} inscrita${inscricoes.length!==1?'s':''}</div>`;
+    let html = `<div class="dt-turma-badge">📚 ${year} ${turma} · ${escola} — ${inscricoes.length} atividade${inscricoes.length!==1?'s':''} inscrita${inscricoes.length!==1?'s':''}</div>`;
 
     DAYS.forEach(function(d) {
       const evs = byDay[d.key];
