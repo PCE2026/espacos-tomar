@@ -87,6 +87,8 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .day-filter-btn .day-count { font-size: 11px; opacity: .75; display: block; margin-top: 2px; }
 
 .events-main { flex: 1; padding: 1.5rem 1.5rem 130px; min-width: 0; }
+.info-notice { background: var(--accent-light); border: 2px solid var(--accent); border-radius: var(--radius); padding: 12px 16px; font-size: 14px; color: var(--text); line-height: 1.6; margin-bottom: 1.5rem; }
+.info-notice strong { color: var(--accent2); }
 .events-main-title { font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
 .events-main-sub { font-size: 13px; color: var(--text2); font-family: monospace; margin-bottom: 1.5rem; }
 
@@ -237,7 +239,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
       <div class="site-title"><strong>12.ª Semana Cultural</strong> — Tomar</div>
       <div class="site-dates">22 · 23 · 24 de março de 2027</div>
     </div>
-    <button class="btn-consulta-dt" id="btn-toggle-dt" onclick="toggleConsultaDT()">📋 Consulta DT</button>
+    <button class="btn-consulta-dt" id="btn-toggle-dt" onclick="toggleConsultaDT()">📋 Consulta Turmas</button>
   </div>
 </div>
 
@@ -254,7 +256,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 <!-- ── Consulta DT ── -->
 <div id="consulta-dt-content" style="display:none">
   <div class="dt-header">
-    <div class="dt-title">Consulta DT</div>
+    <div class="dt-title">Consulta Turmas</div>
     <div class="dt-sub">Introduz o ano e a turma para ver todas as atividades — inscrições livres e programa fixo</div>
   </div>
   <div class="dt-form">
@@ -294,6 +296,10 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
       <div class="day-filter" id="day-filter"></div>
     </div>
     <div class="events-main">
+      <div class="info-notice">
+        📋 <strong>Está a inscrever a sua turma em atividades com lotação limitada.</strong>
+        O programa da Semana Cultural inclui ainda outras atividades — propostas pela própria turma ou partilhadas com outras turmas — que não requerem inscrição e que poderá consultar em cima no botão "Consulta Turmas".
+      </div>
       <div class="events-main-title" id="events-main-title">22 de março de 2027</div>
       <div class="events-main-sub">Seleciona as atividades em que queres participar</div>
       <div id="events-list"></div>
@@ -416,7 +422,7 @@ function toggleConsultaDT() {
     document.getElementById('dt-results-area').innerHTML = '';
   } else {
     btn.classList.remove('active');
-    btn.textContent = '📋 Consulta DT';
+    btn.textContent = '📋 Consulta Turmas';
     dtArea.style.display = 'none';
     stepsWrap.style.display = 'block';
     step1.style.display = 'block';
