@@ -475,7 +475,8 @@ async function consultarDT() {
 
     if (todas.length === 0) {
       area.innerHTML = `<div class="dt-no-results">
-        Não foram encontradas atividades para o <strong>${year} ${turma}</strong> de <strong>${escola}</strong>.
+        Não foram encontradas atividades para o <strong>${year} ${turma}</strong> de <strong>${escola}</strong>.<br><br>
+        📚 Nas turmas sem atividades, as aulas decorrem como habitualmente.
       </div>`;
       return;
     }
