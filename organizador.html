@@ -17,6 +17,7 @@
   --green: #4ade80; --green-bg: rgba(74,222,128,0.1);
   --amber: #fbbf24; --amber-bg: rgba(251,191,36,0.1);
   --red: #f87171; --red-bg: rgba(248,113,113,0.1);
+  --blue: #60a5fa; --blue-bg: rgba(96,165,250,0.12);
   --radius: 8px; --radius-lg: 14px;
 }
 body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); min-height: 100vh; }
@@ -38,7 +39,15 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .topbar-info { font-size: 12px; color: var(--text3); }
 .btn-out { background: none; border: 1px solid var(--border2); border-radius: var(--radius); padding: 6px 14px; font-size: 12px; color: var(--text2); cursor: pointer; font-family: inherit; transition: all .15s; }
 .btn-out:hover { border-color: var(--red); color: var(--red); }
-.main { max-width: 860px; margin: 0 auto; padding: 2rem 1rem; }
+.main { max-width: 960px; margin: 0 auto; padding: 2rem 1rem; }
+
+/* Tabs principais */
+.main-tabs { display: flex; gap: 0; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+.main-tab { padding: 10px 22px; font-size: 13px; font-family: monospace; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; }
+.main-tab:hover { color: var(--text2); }
+.main-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── SECÇÃO EVENTOS ── */
 .day-tabs { display: flex; gap: 4px; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
 .day-tab { padding: 10px 20px; font-size: 13px; font-family: monospace; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; }
 .day-tab:hover { color: var(--text2); }
@@ -87,6 +96,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .fi:focus { outline: none; border-color: var(--accent); }
 .fi-text { text-align: left; font-family: inherit; }
 .fi-area { text-align: left; font-family: inherit; resize: vertical; min-height: 60px; line-height: 1.5; }
+.fi-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
 .time-sep { color: var(--accent); font-size: 20px; font-weight: bold; align-self: flex-end; padding-bottom: 7px; line-height: 1; }
 .btn-add { background: var(--accent); color: #0f0f0f; border: none; border-radius: var(--radius); padding: 9px 18px; font-size: 12px; font-weight: 700; font-family: monospace; text-transform: uppercase; cursor: pointer; white-space: nowrap; align-self: flex-end; }
 .btn-add:hover { background: var(--accent2); }
@@ -95,9 +105,60 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .fill-ok { background: var(--green); }
 .fill-warn { background: var(--amber); }
 .fill-over { background: var(--red); }
+
+/* ── SECÇÃO PROGRAMA FIXO ── */
+.prog-controls { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.5rem; display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+.prog-controls .fg { min-width: 140px; }
+.prog-controls .fg-xs { min-width: 70px; max-width: 90px; }
+.btn-prog-load { background: var(--accent); color: #0f0f0f; border: none; border-radius: var(--radius); padding: 9px 18px; font-size: 12px; font-weight: 700; font-family: monospace; cursor: pointer; white-space: nowrap; align-self: flex-end; }
+.btn-prog-load:hover { background: var(--accent2); }
+
+/* Grelha de horário */
+.prog-grid-wrap { overflow-x: auto; }
+.prog-grid { border-collapse: collapse; width: 100%; min-width: 520px; }
+.prog-grid th { background: var(--surface); border: 1px solid var(--border2); padding: 8px 10px; font-family: monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); text-align: center; font-weight: 400; }
+.prog-grid th.day-col { color: var(--accent); font-weight: 700; min-width: 160px; }
+.prog-grid td { border: 1px solid var(--border); padding: 0; vertical-align: top; min-width: 160px; }
+.prog-grid td.time-cell { background: var(--surface); padding: 10px; font-family: monospace; font-size: 11px; color: var(--text3); white-space: nowrap; text-align: right; min-width: 90px; }
+.slot-cell { min-height: 52px; padding: 6px; position: relative; cursor: pointer; transition: background .15s; }
+.slot-cell:hover { background: var(--surface3); }
+.slot-cell.has-event { cursor: default; }
+.slot-cell.has-event:hover { background: transparent; }
+.slot-empty-hint { font-family: monospace; font-size: 10px; color: var(--text3); opacity: 0; transition: opacity .15s; text-align: center; padding: 16px 0 10px; }
+.slot-cell:hover .slot-empty-hint { opacity: 1; }
+.slot-event { background: var(--blue-bg); border: 1px solid rgba(96,165,250,0.3); border-radius: 6px; padding: 6px 8px; position: relative; }
+.slot-event-name { font-size: 12px; color: var(--blue); line-height: 1.4; }
+.slot-event-del { position: absolute; top: 4px; right: 4px; background: none; border: none; color: var(--text3); cursor: pointer; font-size: 11px; padding: 2px 4px; border-radius: 4px; transition: all .15s; line-height: 1; }
+.slot-event-del:hover { color: var(--red); background: var(--red-bg); }
+.prog-loading { text-align: center; padding: 3rem; font-family: monospace; font-size: 13px; color: var(--text3); }
+.prog-empty { text-align: center; padding: 2rem; font-family: monospace; font-size: 12px; color: var(--text3); background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); }
+
+/* Modal para adicionar atividade fixa */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: none; align-items: center; justify-content: center; padding: 1rem; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 1.5rem; width: 100%; max-width: 420px; }
+.modal-title { font-size: 16px; margin-bottom: 4px; }
+.modal-sub { font-family: monospace; font-size: 11px; color: var(--text3); margin-bottom: 1.25rem; }
+.modal-field { margin-bottom: 1rem; }
+.modal-label { font-family: monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); margin-bottom: 5px; display: block; }
+.modal-input { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius); padding: 10px 12px; font-size: 14px; color: var(--text); font-family: inherit; transition: border-color .15s; }
+.modal-input:focus { outline: none; border-color: var(--accent); }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; }
+.btn-modal-cancel { background: none; border: 1px solid var(--border2); border-radius: var(--radius); padding: 9px 18px; font-size: 13px; color: var(--text2); cursor: pointer; font-family: monospace; transition: all .15s; }
+.btn-modal-cancel:hover { border-color: var(--text2); }
+.btn-modal-ok { background: var(--accent); color: #0f0f0f; border: none; border-radius: var(--radius); padding: 9px 18px; font-size: 13px; font-weight: 700; font-family: monospace; cursor: pointer; }
+.btn-modal-ok:hover { background: var(--accent2); }
+
 .toast { position: fixed; bottom: 24px; right: 24px; background: var(--accent); color: #0f0f0f; padding: 10px 18px; border-radius: var(--radius); font-size: 12px; font-family: monospace; font-weight: 700; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 9999; }
 .toast.show { opacity: 1; }
-@media (max-width:500px) { .form-row { flex-direction: column; } .fg-xs,.fg-md,.fg-lg { width:100%; } }
+
+/* Legenda */
+.legend { display: flex; gap: 16px; margin-bottom: 1rem; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-family: monospace; font-size: 11px; color: var(--text3); }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+.legend-dot.fixo { background: var(--blue-bg); border: 1px solid rgba(96,165,250,0.3); }
+
+@media (max-width:500px) { .form-row { flex-direction: column; } .fg-xs,.fg-md,.fg-lg { width:100%; } .prog-controls { flex-direction: column; } .prog-controls .fg, .prog-controls .fg-xs { min-width: 100%; } }
 </style>
 </head>
 <body>
@@ -122,15 +183,74 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
     <button class="btn-out" onclick="logout()">Sair</button>
   </div>
   <div class="main">
-    <div class="day-tabs" id="day-tabs"></div>
-    <div id="spaces-container"></div>
+    <!-- Tabs principais -->
+    <div class="main-tabs">
+      <button class="main-tab active" id="tab-eventos" onclick="switchTab('eventos')">Inscrições Livres</button>
+      <button class="main-tab" id="tab-programa" onclick="switchTab('programa')">Programa Fixo</button>
+    </div>
+
+    <!-- Secção: Inscrições Livres -->
+    <div id="section-eventos">
+      <div class="day-tabs" id="day-tabs"></div>
+      <div id="spaces-container"></div>
+    </div>
+
+    <!-- Secção: Programa Fixo -->
+    <div id="section-programa" style="display:none">
+      <div class="prog-controls">
+        <div class="fg">
+          <label class="fl">Escola</label>
+          <select id="prog-escola" class="fi fi-select" onchange="progEscolaChanged()">
+            <option value="">Selecionar...</option>
+            <option value="Gualdim Pais">Gualdim Pais</option>
+            <option value="Santa Iria">Santa Iria</option>
+            <option value="Jácome Ratton">Jácome Ratton</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">Ano</label>
+          <select id="prog-ano" class="fi fi-select">
+            <option value="">Selecionar...</option>
+            <option>5.º</option><option>6.º</option><option>7.º</option>
+            <option>8.º</option><option>9.º</option><option>10.º</option>
+            <option>11.º</option><option>12.º</option>
+          </select>
+        </div>
+        <div class="fg fg-xs">
+          <label class="fl">Turma</label>
+          <input type="text" id="prog-turma" class="fi" placeholder="A" maxlength="2" style="text-transform:uppercase;text-align:center">
+        </div>
+        <button class="btn-prog-load" onclick="loadProgramaFixo()">Ver grelha</button>
+      </div>
+
+      <div id="prog-grid-area">
+        <div class="prog-empty">Seleciona escola, ano e turma para ver a grelha de horários.</div>
+      </div>
+    </div>
   </div>
 </div>
+
+<!-- Modal para adicionar atividade fixa -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">Adicionar atividade fixa</div>
+    <div class="modal-sub" id="modal-sub"></div>
+    <div class="modal-field">
+      <label class="modal-label">Descrição da atividade *</label>
+      <input type="text" id="modal-descricao" class="modal-input" placeholder="Ex: Congresso do 9.º ano" onkeydown="if(event.key==='Enter')modalConfirm()">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="modalClose()">Cancelar</button>
+      <button class="btn-modal-ok" onclick="modalConfirm()">Adicionar ✓</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 const PASSWORD   = "pce";
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP2hhejRgth5XYCqYGt58TLpip6PDHJihCZmXm4MfB1NPOXcqMqdOVtvsplj1iCfh-/exec"; // ← cola aqui o URL do Google Apps Script
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP2hhejRgth5XYCqYGt58TLpip6PDHJihCZmXm4MfB1NPOXcqMqdOVtvsplj1iCfh-/exec";
 
 const DAYS = [
   { key:'d22', label:'22 Mar', full:'22 de março de 2027' },
@@ -144,9 +264,19 @@ const SPACES = [
   { id:'s4', name:'Auditório do Centro de Formação Profissional', cap:150 },
   { id:'s5', name:'Biblioteca da Jácome', cap:60 },
 ];
+const TIME_SLOTS = [
+  '08:30','09:30','10:40','11:40','12:40','13:30','14:30','15:35','16:35','17:35'
+];
+const TIME_LABELS = [
+  '8h30','9h30','10h40','11h40','12h40','13h30','14h30','15h35','16h35','17h35'
+];
 
 let events=[], activeDay='d22', openCards={}, dragSrcId=null;
+let activeTab = 'eventos';
+let programaFixo = [];
+let modalPending = null; // {escola, ano, turma, day, time}
 
+// ── Autenticação ──
 function login() {
   if (document.getElementById('pw').value===PASSWORD) {
     document.getElementById('login-screen').style.display='none';
@@ -160,11 +290,30 @@ function logout() {
   document.getElementById('pw').value='';
   document.getElementById('pw-err').classList.remove('show');
 }
+
+// ── Tabs ──
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('tab-eventos').classList.toggle('active', tab==='eventos');
+  document.getElementById('tab-programa').classList.toggle('active', tab==='programa');
+  document.getElementById('section-eventos').style.display = tab==='eventos' ? 'block' : 'none';
+  document.getElementById('section-programa').style.display = tab==='programa' ? 'block' : 'none';
+}
+
+// ── Utilitários ──
 function save() { try { localStorage.setItem('sc27_ev', JSON.stringify(events)); } catch(e){} }
 function load() { try { const r=localStorage.getItem('sc27_ev'); if(r) events=JSON.parse(r); } catch(e){} }
 async function api(action,data={}) {
   if (!SCRIPT_URL) return null;
   try { const r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action,...data})}); return await r.json(); } catch(e){return null;}
+}
+async function apiGet(params) {
+  if (!SCRIPT_URL) return null;
+  try {
+    const qs = Object.entries(params).map(([k,v])=>encodeURIComponent(k)+'='+encodeURIComponent(v)).join('&');
+    const r=await fetch(SCRIPT_URL+'?'+qs+'&t='+Date.now(),{method:'GET',cache:'no-cache'});
+    return await r.json();
+  } catch(e){return null;}
 }
 async function syncEvents() {
   const r=await api('getEvents');
@@ -176,6 +325,178 @@ function toast(msg) {
 }
 async function init() { await syncEvents(); renderTabs(); renderSpaces(); }
 
+// ── Escola changed (programa fixo) ──
+function progEscolaChanged() {
+  const escola = document.getElementById('prog-escola').value;
+  const anoEl = document.getElementById('prog-ano');
+  // Secundário só na Jácome
+  if (escola === 'Jácome Ratton') {
+    // Mostrar todos os anos
+    Array.from(anoEl.options).forEach(o => o.style.display = '');
+  } else if (escola) {
+    // 5.º-9.º apenas
+    Array.from(anoEl.options).forEach(o => {
+      const v = o.value;
+      o.style.display = (v===''||['5.º','6.º','7.º','8.º','9.º'].includes(v)) ? '' : 'none';
+    });
+    if (['10.º','11.º','12.º'].includes(anoEl.value)) anoEl.value = '';
+  }
+}
+
+// ── Carregar e renderizar programa fixo ──
+async function loadProgramaFixo() {
+  const escola = document.getElementById('prog-escola').value.trim();
+  const ano    = document.getElementById('prog-ano').value.trim();
+  const turma  = document.getElementById('prog-turma').value.trim().toUpperCase();
+  const area   = document.getElementById('prog-grid-area');
+
+  if (!escola || !ano) {
+    area.innerHTML = '<div class="prog-empty">Seleciona pelo menos a escola e o ano.</div>';
+    return;
+  }
+
+  area.innerHTML = '<div class="prog-loading">A carregar...</div>';
+
+  const r = await apiGet({ action:'getProgramaFixo', escola, ano, turma });
+  if (!r || !r.ok) {
+    area.innerHTML = '<div class="prog-empty">Erro ao carregar. Tenta novamente.</div>';
+    return;
+  }
+  programaFixo = r.programa || [];
+  renderProgGrid(escola, ano, turma);
+}
+
+function renderProgGrid(escola, ano, turma) {
+  const area = document.getElementById('prog-grid-area');
+
+  let html = `
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot fixo"></div>Atividade fixa</div>
+    <span style="font-family:monospace;font-size:11px;color:var(--text3)">Clica num slot vazio para adicionar uma atividade</span>
+  </div>
+  <div class="prog-grid-wrap">
+  <table class="prog-grid">
+    <thead>
+      <tr>
+        <th>Hora</th>
+        <th class="day-col">22 março 2027</th>
+        <th class="day-col">23 março 2027</th>
+        <th class="day-col">24 março 2027</th>
+      </tr>
+    </thead>
+    <tbody>`;
+
+  TIME_SLOTS.forEach((time, ti) => {
+    html += `<tr><td class="time-cell">${TIME_LABELS[ti]}</td>`;
+    ['d22','d23','d24'].forEach(day => {
+      // Encontrar evento neste slot
+      const ev = programaFixo.find(p =>
+        String(p.day)===day &&
+        normalizeTime(String(p.time))===normalizeTime(time)
+      );
+      if (ev) {
+        html += `<td><div class="slot-cell has-event">
+          <div class="slot-event">
+            <div class="slot-event-name">${escHtml(String(ev.descricao||ev.name||''))}</div>
+            <button class="slot-event-del" onclick="delProgramaFixo('${escHtml(String(ev.id))}',event)" title="Remover">✕</button>
+          </div>
+        </div></td>`;
+      } else {
+        html += `<td><div class="slot-cell" onclick="openModal('${escHtml(escola)}','${escHtml(ano)}','${escHtml(turma)}','${day}','${time}')">
+          <div class="slot-empty-hint">+ adicionar</div>
+        </div></td>`;
+      }
+    });
+    html += `</tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+  area.innerHTML = html;
+}
+
+function normalizeTime(t) {
+  // Normaliza "08:30", "8:30", "8h30" → "08:30"
+  if (!t) return '';
+  t = String(t).replace('h',':').trim();
+  const parts = t.split(':');
+  if (parts.length === 2) {
+    return parts[0].padStart(2,'0') + ':' + parts[1].padStart(2,'0');
+  }
+  return t;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ── Modal ──
+function openModal(escola, ano, turma, day, time) {
+  modalPending = { escola, ano, turma, day, time };
+  const dayLabel = DAYS.find(d=>d.key===day)?.full || day;
+  const timeLabel = TIME_LABELS[TIME_SLOTS.indexOf(time)] || time;
+  document.getElementById('modal-sub').textContent =
+    (turma ? ano + ' ' + turma : ano) + ' · ' + escola + ' · ' + dayLabel + ' · ' + timeLabel;
+  document.getElementById('modal-descricao').value = '';
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('modal-descricao').focus(), 80);
+}
+
+function modalClose() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  modalPending = null;
+}
+
+async function modalConfirm() {
+  if (!modalPending) return;
+  const descricao = document.getElementById('modal-descricao').value.trim();
+  if (!descricao) { document.getElementById('modal-descricao').focus(); return; }
+
+  const item = {
+    id: 'pf_' + Date.now() + '_' + Math.random().toString(36).slice(2,5),
+    escola:    modalPending.escola,
+    ano:       modalPending.ano,
+    turma:     modalPending.turma,
+    day:       modalPending.day,
+    time:      modalPending.time,
+    descricao: descricao
+  };
+
+  modalClose();
+  programaFixo.push(item);
+  const escola = item.escola, ano = item.ano, turma = item.turma;
+  renderProgGrid(escola, ano, turma);
+
+  const r = await api('addProgramaFixo', { item });
+  if (!r || !r.ok) {
+    toast('⚠ Erro ao guardar. Recarrega e tenta novamente.');
+    programaFixo = programaFixo.filter(p=>p.id!==item.id);
+    renderProgGrid(escola, ano, turma);
+  } else {
+    toast('Atividade adicionada ✓');
+  }
+}
+
+async function delProgramaFixo(itemId, e) {
+  e.stopPropagation();
+  if (!confirm('Remover esta atividade?')) return;
+  const escola = document.getElementById('prog-escola').value;
+  const ano    = document.getElementById('prog-ano').value;
+  const turma  = document.getElementById('prog-turma').value.toUpperCase();
+  programaFixo = programaFixo.filter(p=>String(p.id)!==String(itemId));
+  renderProgGrid(escola, ano, turma);
+  await api('deleteProgramaFixo', { itemId });
+  toast('Atividade removida');
+}
+
+// Fechar modal com Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') modalClose();
+});
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) modalClose();
+});
+
+// ── SECÇÃO EVENTOS (código original) ──
 function renderTabs() {
   const el=document.getElementById('day-tabs'); el.innerHTML='';
   DAYS.forEach(d=>{
@@ -196,17 +517,13 @@ function getTimeStr(spaceId) {
 function checkConflict(spaceId) {
   const time=getTimeStr(spaceId);
   const alertEl=document.getElementById('conflict-'+spaceId);
-
-  // Conflito no mesmo espaço à mesma hora
   const sameSpaceConflict=events.filter(e=>e.day===activeDay&&e.spaceId===spaceId&&e.time===time);
-  // Conflito noutros espaços à mesma hora
   const otherSpaceConflict=events.filter(e=>e.day===activeDay&&e.spaceId!==spaceId&&e.time===time);
-
   if (sameSpaceConflict.length>0) {
     alertEl.textContent='🚫 Já existe um evento às '+time+' neste espaço: "'+sameSpaceConflict[0].name+'"';
     alertEl.classList.add('show');
   } else if (otherSpaceConflict.length>0) {
-    const names=otherSpaceConflict.map(e=>{const sp=SPACES.find(s=>s.id===e.spaceId);return '"'+e.name+'" ('+( sp?.name||'')+')';}).join(', ');
+    const names=otherSpaceConflict.map(e=>{const sp=SPACES.find(s=>s.id===e.spaceId);return '"'+e.name+'" ('+(sp?.name||'')+')';}).join(', ');
     alertEl.textContent='⚠ Atenção: já existem eventos às '+time+' noutros espaços: '+names;
     alertEl.classList.add('show');
   } else {
@@ -215,7 +532,6 @@ function checkConflict(spaceId) {
 }
 
 function hasBlockingConflict(spaceId, time) {
-  // Bloqueia apenas se houver evento à mesma hora NO MESMO espaço
   return events.some(e=>e.day===activeDay&&e.spaceId===spaceId&&e.time===time);
 }
 
@@ -307,13 +623,10 @@ async function addEvent(spaceId) {
   const synopsis=document.getElementById('syn-'+spaceId).value.trim();
   const pax=parseInt(document.getElementById('p-'+spaceId).value)||SPACES.find(s=>s.id===spaceId).cap;
   if (!name){toast('Escreve o nome da atividade');return;}
-
-  // Bloquear se já existe evento à mesma hora no mesmo espaço
   if (hasBlockingConflict(spaceId, time)) {
     toast('🚫 Já existe um evento às '+time+' neste espaço!');
     return;
   }
-
   const order=events.filter(e=>e.day===activeDay&&e.spaceId===spaceId).length;
   const ev={id:'ev_'+Date.now()+'_'+Math.random().toString(36).slice(2,5),day:activeDay,spaceId,time,name,synopsis,maxPax:pax,registrations:0,order};
   events.push(ev); save(); openCards[spaceId+activeDay]=true;
