@@ -209,6 +209,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .dt-empty-icon { font-size: 44px; margin-bottom: 1rem; }
 .dt-empty-text { font-size: 15px; color: var(--text2); }
 .dt-no-results { background: var(--pink-bg); border: 2px solid var(--pink); border-radius: var(--radius-lg); padding: 2rem; text-align: center; font-size: 14px; color: var(--pink-dark); font-family: monospace; }
+.dt-nota-horario { background: var(--green-bg); border: 2px solid var(--green); border-radius: var(--radius); padding: 12px 16px; font-size: 14px; color: var(--green-dark); margin-top: 1rem; line-height: 1.5; }
 .dt-loading { text-align: center; padding: 2rem; font-family: monospace; font-size: 14px; color: var(--text3); }
 .dt-legend { display: flex; gap: 16px; margin-bottom: 1.25rem; flex-wrap: wrap; }
 .dt-legend-item { display: flex; align-items: center; gap: 6px; font-family: monospace; font-size: 12px; color: var(--text2); }
@@ -473,11 +474,12 @@ async function consultarDT() {
     const programaFixo = (data.programaFixo || []).map(i => ({ ...i, tipo:'fixo'  }));
     const todas        = [...inscricoes, ...programaFixo];
 
+    const notaHorario = `<div class="dt-nota-horario">📚 Se não tem uma atividade marcada no seu horário, a sua aula decorre como habitualmente.</div>`;
+
     if (todas.length === 0) {
       area.innerHTML = `<div class="dt-no-results">
-        Não foram encontradas atividades para o <strong>${year} ${turma}</strong> de <strong>${escola}</strong>.<br><br>
-        📚 Nas turmas sem atividades, as aulas decorrem como habitualmente.
-      </div>`;
+        Não foram encontradas atividades para o <strong>${year} ${turma}</strong> de <strong>${escola}</strong>.
+      </div>` + notaHorario;
       return;
     }
 
@@ -514,7 +516,7 @@ async function consultarDT() {
       html += `</div>`;
     });
 
-    area.innerHTML = html;
+    area.innerHTML = html + notaHorario;
 
   } catch(e) {
     area.innerHTML = '<div class="dt-no-results">Erro de ligação. Verifica a tua ligação à internet.</div>';
