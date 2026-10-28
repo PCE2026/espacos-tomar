@@ -547,11 +547,18 @@ function renderPrograma() {
 
   let html = '';
 
+  const secundarioEscola = 'Jácome Ratton';
+
   escolasFiltro.forEach(escola => {
-    // Atividades livres desta escola
-    const livresEscola = livres.filter(e =>
-      !e.escola || e.escola === escola
-    ).map(e => ({ ...e, _escola: escola }));
+    // Atividades livres para esta escola:
+    // - sem ciclo definido → todas as escolas
+    // - ciclo "sec" → só Jácome Ratton
+    // - ciclo "2" ou "3" → as 3 escolas
+    const livresEscola = livres.filter(e => {
+      const ciclo = (e.ciclo || '').toString().trim().toLowerCase();
+      if (ciclo === 'sec') return escola === secundarioEscola;
+      return true; // sem ciclo ou 2.º/3.º ciclo → todas
+    }).map(e => ({ ...e, _escola: escola }));
 
     // Atividades fixas desta escola (inclui wildcards sem escola específica)
     const fixosEscola = fixos.filter(f =>
@@ -566,7 +573,10 @@ function renderPrograma() {
     DAYS.forEach(d => {
       const evsDia = todas
         .filter(e => e.day === d.key)
-        .sort((a,b) => (a.time||'').localeCompare(b.time||''));
+        .sort((a,b) => {
+          const ta = (a.time||'99:99'), tb = (b.time||'99:99');
+          return ta.localeCompare(tb);
+        });
       if (!evsDia.length) return;
 
       html += `<div class="prog-day-block"><div class="prog-day-title">${d.full}</div>`;
@@ -574,9 +584,10 @@ function renderPrograma() {
         const space = SPACES.find(s => s.id === ev.spaceId);
         const isFixo = ev.tipo === 'fixo';
         const turmaInfo = isFixo && ev.ano ? ` · ${ev.ano}${ev.turma ? ' ' + ev.turma : ' (todas as turmas)'}` : '';
+        const cicloTag = !isFixo && ev.ciclo ? `<span style="font-size:11px;color:var(--text3);font-family:monospace;margin-left:6px">${ev.ciclo === 'sec' ? 'Secundário' : ev.ciclo + '.º ciclo'}</span>` : '';
         html += `<div class="prog-ev-row${isFixo?' fixo':''}">
           <span class="prog-ev-time">${ev.time || '—'}</span>
-          <span class="prog-ev-name">${ev.name}${turmaInfo ? `<span style="font-size:12px;color:var(--text3);font-family:monospace"> ${turmaInfo}</span>` : ''}</span>
+          <span class="prog-ev-name">${ev.name}${cicloTag}${turmaInfo ? `<span style="font-size:12px;color:var(--text3);font-family:monospace"> ${turmaInfo}</span>` : ''}</span>
           ${!isFixo && space ? `<span class="prog-ev-space">📍 ${space.name}</span>` : ''}
           <span class="prog-ev-tipo ${isFixo?'prog-tipo-fixo':'prog-tipo-livre'}">${isFixo?'Fixo':'Livre'}</span>
         </div>`;
