@@ -284,6 +284,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
       <button class="btn-programa" id="btn-toggle-prog" onclick="togglePrograma()">🗓️ Programa</button>
+      <a href="#form-pergunta" class="btn-programa" style="text-decoration:none;">❓</a>
       <button class="btn-consulta-dt" id="btn-toggle-dt" onclick="toggleConsultaDT()">📋 Consulta Turmas</button>
     </div>
   </div>
@@ -1013,11 +1014,11 @@ loadEvents();
 
 
 
-<section style="max-width:620px;margin:2rem auto;padding:0 1rem;">
+<section id="form-pergunta" style="max-width:620px;margin:2rem auto;padding:0 1rem;">
   <div style="background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:1.5rem 2rem;">
     <h2 style="font-size:17px;color:var(--text);margin-bottom:4px;">❓ Enviar uma pergunta</h2>
     <p style="font-size:13px;color:var(--text3);font-family:monospace;margin-bottom:1.2rem;">Tem alguma dúvida sobre a Semana Cultural? Envie-nos a sua pergunta.</p>
-    <form id="form-pergunta" onsubmit="submitPergunta(event)">
+    <form onsubmit="submitPergunta(event)">
       <div style="display:flex;flex-direction:column;gap:10px;">
         <input id="perg-nome" type="text" placeholder="Nome *" required
           style="padding:10px 14px;border:1.5px solid var(--border2);border-radius:8px;font-family:monospace;font-size:14px;background:var(--bg);color:var(--text);">
