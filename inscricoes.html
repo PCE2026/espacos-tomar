@@ -59,6 +59,9 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .site-title { font-size: 19px; font-weight: 400; color: var(--text); }
 .site-title strong { font-weight: 700; color: var(--accent); }
 .site-dates { font-size: 13px; color: var(--text3); font-family: monospace; margin-top: 3px; }
+.btn-programa { background: var(--green-bg); border: 2px solid var(--green); border-radius: var(--radius); padding: 9px 18px; font-size: 14px; font-family: monospace; color: var(--green-dark); cursor: pointer; transition: all .15s; white-space: nowrap; font-weight: 700; }
+.btn-programa:hover { background: var(--green); color: #fff; }
+.btn-programa.active { background: var(--green-dark); border-color: var(--green-dark); color: #fff; }
 .btn-consulta-dt { background: var(--yellow-bg); border: 2px solid var(--yellow); border-radius: var(--radius); padding: 9px 18px; font-size: 14px; font-family: monospace; color: var(--yellow-dark); cursor: pointer; transition: all .15s; white-space: nowrap; font-weight: 700; }
 .btn-consulta-dt:hover { background: var(--yellow); }
 .btn-consulta-dt.active { background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -217,6 +220,44 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .dt-legend-dot.livre { background: var(--accent-light); border: 1px solid var(--accent); }
 .dt-legend-dot.fixo  { background: var(--yellow-bg); border: 1px solid var(--yellow); }
 
+/* ── Programa ── */
+#programa-content { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
+.prog-header { margin-bottom: 1.5rem; }
+.prog-title { font-size: 22px; font-weight: 400; margin-bottom: 4px; color: var(--green-dark); }
+.prog-sub { font-size: 14px; color: var(--text2); font-family: monospace; }
+.prog-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 2rem; align-items: center; }
+.prog-filter-label { font-family: monospace; font-size: 12px; color: var(--text3); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-right: 4px; }
+.prog-filter-btn { background: var(--surface); border: 2px solid var(--border2); border-radius: var(--radius); padding: 7px 16px; font-size: 13px; font-family: monospace; color: var(--text2); cursor: pointer; transition: all .15s; font-weight: 700; }
+.prog-filter-btn:hover { border-color: var(--green); color: var(--green-dark); }
+.prog-filter-btn.active { background: var(--green-dark); border-color: var(--green-dark); color: #fff; }
+
+.escola-block { margin-bottom: 2.5rem; }
+.escola-title { font-size: 20px; font-weight: 700; color: var(--green-dark); padding: 12px 16px; background: var(--green-bg); border-radius: var(--radius-lg) var(--radius-lg) 0 0; border: 2px solid var(--green); border-bottom: none; }
+.escola-body { border: 2px solid var(--green); border-radius: 0 0 var(--radius-lg) var(--radius-lg); overflow: hidden; }
+
+.prog-day-block { border-bottom: 1px solid var(--border2); }
+.prog-day-block:last-child { border-bottom: none; }
+.prog-day-title { font-family: monospace; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--text2); padding: 10px 16px; background: var(--surface2); border-bottom: 1px solid var(--border2); font-weight: 700; }
+
+.prog-ev-row { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
+.prog-ev-row:last-child { border-bottom: none; }
+.prog-ev-row.fixo { background: var(--yellow-bg); }
+.prog-ev-time { font-family: monospace; font-size: 14px; font-weight: 700; color: var(--accent); min-width: 54px; flex-shrink: 0; }
+.prog-ev-row.fixo .prog-ev-time { color: var(--yellow-dark); }
+.prog-ev-name { font-size: 15px; flex: 1; color: var(--text); font-weight: 500; }
+.prog-ev-space { font-size: 13px; color: var(--text2); font-family: monospace; white-space: nowrap; }
+.prog-ev-tipo { font-family: monospace; font-size: 11px; padding: 3px 10px; border-radius: 100px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+.prog-tipo-livre { background: var(--accent-light); color: var(--accent); }
+.prog-tipo-fixo { background: var(--yellow-bg); color: var(--yellow-dark); border: 1px solid var(--yellow); }
+
+.prog-vazio { padding: 1.5rem; text-align: center; font-size: 14px; color: var(--text3); font-family: monospace; font-style: italic; }
+.prog-loading { text-align: center; padding: 3rem; font-family: monospace; font-size: 14px; color: var(--text3); }
+.prog-legend { display: flex; gap: 16px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.prog-legend-item { display: flex; align-items: center; gap: 6px; font-family: monospace; font-size: 12px; color: var(--text2); }
+.prog-legend-dot { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; }
+.prog-legend-dot.livre { background: var(--accent-light); border: 1px solid var(--accent); }
+.prog-legend-dot.fixo  { background: var(--yellow-bg); border: 1px solid var(--yellow); }
+
 @media (max-width:600px) {
   .step-label { display: none; }
   .step1-layout { flex-direction: column; }
@@ -240,7 +281,10 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
       <div class="site-title"><strong>12.ª Semana Cultural</strong> — Tomar</div>
       <div class="site-dates">22 · 23 · 24 de março de 2027</div>
     </div>
-    <button class="btn-consulta-dt" id="btn-toggle-dt" onclick="toggleConsultaDT()">📋 Consulta Turmas</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn-programa" id="btn-toggle-prog" onclick="togglePrograma()">🗓️ Programa</button>
+      <button class="btn-consulta-dt" id="btn-toggle-dt" onclick="toggleConsultaDT()">📋 Consulta Turmas</button>
+    </div>
   </div>
 </div>
 
@@ -286,6 +330,26 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
     <button class="btn-dt-search" onclick="consultarDT()">Consultar</button>
   </div>
   <div id="dt-results-area"></div>
+</div>
+
+<!-- ── Programa ── -->
+<div id="programa-content" style="display:none">
+  <div class="prog-header">
+    <div class="prog-title">🗓️ Programa da Semana Cultural</div>
+    <div class="prog-sub">Todas as atividades — por escola, por dia e por hora</div>
+  </div>
+  <div class="prog-filters">
+    <span class="prog-filter-label">Escola:</span>
+    <button class="prog-filter-btn active" onclick="filtrarEscola('todas',this)">Todas</button>
+    <button class="prog-filter-btn" onclick="filtrarEscola('Jácome Ratton',this)">Jácome Ratton</button>
+    <button class="prog-filter-btn" onclick="filtrarEscola('Gualdim Pais',this)">Gualdim Pais</button>
+    <button class="prog-filter-btn" onclick="filtrarEscola('Santa Iria',this)">Santa Iria</button>
+  </div>
+  <div class="prog-legend">
+    <div class="prog-legend-item"><div class="prog-legend-dot livre"></div>Inscrição livre (com vagas limitadas)</div>
+    <div class="prog-legend-item"><div class="prog-legend-dot fixo"></div>Programa fixo (definido para a turma)</div>
+  </div>
+  <div id="prog-results"></div>
 </div>
 
 <!-- Step 1 -->
@@ -398,7 +462,137 @@ const SPACES = [
 ];
 
 let events=[], selected=[], activeFilter='d22';
-let dtMode = false;
+let dtMode = false, progMode = false;
+let progData = null, progEscolaFiltro = 'todas';
+
+const ESCOLAS = ['Jácome Ratton','Gualdim Pais','Santa Iria'];
+
+// ── Programa ──
+function togglePrograma() {
+  progMode = !progMode;
+  const btn = document.getElementById('btn-toggle-prog');
+  const area = document.getElementById('programa-content');
+  const dtArea = document.getElementById('consulta-dt-content');
+  const stepsWrap = document.getElementById('steps-wrap');
+  const step1 = document.getElementById('step1-content');
+  const step2 = document.getElementById('step2-content');
+  const step3 = document.getElementById('step3-content');
+  const bottomBar = document.getElementById('bottom-bar');
+  const btnDt = document.getElementById('btn-toggle-dt');
+
+  if (progMode) {
+    // fechar consulta DT se estiver aberta
+    dtMode = false;
+    btnDt.classList.remove('active');
+    btnDt.textContent = '📋 Consulta Turmas';
+    dtArea.style.display = 'none';
+
+    btn.classList.add('active');
+    btn.textContent = '✕ Fechar programa';
+    area.style.display = 'block';
+    stepsWrap.style.display = 'none';
+    step1.style.display = 'none';
+    step2.style.display = 'none';
+    step3.style.display = 'none';
+    bottomBar.style.display = 'none';
+    if (!progData) loadPrograma();
+  } else {
+    btn.classList.remove('active');
+    btn.textContent = '🗓️ Programa';
+    area.style.display = 'none';
+    stepsWrap.style.display = 'block';
+    step1.style.display = 'block';
+    bottomBar.style.display = 'block';
+  }
+}
+
+async function loadPrograma() {
+  const el = document.getElementById('prog-results');
+  el.innerHTML = '<div class="prog-loading">A carregar programa...</div>';
+  try {
+    // Carregar eventos livres (já temos em `events`) e programa fixo global
+    const [rEv, rProg] = await Promise.all([
+      fetch(SCRIPT_URL + '?action=getEvents&t=' + Date.now(), { method:'GET', cache:'no-cache' }),
+      fetch(SCRIPT_URL + '?action=getProgramaFixo&t=' + Date.now(), { method:'GET', cache:'no-cache' })
+    ]);
+    const dEv   = await rEv.json();
+    const dProg = await rProg.json();
+
+    const livres = (dEv.events || []).map(e => ({ ...e, tipo:'livre' }));
+    const fixos  = (dProg.ok ? dProg.programa || [] : []).map(p => ({
+      id: p.id, name: p.descricao, day: p.day, time: p.time,
+      escola: p.escola, ano: p.ano, turma: p.turma, tipo:'fixo'
+    }));
+
+    progData = { livres, fixos };
+    renderPrograma();
+  } catch(e) {
+    el.innerHTML = '<div class="prog-loading">Erro ao carregar. Tenta novamente.</div>';
+  }
+}
+
+function filtrarEscola(escola, btnEl) {
+  progEscolaFiltro = escola;
+  document.querySelectorAll('.prog-filter-btn').forEach(b => b.classList.remove('active'));
+  btnEl.classList.add('active');
+  if (progData) renderPrograma();
+}
+
+function renderPrograma() {
+  const el = document.getElementById('prog-results');
+  if (!progData) return;
+
+  const { livres, fixos } = progData;
+  const escolasFiltro = progEscolaFiltro === 'todas' ? ESCOLAS : [progEscolaFiltro];
+
+  let html = '';
+
+  escolasFiltro.forEach(escola => {
+    // Atividades livres desta escola
+    const livresEscola = livres.filter(e =>
+      !e.escola || e.escola === escola
+    ).map(e => ({ ...e, _escola: escola }));
+
+    // Atividades fixas desta escola (inclui wildcards sem escola específica)
+    const fixosEscola = fixos.filter(f =>
+      !f.escola || f.escola === escola
+    );
+
+    const todas = [...livresEscola, ...fixosEscola];
+    if (!todas.length) return;
+
+    html += `<div class="escola-block"><div class="escola-title">🏫 ${escola}</div><div class="escola-body">`;
+
+    DAYS.forEach(d => {
+      const evsDia = todas
+        .filter(e => e.day === d.key)
+        .sort((a,b) => (a.time||'').localeCompare(b.time||''));
+      if (!evsDia.length) return;
+
+      html += `<div class="prog-day-block"><div class="prog-day-title">${d.full}</div>`;
+      evsDia.forEach(ev => {
+        const space = SPACES.find(s => s.id === ev.spaceId);
+        const isFixo = ev.tipo === 'fixo';
+        const turmaInfo = isFixo && ev.ano ? ` · ${ev.ano}${ev.turma ? ' ' + ev.turma : ' (todas as turmas)'}` : '';
+        html += `<div class="prog-ev-row${isFixo?' fixo':''}">
+          <span class="prog-ev-time">${ev.time || '—'}</span>
+          <span class="prog-ev-name">${ev.name}${turmaInfo ? `<span style="font-size:12px;color:var(--text3);font-family:monospace"> ${turmaInfo}</span>` : ''}</span>
+          ${!isFixo && space ? `<span class="prog-ev-space">📍 ${space.name}</span>` : ''}
+          <span class="prog-ev-tipo ${isFixo?'prog-tipo-fixo':'prog-tipo-livre'}">${isFixo?'Fixo':'Livre'}</span>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  if (!html) {
+    html = '<div class="prog-vazio">Ainda não há atividades registadas.</div>';
+  }
+
+  el.innerHTML = html;
+}
 
 // ── Consulta DT ──
 function toggleConsultaDT() {
@@ -412,6 +606,12 @@ function toggleConsultaDT() {
   const bottomBar = document.getElementById('bottom-bar');
 
   if (dtMode) {
+    // fechar programa se estiver aberto
+    progMode = false;
+    document.getElementById('btn-toggle-prog').classList.remove('active');
+    document.getElementById('btn-toggle-prog').textContent = '🗓️ Programa';
+    document.getElementById('programa-content').style.display = 'none';
+
     btn.classList.add('active');
     btn.textContent = '✕ Fechar consulta';
     dtArea.style.display = 'block';
