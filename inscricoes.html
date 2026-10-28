@@ -468,6 +468,43 @@ let progData = null, progEscolaFiltro = 'todas';
 
 const ESCOLAS = ['Jácome Ratton','Gualdim Pais','Santa Iria'];
 
+// ── Formulário de perguntas ──
+async function submitPergunta(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btn-perg-submit');
+  const msg = document.getElementById('perg-msg');
+  const nome     = document.getElementById('perg-nome').value.trim();
+  const email    = document.getElementById('perg-email').value.trim();
+  const escola   = document.getElementById('perg-escola').value.trim();
+  const pergunta = document.getElementById('perg-texto').value.trim();
+
+  btn.disabled = true;
+  btn.textContent = 'A enviar…';
+  msg.textContent = '';
+  msg.style.color = 'var(--text3)';
+
+  try {
+    const r = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'submitPergunta', nome, email, escola, pergunta })
+    });
+    const d = await r.json();
+    if (d.ok) {
+      msg.textContent = '✅ Pergunta enviada com sucesso!';
+      msg.style.color = 'var(--green)';
+      document.getElementById('form-pergunta').reset();
+    } else {
+      msg.textContent = '❌ ' + (d.error || 'Erro ao enviar.');
+      msg.style.color = '#c0392b';
+    }
+  } catch(err) {
+    msg.textContent = '❌ Erro de ligação. Tente novamente.';
+    msg.style.color = '#c0392b';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Enviar pergunta';
+}
+
 // ── Programa ──
 function togglePrograma() {
   progMode = !progMode;
@@ -974,6 +1011,38 @@ loadEvents();
 </script>
 
 
+
+
+<section style="max-width:620px;margin:2rem auto;padding:0 1rem;">
+  <div style="background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:1.5rem 2rem;">
+    <h2 style="font-size:17px;color:var(--text);margin-bottom:4px;">❓ Enviar uma pergunta</h2>
+    <p style="font-size:13px;color:var(--text3);font-family:monospace;margin-bottom:1.2rem;">Tem alguma dúvida sobre a Semana Cultural? Envie-nos a sua pergunta.</p>
+    <form id="form-pergunta" onsubmit="submitPergunta(event)">
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <input id="perg-nome" type="text" placeholder="Nome *" required
+          style="padding:10px 14px;border:1.5px solid var(--border2);border-radius:8px;font-family:monospace;font-size:14px;background:var(--bg);color:var(--text);">
+        <input id="perg-email" type="email" placeholder="Email *" required
+          style="padding:10px 14px;border:1.5px solid var(--border2);border-radius:8px;font-family:monospace;font-size:14px;background:var(--bg);color:var(--text);">
+        <select id="perg-escola" required
+          style="padding:10px 14px;border:1.5px solid var(--border2);border-radius:8px;font-family:monospace;font-size:14px;background:var(--bg);color:var(--text);">
+          <option value="">Escola *</option>
+          <option value="Jácome Ratton">Jácome Ratton</option>
+          <option value="Gualdim Pais">Gualdim Pais</option>
+          <option value="Santa Iria">Santa Iria</option>
+        </select>
+        <textarea id="perg-texto" placeholder="A sua pergunta *" required rows="4"
+          style="padding:10px 14px;border:1.5px solid var(--border2);border-radius:8px;font-family:monospace;font-size:14px;background:var(--bg);color:var(--text);resize:vertical;"></textarea>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <button type="submit" id="btn-perg-submit"
+            style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 22px;font-family:monospace;font-size:14px;font-weight:700;cursor:pointer;">
+            Enviar pergunta
+          </button>
+          <span id="perg-msg" style="font-size:13px;font-family:monospace;"></span>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
 
 <footer style="margin-top:3rem;padding:1.5rem;text-align:center;border-top:1px solid var(--border2);background:var(--surface);">
     
