@@ -525,6 +525,8 @@ async function loadPrograma() {
     }));
 
     progData = { livres, fixos };
+    // DEBUG temporário
+    console.log('LIVRES ciclo debug:', JSON.stringify(livres.map(function(e){ return {name:e.name, ciclo:e.ciclo}; })));
     renderPrograma();
   } catch(e) {
     el.innerHTML = '<div class="prog-loading">Erro ao carregar. Tenta novamente.</div>';
