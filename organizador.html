@@ -298,6 +298,7 @@ const TIME_LABELS = [
 let events=[], activeDay='d22', openCards={}, dragSrcId=null;
 let activeTab = 'eventos';
 let programaFixo = [];
+let inscricoesLivres = [];
 let modalPending = null; // {escola, ano, turma, day, time}
 
 // ── Autenticação ──
@@ -381,12 +382,13 @@ async function loadProgramaFixo() {
 
   area.innerHTML = '<div class="prog-loading">A carregar...</div>';
 
-  const r = await apiGet({ action:'getProgramaFixo', escola, ano, turma });
+  const r = await apiGet({ action:'getTurmaInscricoes', escola, year: ano, turma });
   if (!r || !r.ok) {
     area.innerHTML = '<div class="prog-empty">Erro ao carregar. Tenta novamente.</div>';
     return;
   }
-  programaFixo = r.programa || [];
+  programaFixo      = r.programaFixo  || [];
+  inscricoesLivres  = r.inscricoes    || [];
   renderProgGrid(escola, ano, turma);
 }
 
@@ -396,6 +398,7 @@ function renderProgGrid(escola, ano, turma) {
   let html = `
   <div class="legend">
     <div class="legend-item"><div class="legend-dot fixo"></div>Atividade fixa</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green-bg);border:1px solid rgba(46,125,94,0.3);"></div>Inscrição livre</div>
     <span style="font-family:monospace;font-size:11px;color:var(--text3)">Clica num slot vazio para adicionar uma atividade</span>
   </div>
   <div class="prog-grid-wrap">
@@ -413,16 +416,26 @@ function renderProgGrid(escola, ano, turma) {
   TIME_SLOTS.forEach((time, ti) => {
     html += `<tr><td class="time-cell">${TIME_LABELS[ti]}</td>`;
     ['d22','d23','d24'].forEach(day => {
-      // Encontrar evento neste slot
-      const ev = programaFixo.find(p =>
+      // Procurar primeiro em atividades fixas, depois em inscrições livres
+      const evFixo = programaFixo.find(p =>
         String(p.day)===day &&
         normalizeTime(String(p.time))===normalizeTime(time)
       );
-      if (ev) {
+      const evLivre = inscricoesLivres.find(p =>
+        String(p.day)===day &&
+        normalizeTime(String(p.time))===normalizeTime(time)
+      );
+      if (evFixo) {
         html += `<td><div class="slot-cell has-event">
           <div class="slot-event">
-            <div class="slot-event-name">${escHtml(String(ev.descricao||ev.name||''))}</div>
-            <button class="slot-event-del" onclick="delProgramaFixo('${escHtml(String(ev.id))}',event)" title="Remover">✕</button>
+            <div class="slot-event-name">${escHtml(String(evFixo.descricao||evFixo.name||''))}</div>
+            <button class="slot-event-del" onclick="delProgramaFixo('${escHtml(String(evFixo.id))}',event)" title="Remover">✕</button>
+          </div>
+        </div></td>`;
+      } else if (evLivre) {
+        html += `<td><div class="slot-cell has-event">
+          <div class="slot-event" style="background:var(--green-bg);border-color:rgba(46,125,94,0.3);">
+            <div class="slot-event-name" style="color:var(--green);">${escHtml(String(evLivre.name||''))}</div>
           </div>
         </div></td>`;
       } else {
