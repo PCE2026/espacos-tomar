@@ -304,7 +304,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 <div id="consulta-dt-content" style="display:none">
   <div class="dt-header">
     <div class="dt-title">Consulta Turmas</div>
-    <div class="dt-sub">Introduz o ano e a turma para ver todas as atividades — inscrições livres e programa fixo</div>
+    <div class="dt-sub">Introduz o ano e a turma para ver todas as atividades — lotação limitada e outras atividades</div>
   </div>
   <div class="dt-form">
     <div class="fg">
@@ -348,8 +348,8 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
     <button class="prog-filter-btn" onclick="filtrarEscola('Santa Iria',this)">Santa Iria</button>
   </div>
   <div class="prog-legend">
-    <div class="prog-legend-item"><div class="prog-legend-dot livre"></div>Inscrição livre (com vagas limitadas)</div>
-    <div class="prog-legend-item"><div class="prog-legend-dot fixo"></div>Programa fixo (definido para a turma)</div>
+    <div class="prog-legend-item"><div class="prog-legend-dot livre"></div>Lotação limitada (com vagas limitadas)</div>
+    <div class="prog-legend-item"><div class="prog-legend-dot fixo"></div>Outras atividades (definido para a turma)</div>
   </div>
   <div id="prog-results"></div>
 </div>
@@ -635,7 +635,7 @@ function renderPrograma() {
           <span class="prog-ev-time">${ev.time || '—'}</span>
           <span class="prog-ev-name">${ev.name}${cicloTag}${turmaInfo ? `<span style="font-size:12px;color:var(--text3);font-family:monospace"> ${turmaInfo}</span>` : ''}</span>
           ${!isFixo && space ? `<span class="prog-ev-space">📍 ${space.name}</span>` : ''}
-          <span class="prog-ev-tipo ${isFixo?'prog-tipo-fixo':'prog-tipo-livre'}">${isFixo?'Fixo':'Livre'}</span>
+          <span class="prog-ev-tipo ${isFixo?'prog-tipo-fixo':'prog-tipo-livre'}">${isFixo?'Outras':'Lotação'}</span>
         </div>`;
       });
       html += `</div>`;
@@ -750,10 +750,10 @@ async function consultarDT() {
     const nLivre = inscricoes.length;
     const nFixo  = programaFixo.length;
     let html = `
-      <div class="dt-turma-badge">📚 ${year} ${turma} · ${escola} — ${nLivre} inscrição${nLivre!==1?'ões':''} livre${nLivre!==1?'s':''} + ${nFixo} atividade${nFixo!==1?'s':''} fixa${nFixo!==1?'s':''}</div>
+      <div class="dt-turma-badge">📚 ${year} ${turma} · ${escola} — ${nLivre} inscrição${nLivre!==1?'ões':''} de lotação limitada + ${nFixo} outra${nFixo!==1?'s':''} atividade${nFixo!==1?'s':''}</div>
       <div class="dt-legend">
-        <div class="dt-legend-item"><div class="dt-legend-dot livre"></div>Inscrição livre (cineteatro, auditórios…)</div>
-        <div class="dt-legend-item"><div class="dt-legend-dot fixo"></div>Programa fixo (congresso, desporto, visitas…)</div>
+        <div class="dt-legend-item"><div class="dt-legend-dot livre"></div>Lotação limitada (cineteatro, auditórios…)</div>
+        <div class="dt-legend-item"><div class="dt-legend-dot fixo"></div>Outras atividades (congresso, desporto, visitas…)</div>
       </div>`;
 
     DAYS.forEach(d => {
@@ -767,7 +767,7 @@ async function consultarDT() {
           <span class="dt-event-time">${ev.time || '—'}</span>
           <span class="dt-event-name">${ev.name}</span>
           ${!isFixo && space ? `<span class="dt-event-space">📍 ${space.name}</span>` : ''}
-          <span class="dt-event-tipo ${isFixo?'tipo-fixo':'tipo-livre'}">${isFixo?'Fixo':'Livre'}</span>
+          <span class="dt-event-tipo ${isFixo?'tipo-fixo':'tipo-livre'}">${isFixo?'Outras':'Lotação'}</span>
         </div>`;
       });
       html += `</div>`;
