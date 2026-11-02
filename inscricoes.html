@@ -401,7 +401,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
         </div>
         <div class="fg fg-sm">
           <label class="fl">Ano *</label>
-          <select id="r-year" class="fi fi-select">
+          <select id="r-year" class="fi fi-select" onchange="renderEvents()">
             <option value="">Ano...</option>
             <option>5.º</option><option>6.º</option><option>7.º</option>
             <option>8.º</option><option>9.º</option><option>10.º</option>
@@ -830,12 +830,34 @@ function renderSidebar() {
   document.getElementById('events-main-title').textContent = day?.full || '';
 }
 
+function getCicloDaTurma() {
+  // Devolve 'sec', '3', '2' ou '' (todos) com base no ano selecionado no formulário
+  const year = (document.getElementById('r-year')?.value || '').trim();
+  if (['10.º','11.º','12.º'].includes(year)) return 'sec';
+  if (['7.º','8.º','9.º'].includes(year)) return '3';
+  if (['5.º','6.º'].includes(year)) return '2';
+  return ''; // sem ano selecionado → não filtrar
+}
+
 function renderEvents() {
   const container = document.getElementById('events-list');
   const noEv = document.getElementById('no-events');
   container.innerHTML = '';
+
+  const cicloDaTurma = getCicloDaTurma();
+
   const visible = events
-    .filter(e => e.day===activeFilter)
+    .filter(e => {
+      if (e.day !== activeFilter) return false;
+      // Se o evento tem ciclo definido, só mostrar se coincidir com o ciclo da turma
+      const ciclEv = (e.ciclo || '').toString().trim().toLowerCase();
+      if (ciclEv && cicloDaTurma) {
+        return ciclEv === cicloDaTurma;
+      }
+      // sem ciclo no evento → disponível para todos
+      // sem ano selecionado ainda → mostrar tudo
+      return true;
+    })
     .sort((a,b) => {
       const ao=parseInt(a.order)||0, bo=parseInt(b.order)||0;
       if (ao!==bo) return ao-bo;
