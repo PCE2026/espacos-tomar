@@ -284,7 +284,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
       <button class="btn-programa" id="btn-toggle-prog" onclick="togglePrograma()">🗓️ Programa</button>
-      <a href="#form-pergunta" class="btn-programa" style="text-decoration:none;">❓</a>
+      <button class="btn-programa" id="btn-toggle-perg" onclick="togglePergunta()">❓</button>
       <button class="btn-consulta-dt" id="btn-toggle-dt" onclick="toggleConsultaDT()">📋 Consulta Turmas</button>
     </div>
   </div>
@@ -511,6 +511,15 @@ async function submitPergunta(e) {
   }
   btn.disabled = false;
   btn.textContent = 'Enviar pergunta';
+}
+
+// ── Formulário de perguntas ──
+function togglePergunta() {
+  const sec = document.getElementById('form-pergunta');
+  const btn = document.getElementById('btn-toggle-perg');
+  const visible = sec.style.display !== 'none';
+  sec.style.display = visible ? 'none' : 'block';
+  if (!visible) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // ── Programa ──
@@ -750,7 +759,7 @@ async function consultarDT() {
     const nLivre = inscricoes.length;
     const nFixo  = programaFixo.length;
     let html = `
-      <div class="dt-turma-badge">📚 ${year} ${turma} · ${escola} — ${nLivre} inscrição${nLivre!==1?'ões':''} de lotação limitada + ${nFixo} outra${nFixo!==1?'s':''} atividade${nFixo!==1?'s':''}</div>
+      <div class="dt-turma-badge">📚 ${year} ${turma} · ${escola} — ${nLivre!==1?nLivre+' inscrições':nLivre+' inscrição'} de lotação limitada + ${nFixo!==1?nFixo+' outras atividades':nFixo+' outra atividade'}</div>
       <div class="dt-legend">
         <div class="dt-legend-item"><div class="dt-legend-dot livre"></div>Lotação limitada (cineteatro, auditórios…)</div>
         <div class="dt-legend-item"><div class="dt-legend-dot fixo"></div>Outras atividades (congresso, desporto, visitas…)</div>
@@ -1021,7 +1030,7 @@ loadEvents();
 
 
 
-<section id="form-pergunta" style="max-width:620px;margin:2rem auto;padding:0 1rem;">
+<section id="form-pergunta" style="display:none;max-width:620px;margin:2rem auto;padding:0 1rem;">
   <div style="background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:1.5rem 2rem;">
     <h2 style="font-size:17px;color:var(--text);margin-bottom:4px;">❓ Enviar uma pergunta</h2>
     <p style="font-size:13px;color:var(--text3);font-family:monospace;margin-bottom:1.2rem;">Tem alguma dúvida sobre a Semana Cultural? Envie-nos a sua pergunta.</p>
