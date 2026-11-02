@@ -292,11 +292,13 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 
 <div class="steps-wrap" id="steps-wrap">
   <div class="steps-inner">
-    <div class="step-item active" id="si1"><div class="step-num">1</div><div class="step-label">Atividades</div></div>
+    <div class="step-item active" id="si0"><div class="step-num">1</div><div class="step-label">Ano</div></div>
     <div class="step-line"></div>
-    <div class="step-item" id="si2"><div class="step-num">2</div><div class="step-label">Os meus dados</div></div>
+    <div class="step-item" id="si1"><div class="step-num">2</div><div class="step-label">Atividades</div></div>
     <div class="step-line"></div>
-    <div class="step-item" id="si3"><div class="step-num">3</div><div class="step-label">Confirmação</div></div>
+    <div class="step-item" id="si2"><div class="step-num">3</div><div class="step-label">Os meus dados</div></div>
+    <div class="step-line"></div>
+    <div class="step-item" id="si3"><div class="step-num">4</div><div class="step-label">Confirmação</div></div>
   </div>
 </div>
 
@@ -411,12 +413,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
         </div>
         <div class="fg fg-sm">
           <label class="fl">Ano *</label>
-          <select id="r-year" class="fi fi-select" onchange="selected=[]; renderEvents()">
-            <option value="">Ano...</option>
-            <option>5.º</option><option>6.º</option><option>7.º</option>
-            <option>8.º</option><option>9.º</option><option>10.º</option>
-            <option>11.º</option><option>12.º</option>
-          </select>
+          <input type="text" id="r-year" class="fi" readonly style="background:var(--surface2);color:var(--text2);cursor:default">
         </div>
         <div class="fg fg-xs">
           <label class="fl">Turma *</label>
@@ -883,16 +880,19 @@ function renderEvents() {
 
   const cicloDaTurma = getCicloDaTurma();
 
+  // Se o ano não foi selecionado, pedir ao professor para escolher primeiro
+  if (!cicloDaTurma) {
+    container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text3);font-family:monospace;font-size:13px">👆 Seleciona primeiro o ano da turma para ver as atividades disponíveis.</div>';
+    return;
+  }
+
   const visible = events
     .filter(e => {
       if (e.day !== activeFilter) return false;
-      // Se o evento tem ciclo definido, só mostrar se coincidir com o ciclo da turma
       const ciclEv = (e.ciclo || '').toString().trim().toLowerCase();
-      if (ciclEv && cicloDaTurma) {
-        return ciclEv === cicloDaTurma;
-      }
-      // sem ciclo no evento → disponível para todos
-      // sem ano selecionado ainda → mostrar tudo
+      // evento com ciclo definido → só mostrar se coincidir
+      if (ciclEv) return ciclEv === cicloDaTurma;
+      // evento sem ciclo → disponível para todos
       return true;
     })
     .sort((a,b) => {
@@ -950,6 +950,8 @@ function updateBottomBar() {
 
 function goToStep2() {
   if (!selected.length) return;
+  // Copiar ano do passo 1 para o campo readonly do passo 2
+  document.getElementById('r-year').value = document.getElementById('s1-year').value;
   document.getElementById('step1-content').style.display = 'none';
   document.getElementById('bottom-bar').style.display = 'none';
   document.getElementById('step2-content').style.display = 'block';
@@ -1084,6 +1086,8 @@ function resetAll() {
   document.getElementById('si2').className = 'step-item';
   document.getElementById('si3').className = 'step-item';
   ['r-name','r-email','r-companion','r-school','r-year','r-class','r-students'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('s1-year').value = '';
+  document.getElementById('s1-year-hint').textContent = '';
   renderSidebar(); renderEvents(); updateBottomBar();
 }
 
