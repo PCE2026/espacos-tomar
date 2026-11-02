@@ -956,6 +956,11 @@ async function submitForm() {
     errEl.classList.add('show'); return;
   }
 
+  if (selected.length === 0) {
+    errEl.textContent = 'Seleciona pelo menos uma atividade antes de confirmar a inscrição.';
+    errEl.classList.add('show'); return;
+  }
+
   // Validar ciclo: confirmar que nenhum evento selecionado é de ciclo diferente
   const cicloDaTurma = getCicloDaTurma();
   for (const id of selected) {
