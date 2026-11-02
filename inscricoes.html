@@ -641,7 +641,7 @@ function renderPrograma() {
         const turmaInfo = isFixo && ev.ano ? ` · ${ev.ano}${ev.turma ? ' ' + ev.turma : ' (todas as turmas)'}` : '';
         const cicloTag = !isFixo && ev.ciclo ? `<span style="font-size:11px;color:var(--text3);font-family:monospace;margin-left:6px">${ev.ciclo === 'sec' ? 'Secundário' : ev.ciclo + '.º ciclo'}</span>` : '';
         html += `<div class="prog-ev-row${isFixo?' fixo':''}">
-          <span class="prog-ev-time">${ev.time || '—'}</span>
+          <span class="prog-ev-time">${ev.time || '—'}${ev.duracao ? `<span style="font-weight:400;font-size:11px;color:var(--text3);margin-left:5px">${ev.duracao}</span>` : ''}</span>
           <span class="prog-ev-name">${ev.name}${cicloTag}${turmaInfo ? `<span style="font-size:12px;color:var(--text3);font-family:monospace"> ${turmaInfo}</span>` : ''}</span>
           ${!isFixo && space ? `<span class="prog-ev-space">📍 ${space.name}</span>` : ''}
           <span class="prog-ev-tipo ${isFixo?'prog-tipo-fixo':'prog-tipo-livre'}">${isFixo?'Outras':'Lotação'}</span>
@@ -773,7 +773,7 @@ async function consultarDT() {
         const space = SPACES.find(s => s.id === ev.spaceId);
         const isFixo = ev.tipo === 'fixo';
         html += `<div class="dt-event-row${isFixo?' fixo':''}">
-          <span class="dt-event-time">${ev.time || '—'}</span>
+          <span class="dt-event-time">${ev.time || '—'}${ev.duracao ? `<span style="font-weight:400;font-size:11px;color:var(--text3);margin-left:5px">${ev.duracao}</span>` : ''}</span>
           <span class="dt-event-name">${ev.name}</span>
           ${!isFixo && space ? `<span class="dt-event-space">📍 ${space.name}</span>` : ''}
           <span class="dt-event-tipo ${isFixo?'tipo-fixo':'tipo-livre'}">${isFixo?'Outras':'Lotação'}</span>
