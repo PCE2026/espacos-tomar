@@ -521,7 +521,7 @@ async function delProgramaFixo(itemId, e) {
   const turma  = document.getElementById('prog-turma').value.toUpperCase();
   programaFixo = programaFixo.filter(p=>String(p.id)!==String(itemId));
   renderProgGrid(escola, ano, turma);
-  await api('deleteProgramaFixo', { itemId });
+  await apiGet({ action:'deleteProgramaFixo', itemId });
   toast('Atividade removida');
 }
 
