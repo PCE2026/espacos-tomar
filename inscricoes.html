@@ -956,9 +956,17 @@ async function submitForm() {
     errEl.classList.add('show'); return;
   }
 
+  // Validar ciclo: confirmar que nenhum evento selecionado é de ciclo diferente
+  const cicloDaTurma = getCicloDaTurma();
   for (const id of selected) {
     const ev = events.find(e => e.id===id);
     if (ev) {
+      const ciclEv = (ev.ciclo || '').toString().trim().toLowerCase();
+      if (ciclEv && cicloDaTurma && ciclEv !== cicloDaTurma) {
+        const nomeCiclo = ciclEv==='sec'?'Ensino Secundário':ciclEv+'.º ciclo';
+        errEl.textContent = `"${ev.name}" é uma atividade destinada ao ${nomeCiclo} e não está disponível para o ${year}.`;
+        errEl.classList.add('show'); return;
+      }
       const vagas = (parseInt(ev.maxPax)||0)-(parseInt(ev.registrations)||0);
       if (students>vagas) {
         errEl.textContent = `Não há vagas suficientes em "${ev.name}". Vagas disponíveis: ${vagas}`;
