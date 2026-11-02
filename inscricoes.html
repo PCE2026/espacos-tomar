@@ -357,9 +357,31 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 </div>
 
 <!-- Step 1 -->
-<div id="step1-content">
+<!-- Ecrã 0: escolha do ano -->
+<div id="step0-content">
   <div class="loading-state" id="loading-state">A carregar atividades...</div>
-  <div class="step1-layout" id="step1-layout" style="display:none">
+  <div id="step0-layout" style="display:none;max-width:480px;margin:4rem auto;padding:0 1rem">
+    <div class="form-card">
+      <div class="form-card-title">Inscrição de turma</div>
+      <div class="form-card-sub">Começa por indicar o ano escolar da tua turma</div>
+      <div style="margin:1.5rem 0">
+        <label class="fl" style="margin-bottom:.5rem;display:block">Ano escolar *</label>
+        <select id="s1-year" class="fi fi-select" style="font-size:16px">
+          <option value="">Selecionar ano...</option>
+          <option>5.º</option><option>6.º</option><option>7.º</option>
+          <option>8.º</option><option>9.º</option><option>10.º</option>
+          <option>11.º</option><option>12.º</option>
+        </select>
+        <div id="s1-year-hint" style="margin-top:.6rem;font-size:13px;color:var(--text3);font-family:monospace;min-height:1.2em"></div>
+      </div>
+      <div id="step0-error" style="display:none;color:#c0392b;font-size:13px;font-family:monospace;margin-bottom:.8rem"></div>
+      <button class="btn-submit" onclick="goToStep1()">Ver atividades disponíveis →</button>
+    </div>
+  </div>
+</div>
+
+<div id="step1-content" style="display:none">
+  <div class="step1-layout" id="step1-layout">
     <div class="sidebar">
       <div class="sidebar-title">Filtrar por dia</div>
       <div class="day-filter" id="day-filter"></div>
@@ -370,17 +392,8 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
         O programa da Semana Cultural inclui ainda outras atividades — propostas pela própria turma ou partilhadas com outras turmas — que não requerem inscrição e que poderá consultar em cima no botão "Consulta Turmas".
       </div>
       <div class="events-main-title" id="events-main-title">22 de março de 2027</div>
+      <div id="s1-year-badge" style="margin-bottom:1rem;display:inline-flex;align-items:center;gap:8px;background:var(--accent-light);border:1px solid var(--accent);border-radius:var(--radius);padding:6px 14px;font-family:monospace;font-size:13px;color:var(--accent);font-weight:700"></div>
       <div class="events-main-sub">Seleciona as atividades em que queres participar</div>
-      <div id="ano-selector" style="margin-bottom:1rem;display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px">
-        <label style="font-family:monospace;font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">Ano da turma</label>
-        <select id="s1-year" class="fi fi-select" style="max-width:140px;margin:0" onchange="onS1YearChange()">
-          <option value="">Selecionar...</option>
-          <option>5.º</option><option>6.º</option><option>7.º</option>
-          <option>8.º</option><option>9.º</option><option>10.º</option>
-          <option>11.º</option><option>12.º</option>
-        </select>
-        <span id="s1-year-hint" style="font-size:12px;color:var(--text3);font-family:monospace"></span>
-      </div>
       <div id="events-list"></div>
       <div class="no-events" id="no-events" style="display:none">Sem atividades disponíveis para este dia.</div>
     </div>
@@ -429,7 +442,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
       <div class="form-error" id="form-error"></div>
       <hr class="form-divider">
       <div class="form-actions">
-        <button class="btn-back" onclick="goToStep1()">← Voltar</button>
+        <button class="btn-back" onclick="backToStep1()">← Voltar</button>
         <button class="btn-submit" id="btn-submit" onclick="submitForm()">Confirmar inscrição ✓</button>
       </div>
     </div>
@@ -818,9 +831,7 @@ async function loadEvents() {
   if (r && r.events) events = r.events;
   else { try{ const s=localStorage.getItem('sc27_ev'); if(s) events=JSON.parse(s); }catch(e){} }
   document.getElementById('loading-state').style.display = 'none';
-  document.getElementById('step1-layout').style.display = 'flex';
-  document.getElementById('bottom-bar').style.display = 'block';
-  renderSidebar(); renderEvents();
+  document.getElementById('step0-layout').style.display = 'block';
 }
 
 function renderSidebar() {
@@ -848,29 +859,32 @@ function getCicloDaTurma() {
 
 function onS1YearChange() {
   const year = document.getElementById('s1-year').value;
-  // Sincronizar com o campo do passo 2
-  const rYear = document.getElementById('r-year');
-  if (rYear) rYear.value = year;
-  // Bloquear escola para secundário
-  const escolaEl = document.getElementById('r-school');
-  if (escolaEl) {
-    if (['10.º','11.º','12.º'].includes(year)) {
-      escolaEl.value = 'Jácome Ratton';
-      escolaEl.disabled = true;
-    } else {
-      escolaEl.disabled = false;
-    }
-  }
-  // Mostrar label do ciclo
+  const ciclo = getCicloDaTurma();
   const hint = document.getElementById('s1-year-hint');
-  if (hint) {
-    const ciclo = getCicloDaTurma();
-    hint.textContent = ciclo === 'sec' ? '(Ensino Secundário)' : ciclo ? '(' + ciclo + '.º ciclo)' : '';
+  if (hint) hint.textContent = ciclo === 'sec' ? 'Ensino Secundário' : ciclo ? ciclo + '.º ciclo' : '';
+}
+
+function goToStep1() {
+  const year = document.getElementById('s1-year').value;
+  if (!year) {
+    const err = document.getElementById('step0-error');
+    err.textContent = 'Por favor seleciona o ano escolar.';
+    err.style.display = 'block';
+    return;
   }
-  // Limpar seleção e re-renderizar com filtro de ciclo
-  selected = [];
-  updateBottomBar();
-  renderEvents();
+  document.getElementById('step0-error').style.display = 'none';
+  // badge no passo 1 com o ano
+  const ciclo = getCicloDaTurma();
+  const badge = document.getElementById('s1-year-badge');
+  if (badge) badge.textContent = year + (ciclo === 'sec' ? ' · Ensino Secundário' : ciclo ? ' · ' + ciclo + '.º ciclo' : '');
+  // mostrar passo 1
+  document.getElementById('step0-content').style.display = 'none';
+  document.getElementById('step1-content').style.display = 'block';
+  document.getElementById('bottom-bar').style.display = 'block';
+  document.getElementById('si0').className = 'step-item done';
+  document.getElementById('si1').className = 'step-item active';
+  // limpar seleção e renderizar eventos filtrados
+  selected = []; updateBottomBar(); renderSidebar(); renderEvents();
 }
 
 function renderEvents() {
@@ -970,7 +984,7 @@ function goToStep2() {
   btn.disabled = false; btn.textContent = 'Confirmar inscrição ✓';
 }
 
-function goToStep1() {
+function backToStep1() {
   document.getElementById('step2-content').style.display = 'none';
   document.getElementById('step1-content').style.display = 'block';
   document.getElementById('bottom-bar').style.display = 'block';
@@ -1079,16 +1093,18 @@ async function submitForm() {
 
 function resetAll() {
   selected=[]; activeFilter='d22';
-  ['step3-content','step2-content'].forEach(id => document.getElementById(id).style.display='none');
-  document.getElementById('step1-content').style.display = 'block';
-  document.getElementById('bottom-bar').style.display = 'block';
-  document.getElementById('si1').className = 'step-item active';
+  ['step3-content','step2-content','step1-content'].forEach(id => document.getElementById(id).style.display='none');
+  document.getElementById('bottom-bar').style.display = 'none';
+  document.getElementById('step0-content').style.display = 'block';
+  document.getElementById('si0').className = 'step-item active';
+  document.getElementById('si1').className = 'step-item';
   document.getElementById('si2').className = 'step-item';
   document.getElementById('si3').className = 'step-item';
   ['r-name','r-email','r-companion','r-school','r-year','r-class','r-students'].forEach(id => document.getElementById(id).value='');
   document.getElementById('s1-year').value = '';
   document.getElementById('s1-year-hint').textContent = '';
-  renderSidebar(); renderEvents(); updateBottomBar();
+  document.getElementById('step0-error').style.display = 'none';
+  updateBottomBar();
 }
 
 function toggleInfo(e, id) {
