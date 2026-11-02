@@ -730,6 +730,7 @@ function renderSpaces() {
         <div class="fg fg-lg"><label class="fl">Nome da atividade</label><input type="text" class="fi fi-text" placeholder="Ex: Visita guiada" id="n-${space.id}"></div>
         <div class="fg fg-md"><label class="fl">Vagas máx.</label><input type="number" class="fi" placeholder="${space.cap}" min="1" max="${space.cap}" id="p-${space.id}"></div>
         <div class="fg fg-xs"><label class="fl">Duração</label><input type="text" class="fi fi-text" placeholder="1h30" id="dur-${space.id}" style="text-align:center"></div>
+        <div class="fg fg-md"><label class="fl">Ciclo</label><select class="fi fi-select" id="ciclo-${space.id}"><option value="">Todos</option><option value="2">2.º ciclo (5.º/6.º)</option><option value="3">3.º ciclo (7.º-9.º)</option><option value="sec">Secundário (10.º-12.º)</option></select></div>
         <button class="btn-add" onclick="addEvent('${space.id}')">+ Adicionar</button>
       </div>
       <div class="form-row form-row-full">
@@ -749,6 +750,7 @@ async function addEvent(spaceId) {
   const time=getTimeStr(spaceId);
   const synopsis=document.getElementById('syn-'+spaceId).value.trim();
   const duracao=document.getElementById('dur-'+spaceId).value.trim();
+  const ciclo=document.getElementById('ciclo-'+spaceId).value;
   const pax=parseInt(document.getElementById('p-'+spaceId).value)||SPACES.find(s=>s.id===spaceId).cap;
   if (!name){toast('Escreve o nome da atividade');return;}
   if (hasBlockingConflict(spaceId, time)) {
@@ -756,7 +758,7 @@ async function addEvent(spaceId) {
     return;
   }
   const order=events.filter(e=>e.day===activeDay&&e.spaceId===spaceId).length;
-  const ev={id:'ev_'+Date.now()+'_'+Math.random().toString(36).slice(2,5),day:activeDay,spaceId,time,name,synopsis,duracao,maxPax:pax,registrations:0,order};
+  const ev={id:'ev_'+Date.now()+'_'+Math.random().toString(36).slice(2,5),day:activeDay,spaceId,time,name,synopsis,duracao,ciclo,maxPax:pax,registrations:0,order};
   events.push(ev); save(); openCards[spaceId+activeDay]=true;
   await api('addEvent',{event:ev});
   toast('Evento adicionado ✓'); renderSpaces();
