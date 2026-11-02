@@ -428,14 +428,14 @@ function renderProgGrid(escola, ano, turma) {
       if (evFixo) {
         html += `<td><div class="slot-cell has-event">
           <div class="slot-event">
-            <div class="slot-event-name">${escHtml(String(evFixo.descricao||evFixo.name||''))}</div>
+            <div class="slot-event-name">${escHtml(String(evFixo.descricao||evFixo.name||''))}${evFixo.duracao?`<span style="display:block;font-size:10px;color:var(--text3);font-family:monospace;margin-top:3px">${escHtml(String(evFixo.duracao))}</span>`:''}</div>
             <button class="slot-event-del" onclick="delProgramaFixo('${escHtml(String(evFixo.id))}',event)" title="Remover">✕</button>
           </div>
         </div></td>`;
       } else if (evLivre) {
         html += `<td><div class="slot-cell has-event">
           <div class="slot-event" style="background:var(--green-bg);border-color:rgba(46,125,94,0.3);">
-            <div class="slot-event-name" style="color:var(--green);">${escHtml(String(evLivre.name||''))}</div>
+            <div class="slot-event-name" style="color:var(--green);">${escHtml(String(evLivre.name||''))}${evLivre.duracao?`<span style="display:block;font-size:10px;color:var(--text3);font-family:monospace;margin-top:3px">${escHtml(String(evLivre.duracao))}</span>`:''}</div>
           </div>
         </div></td>`;
       } else {
