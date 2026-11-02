@@ -369,6 +369,16 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
       </div>
       <div class="events-main-title" id="events-main-title">22 de março de 2027</div>
       <div class="events-main-sub">Seleciona as atividades em que queres participar</div>
+      <div id="ano-selector" style="margin-bottom:1rem;display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px">
+        <label style="font-family:monospace;font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">Ano da turma</label>
+        <select id="s1-year" class="fi fi-select" style="max-width:140px;margin:0" onchange="onS1YearChange()">
+          <option value="">Selecionar...</option>
+          <option>5.º</option><option>6.º</option><option>7.º</option>
+          <option>8.º</option><option>9.º</option><option>10.º</option>
+          <option>11.º</option><option>12.º</option>
+        </select>
+        <span id="s1-year-hint" style="font-size:12px;color:var(--text3);font-family:monospace"></span>
+      </div>
       <div id="events-list"></div>
       <div class="no-events" id="no-events" style="display:none">Sem atividades disponíveis para este dia.</div>
     </div>
@@ -831,12 +841,39 @@ function renderSidebar() {
 }
 
 function getCicloDaTurma() {
-  // Devolve 'sec', '3', '2' ou '' (todos) com base no ano selecionado no formulário
-  const year = (document.getElementById('r-year')?.value || '').trim();
+  // Lê do selector do passo 1 (s1-year) — é a fonte de verdade
+  const year = (document.getElementById('s1-year')?.value || document.getElementById('r-year')?.value || '').trim();
   if (['10.º','11.º','12.º'].includes(year)) return 'sec';
   if (['7.º','8.º','9.º'].includes(year)) return '3';
   if (['5.º','6.º'].includes(year)) return '2';
-  return ''; // sem ano selecionado → não filtrar
+  return '';
+}
+
+function onS1YearChange() {
+  const year = document.getElementById('s1-year').value;
+  // Sincronizar com o campo do passo 2
+  const rYear = document.getElementById('r-year');
+  if (rYear) rYear.value = year;
+  // Bloquear escola para secundário
+  const escolaEl = document.getElementById('r-school');
+  if (escolaEl) {
+    if (['10.º','11.º','12.º'].includes(year)) {
+      escolaEl.value = 'Jácome Ratton';
+      escolaEl.disabled = true;
+    } else {
+      escolaEl.disabled = false;
+    }
+  }
+  // Mostrar label do ciclo
+  const hint = document.getElementById('s1-year-hint');
+  if (hint) {
+    const ciclo = getCicloDaTurma();
+    hint.textContent = ciclo === 'sec' ? '(Ensino Secundário)' : ciclo ? '(' + ciclo + '.º ciclo)' : '';
+  }
+  // Limpar seleção e re-renderizar com filtro de ciclo
+  selected = [];
+  updateBottomBar();
+  renderEvents();
 }
 
 function renderEvents() {
