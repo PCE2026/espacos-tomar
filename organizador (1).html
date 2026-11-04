@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organizador — Semana Cultural Tomar 2027</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  /* Paleta pastel fundo verde claro */
+  --bg: #edf7f2;           /* verde muito claro */
+  --surface: #ffffff;
+  --surface2: #dff0e8;     /* verde pastel */
+  --surface3: #cce6da;
+  --border: rgba(10,60,40,0.10);
+  --border2: rgba(10,60,40,0.20);
+
+  --text: #0d2b40;         /* azul muito escuro */
+  --text2: #2d6080;
+  --text3: #7aaabb;
+
+  --accent: #c9920a;       /* amarelo escuro (botões principais) */
+  --accent2: #a37208;
+  --accent-light: #fef3cc; /* amarelo pastel */
+
+  --green: #2e7d5e;
+  --green-bg: #d4f0e4;
+  --green-dark: #1a4d38;
+
+  --amber: #b07800;
+  --amber-bg: #fff3cc;
+
+  --red: #c0392b;
+  --red-bg: #fde8e6;
+
+  --blue: #1a5c8a;
+  --blue-bg: #dceef8;
+
+  --pink: #e8a0b0;
+  --pink-bg: #fdf0f3;
+
+  --radius: 8px; --radius-lg: 14px;
+}
+body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; }
+#login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; background: var(--bg); }
+.login-wrap { width: 100%; max-width: 360px; background: var(--surface); border: 2px solid var(--border2); border-radius: var(--radius-lg); padding: 2rem; box-shadow: 0 8px 32px rgba(10,60,40,.10); }
+.login-eyebrow { font-family: monospace; font-size: 11px; letter-spacing: .15em; color: var(--green); text-transform: uppercase; margin-bottom: 1.5rem; }
+.login-title { font-size: 26px; font-weight: 400; line-height: 1.2; margin-bottom: 2rem; color: var(--text); }
+.login-title em { font-style: italic; color: var(--accent); }
+.field-label { font-family: monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; display: block; font-weight: 700; }
+.field-input { width: 100%; background: var(--surface2); border: 2px solid var(--border2); border-radius: var(--radius); padding: 12px 14px; font-size: 16px; color: var(--text); font-family: monospace; transition: border-color .2s; }
+.field-input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+.btn-login { width: 100%; margin-top: 1rem; background: var(--accent); color: #fff; border: none; border-radius: var(--radius); padding: 13px; font-size: 14px; font-weight: 700; font-family: monospace; text-transform: uppercase; cursor: pointer; }
+.btn-login:hover { background: var(--accent2); }
+.login-error { font-size: 12px; color: var(--red); margin-top: 8px; display: none; font-family: monospace; }
+.login-error.show { display: block; }
+#app-screen { display: none; min-height: 100vh; }
+.topbar { background: var(--surface); border-bottom: 2px solid var(--border2); padding: 0 1.5rem; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(10,60,40,.07); }
+.topbar-brand { font-family: monospace; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--green); font-weight: 700; }
+.topbar-info { font-size: 13px; color: var(--text3); }
+.btn-out { background: none; border: 2px solid var(--border2); border-radius: var(--radius); padding: 6px 16px; font-size: 13px; color: var(--text2); cursor: pointer; font-family: monospace; transition: all .15s; font-weight: 700; }
+.btn-out:hover { border-color: var(--red); color: var(--red); background: var(--red-bg); }
+.main { max-width: 960px; margin: 0 auto; padding: 2rem 1rem; }
+
+/* Tabs principais */
+.main-tabs { display: flex; gap: 0; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+.main-tab { padding: 10px 22px; font-size: 13px; font-family: monospace; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; }
+.main-tab:hover { color: var(--text2); }
+.main-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── SECÇÃO EVENTOS ── */
+.day-tabs { display: flex; gap: 4px; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+.day-tab { padding: 10px 20px; font-size: 13px; font-family: monospace; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; }
+.day-tab:hover { color: var(--text2); }
+.day-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.space-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 12px; overflow: hidden; }
+.space-head { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; cursor: pointer; gap: 12px; }
+.space-head:hover { background: var(--surface2); }
+.space-name { font-size: 14px; color: var(--text); }
+.space-cap-tag { font-family: monospace; font-size: 11px; color: var(--text3); background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 3px 8px; }
+.space-right { display: flex; align-items: center; gap: 10px; }
+.space-stats { font-family: monospace; font-size: 11px; color: var(--text3); }
+.chevron { color: var(--text3); font-size: 10px; transition: transform .2s; }
+.space-card.open .chevron { transform: rotate(180deg); }
+.space-body { display: none; border-top: 1px solid var(--border); }
+.space-card.open .space-body { display: block; }
+.events-section { padding: 1rem 1.25rem; }
+.drag-hint { font-family: monospace; font-size: 10px; color: var(--text3); margin-bottom: 8px; }
+.ev-row { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 6px; cursor: grab; user-select: none; transition: opacity .15s, border-color .15s; }
+.ev-row-top { display: flex; align-items: center; gap: 10px; }
+.ev-row.dragging { opacity: .35; }
+.ev-row.drag-over { border-color: var(--accent); background: var(--surface3); }
+.drag-handle { color: var(--text3); font-size: 14px; flex-shrink: 0; }
+.ev-time { font-family: monospace; font-size: 12px; color: var(--accent); width: 48px; flex-shrink: 0; }
+.ev-name { flex: 1; font-size: 13px; color: var(--text); }
+.ev-synopsis { font-size: 12px; color: var(--text2); margin-top: 6px; padding: 6px 10px; background: var(--surface3); border-radius: 4px; border-left: 2px solid var(--accent2); font-style: italic; line-height: 1.5; margin-left: 24px; }
+.ev-badge { font-family: monospace; font-size: 11px; padding: 2px 8px; border-radius: 4px; flex-shrink: 0; }
+.badge-ok { background: var(--green-bg); color: var(--green); }
+.badge-warn { background: var(--amber-bg); color: var(--amber); }
+.badge-full { background: var(--red-bg); color: var(--red); }
+.ev-del { background: none; border: 1px solid transparent; border-radius: var(--radius); padding: 4px 8px; font-size: 11px; color: var(--text3); cursor: pointer; transition: all .15s; flex-shrink: 0; }
+.ev-del:hover { border-color: var(--red); color: var(--red); background: var(--red-bg); }
+.no-events { font-family: monospace; font-size: 12px; color: var(--text3); padding: 4px 0 12px; }
+.add-form { border-top: 1px solid var(--border); padding: 1rem 1.25rem; background: var(--surface2); }
+.add-form-title { font-family: monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+.conflict-alert { background: var(--red-bg); border: 1px solid var(--red); border-radius: var(--radius); padding: 7px 11px; font-size: 11px; color: var(--red); font-family: monospace; margin-bottom: 8px; display: none; }
+.conflict-alert.show { display: block; }
+.form-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; }
+.form-row-full { margin-top: 8px; }
+.fg { display: flex; flex-direction: column; gap: 5px; }
+.fg-xs { width: 62px; }
+.fg-md { width: 120px; }
+.fg-lg { flex: 1; min-width: 180px; }
+.fg-full { width: 100%; }
+.fl { font-family: monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
+.fi { background: var(--surface3); border: 1px solid var(--border2); border-radius: var(--radius); padding: 8px 6px; font-size: 13px; color: var(--text); font-family: monospace; transition: border-color .15s; width: 100%; text-align: center; }
+.fi:focus { outline: none; border-color: var(--accent); }
+.fi-text { text-align: left; font-family: inherit; }
+.fi-area { text-align: left; font-family: inherit; resize: vertical; min-height: 60px; line-height: 1.5; }
+.fi-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+.time-sep { color: var(--accent); font-size: 20px; font-weight: bold; align-self: flex-end; padding-bottom: 7px; line-height: 1; }
+.btn-add { background: var(--accent); color: #0f0f0f; border: none; border-radius: var(--radius); padding: 9px 18px; font-size: 12px; font-weight: 700; font-family: monospace; text-transform: uppercase; cursor: pointer; white-space: nowrap; align-self: flex-end; }
+.btn-add:hover { background: var(--accent2); }
+.occ-bar { height: 3px; background: var(--surface3); margin: 0 1.25rem 1rem; border-radius: 2px; overflow: hidden; }
+.occ-fill { height: 100%; border-radius: 2px; transition: width .3s; }
+.fill-ok { background: var(--green); }
+.fill-warn { background: var(--amber); }
+.fill-over { background: var(--red); }
+
+/* ── SECÇÃO PROGRAMA FIXO ── */
+.prog-controls { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.5rem; display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+.prog-controls .fg { min-width: 140px; }
+.prog-controls .fg-xs { min-width: 70px; max-width: 90px; }
+.btn-prog-load { background: var(--accent); color: #0f0f0f; border: none; border-radius: var(--radius); padding: 9px 18px; font-size: 12px; font-weight: 700; font-family: monospace; cursor: pointer; white-space: nowrap; align-self: flex-end; }
+.btn-prog-load:hover { background: var(--accent2); }
+
+/* Grelha de horário */
+.prog-grid-wrap { overflow-x: auto; }
+.prog-grid { border-collapse: collapse; width: 100%; min-width: 520px; }
+.prog-grid th { background: var(--surface); border: 1px solid var(--border2); padding: 8px 10px; font-family: monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); text-align: center; font-weight: 400; }
+.prog-grid th.day-col { color: var(--accent); font-weight: 700; min-width: 160px; }
+.prog-grid td { border: 1px solid var(--border); padding: 0; vertical-align: top; min-width: 160px; }
+.prog-grid td.time-cell { background: var(--surface); padding: 10px; font-family: monospace; font-size: 11px; color: var(--text3); white-space: nowrap; text-align: right; min-width: 90px; }
+.slot-cell { min-height: 52px; padding: 6px; position: relative; cursor: pointer; transition: background .15s; }
+.slot-cell:hover { background: var(--surface3); }
+.slot-cell.has-event { cursor: default; }
+.slot-cell.has-event:hover { background: transparent; }
+.slot-empty-hint { font-family: monospace; font-size: 10px; color: var(--text3); opacity: 0; transition: opacity .15s; text-align: center; padding: 16px 0 10px; }
+.slot-cell:hover .slot-empty-hint { opacity: 1; }
+.slot-event { background: var(--blue-bg); border: 1px solid rgba(96,165,250,0.3); border-radius: 6px; padding: 6px 8px; position: relative; height: 100%; }
+.slot-event-name { font-size: 12px; color: var(--blue); line-height: 1.4; }
+.slot-event-del { position: absolute; top: 4px; right: 4px; background: none; border: none; color: var(--text3); cursor: pointer; font-size: 11px; padding: 2px 4px; border-radius: 4px; transition: all .15s; line-height: 1; }
+.slot-event-del:hover { color: var(--red); background: var(--red-bg); }
+.prog-loading { text-align: center; padding: 3rem; font-family: monospace; font-size: 13px; color: var(--text3); }
+.prog-empty { text-align: center; padding: 2rem; font-family: monospace; font-size: 12px; color: var(--text3); background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); }
+
+/* Modal para adicionar atividade fixa */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: none; align-items: center; justify-content: center; padding: 1rem; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 1.5rem; width: 100%; max-width: 420px; }
+.modal-title { font-size: 16px; margin-bottom: 4px; }
+.modal-sub { font-family: monospace; font-size: 11px; color: var(--text3); margin-bottom: 1.25rem; }
+.modal-field { margin-bottom: 1rem; }
+.modal-label { font-family: monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); margin-bottom: 5px; display: block; }
+.modal-input { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius); padding: 10px 12px; font-size: 14px; color: var(--text); font-family: inherit; transition: border-color .15s; }
+.modal-input:focus { outline: none; border-color: var(--accent); }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; }
+.btn-modal-cancel { background: none; border: 1px solid var(--border2); border-radius: var(--radius); padding: 9px 18px; font-size: 13px; color: var(--text2); cursor: pointer; font-family: monospace; transition: all .15s; }
+.btn-modal-cancel:hover { border-color: var(--text2); }
+.btn-modal-ok { background: var(--accent); color: #0f0f0f; border: none; border-radius: var(--radius); padding: 9px 18px; font-size: 13px; font-weight: 700; font-family: monospace; cursor: pointer; }
+.btn-modal-ok:hover { background: var(--accent2); }
+
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--accent); color: #0f0f0f; padding: 10px 18px; border-radius: var(--radius); font-size: 12px; font-family: monospace; font-weight: 700; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 9999; }
+.toast.show { opacity: 1; }
+
+/* Legenda */
+.legend { display: flex; gap: 16px; margin-bottom: 1rem; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-family: monospace; font-size: 11px; color: var(--text3); }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+.legend-dot.fixo { background: var(--blue-bg); border: 1px solid rgba(96,165,250,0.3); }
+
+@media (max-width:500px) { .form-row { flex-direction: column; } .fg-xs,.fg-md,.fg-lg { width:100%; } .prog-controls { flex-direction: column; } .prog-controls .fg, .prog-controls .fg-xs { min-width: 100%; } }
+
+/* ── PANORAMAS ── */
+.pan-subtabs { display: flex; gap: 8px; margin-bottom: 1.5rem; }
+.pan-subtab { padding: 8px 20px; font-size: 12px; font-family: monospace; background: var(--surface); border: 2px solid var(--border2); border-radius: var(--radius); color: var(--text3); cursor: pointer; font-weight: 700; transition: all .15s; }
+.pan-subtab:hover { color: var(--text2); border-color: var(--accent); }
+.pan-subtab.active { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+.pan-controls { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.5rem; display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+.pan-controls .fg { min-width: 260px; }
+.pan-loading { text-align: center; padding: 2rem; color: var(--text3); font-family: monospace; font-size: 12px; }
+/* Panorama espaço */
+.pan-day-block { margin-bottom: 1.5rem; }
+.pan-day-title { font-size: 12px; font-family: monospace; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.pan-ev-row { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 6px; }
+.pan-ev-time { font-family: monospace; font-size: 12px; color: var(--accent); width: 52px; flex-shrink: 0; }
+.pan-ev-name { flex: 1; font-size: 13px; color: var(--text); }
+.pan-ev-dur { font-family: monospace; font-size: 11px; color: var(--text3); }
+.pan-ev-badge { font-family: monospace; font-size: 11px; padding: 2px 8px; border-radius: 4px; background: var(--surface2); color: var(--text2); flex-shrink: 0; }
+.pan-ev-insc { font-family: monospace; font-size: 11px; color: var(--text2); flex-shrink: 0; }
+.pan-empty { text-align: center; padding: 2.5rem; color: var(--text3); font-size: 13px; font-style: italic; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+/* Panorama escola — grelha de turmas */
+.escola-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.turma-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.turma-card-head { background: var(--surface2); padding: 10px 14px; }
+.turma-card-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.turma-card-body { padding: 10px 14px; }
+.turma-ev-item { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.turma-ev-item:last-child { border-bottom: none; }
+.turma-ev-day { font-family: monospace; color: var(--text3); font-size: 11px; white-space: nowrap; flex-shrink: 0; width: 38px; }
+.turma-ev-time { font-family: monospace; color: var(--accent); font-size: 11px; white-space: nowrap; flex-shrink: 0; width: 42px; }
+.turma-ev-name { color: var(--text); flex: 1; }
+.turma-ev-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+.turma-ev-dot.livre { background: var(--green); }
+.turma-ev-dot.fixo { background: var(--blue); }
+.turma-no-ev { color: var(--text3); font-style: italic; font-size: 12px; padding: 4px 0; }
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-wrap">
+    <div class="login-eyebrow">Área Restrita</div>
+    <div class="login-title">Semana Cultural<br><em>Organizador</em></div>
+    <div style="margin-bottom:1rem">
+      <label class="field-label">Palavra-passe</label>
+      <input type="password" id="pw" class="field-input" placeholder="••••••" onkeydown="if(event.key==='Enter')login()">
+    </div>
+    <button class="btn-login" onclick="login()">Entrar →</button>
+    <div class="login-error" id="pw-err">Palavra-passe incorreta.</div>
+  </div>
+</div>
+
+<div id="app-screen">
+  <div class="topbar">
+    <span class="topbar-brand">⚙ Organizador</span>
+    <span class="topbar-info">Semana Cultural · Tomar 2027</span>
+    <button class="btn-out" onclick="logout()">Sair</button>
+  </div>
+  <div class="main">
+    <!-- Tabs principais -->
+    <div class="main-tabs">
+      <button class="main-tab active" id="tab-eventos" onclick="switchTab('eventos')">Lotação limitada</button>
+      <button class="main-tab" id="tab-programa" onclick="switchTab('programa')">Outras atividades</button>
+      <button class="main-tab" id="tab-panoramas" onclick="switchTab('panoramas')">Panoramas gerais</button>
+    </div>
+
+    <!-- Secção: Inscrições Livres -->
+    <div id="section-eventos">
+      <div class="day-tabs" id="day-tabs"></div>
+      <div id="spaces-container"></div>
+    </div>
+
+    <!-- Secção: Programa Fixo -->
+    <div id="section-programa" style="display:none">
+      <div class="prog-controls">
+        <div class="fg">
+          <label class="fl">Escola</label>
+          <select id="prog-escola" class="fi fi-select" onchange="progEscolaChanged()">
+            <option value="">Selecionar...</option>
+            <option value="Gualdim Pais">Gualdim Pais</option>
+            <option value="Santa Iria">Santa Iria</option>
+            <option value="Jácome Ratton">Jácome Ratton</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">Ano</label>
+          <select id="prog-ano" class="fi fi-select">
+            <option value="">Selecionar...</option>
+            <option>5.º</option><option>6.º</option><option>7.º</option>
+            <option>8.º</option><option>9.º</option><option>10.º</option>
+            <option>11.º</option><option>12.º</option>
+          </select>
+        </div>
+        <div class="fg fg-xs">
+          <label class="fl">Turma</label>
+          <input type="text" id="prog-turma" class="fi" placeholder="A" maxlength="2" style="text-transform:uppercase;text-align:center">
+        </div>
+        <button class="btn-prog-load" onclick="loadProgramaFixo()">Ver grelha</button>
+      </div>
+
+      <div id="prog-grid-area">
+        <div class="prog-empty">Seleciona escola, ano e turma para ver a grelha de horários.</div>
+      </div>
+    </div>
+
+    <!-- Secção: Panoramas Gerais -->
+    <div id="section-panoramas" style="display:none">
+      <!-- Sub-tabs -->
+      <div class="pan-subtabs">
+        <button class="pan-subtab active" id="ptab-espaco" onclick="switchPanTab('espaco')">Por espaço</button>
+        <button class="pan-subtab" id="ptab-escola" onclick="switchPanTab('escola')">Por escola</button>
+      </div>
+
+      <!-- Panorama 5: por espaço -->
+      <div id="pan-espaco">
+        <div class="pan-controls">
+          <div class="fg">
+            <label class="fl">Espaço</label>
+            <select id="pan-espaco-sel" class="fi fi-select" onchange="loadPanoramaEspaco()">
+              <option value="">Selecionar espaço...</option>
+              <option value="Cineteatro Paraíso">Cineteatro Paraíso</option>
+              <option value="Biblioteca Municipal de Tomar">Biblioteca Municipal de Tomar</option>
+              <option value="Auditório da Jácome">Auditório da Jácome</option>
+              <option value="Auditório do Centro de Formação Profissional">Auditório do Centro de Formação Profissional</option>
+              <option value="Biblioteca da Jácome">Biblioteca da Jácome</option>
+            </select>
+          </div>
+        </div>
+        <div id="pan-espaco-result"></div>
+      </div>
+
+      <!-- Panorama 6: por escola -->
+      <div id="pan-escola" style="display:none">
+        <div class="pan-controls">
+          <div class="fg">
+            <label class="fl">Escola</label>
+            <select id="pan-escola-sel" class="fi fi-select" onchange="loadPanoramaEscola()">
+              <option value="">Selecionar escola...</option>
+              <option value="Gualdim Pais">Gualdim Pais</option>
+              <option value="Santa Iria">Santa Iria</option>
+              <option value="Jácome Ratton">Jácome Ratton</option>
+            </select>
+          </div>
+        </div>
+        <div id="pan-escola-result"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal para adicionar atividade fixa -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">Adicionar atividade fixa</div>
+    <div class="modal-sub" id="modal-sub"></div>
+    <div class="modal-field">
+      <label class="modal-label">Descrição da atividade *</label>
+      <input type="text" id="modal-descricao" class="modal-input" placeholder="Ex: Congresso do 9.º ano" onkeydown="if(event.key==='Enter')modalConfirm()">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Duração (opcional)</label>
+      <input type="text" id="modal-duracao" class="modal-input" placeholder="Ex: 1h30" style="max-width:120px">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="modalClose()">Cancelar</button>
+      <button class="btn-modal-ok" onclick="modalConfirm()">Adicionar ✓</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PASSWORD   = "pce";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP2hhejRgth5XYCqYGt58TLpip6PDHJihCZmXm4MfB1NPOXcqMqdOVtvsplj1iCfh-/exec";
+
+const DAYS = [
+  { key:'d22', label:'22 Mar', full:'22 de março de 2027' },
+  { key:'d23', label:'23 Mar', full:'23 de março de 2027' },
+  { key:'d24', label:'24 Mar', full:'24 de março de 2027' },
+];
+const SPACES = [
+  { id:'s1', name:'Cineteatro Paraíso', cap:300 },
+  { id:'s2', name:'Biblioteca Municipal de Tomar', cap:150 },
+  { id:'s3', name:'Auditório da Jácome', cap:150 },
+  { id:'s4', name:'Auditório do Centro de Formação Profissional', cap:150 },
+  { id:'s5', name:'Biblioteca da Jácome', cap:60 },
+];
+const TIME_SLOTS = [
+  '08:30','09:30','10:40','11:40','12:40','13:30','14:30','15:35','16:35','17:35'
+];
+const TIME_LABELS = [
+  '8h30','9h30','10h40','11h40','12h40','13h30','14h30','15h35','16h35','17h35'
+];
+
+let events=[], activeDay='d22', openCards={}, dragSrcId=null;
+let activeTab = 'eventos';
+let programaFixo = [];
+let inscricoesLivres = [];
+let modalPending = null; // {escola, ano, turma, day, time}
+
+// ── Autenticação ──
+function login() {
+  if (document.getElementById('pw').value===PASSWORD) {
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app-screen').style.display='block';
+    init();
+  } else { document.getElementById('pw-err').classList.add('show'); }
+}
+function logout() {
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app-screen').style.display='none';
+  document.getElementById('pw').value='';
+  document.getElementById('pw-err').classList.remove('show');
+}
+
+// ── Tabs ──
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('tab-eventos').classList.toggle('active', tab==='eventos');
+  document.getElementById('tab-programa').classList.toggle('active', tab==='programa');
+  document.getElementById('tab-panoramas').classList.toggle('active', tab==='panoramas');
+  document.getElementById('section-eventos').style.display = tab==='eventos' ? 'block' : 'none';
+  document.getElementById('section-programa').style.display = tab==='programa' ? 'block' : 'none';
+  document.getElementById('section-panoramas').style.display = tab==='panoramas' ? 'block' : 'none';
+  if (tab==='panoramas') initPanoramas();
+}
+
+// ── Utilitários ──
+function save() { try { localStorage.setItem('sc27_ev', JSON.stringify(events)); } catch(e){} }
+function load() { try { const r=localStorage.getItem('sc27_ev'); if(r) events=JSON.parse(r); } catch(e){} }
+async function api(action,data={}) {
+  if (!SCRIPT_URL) return null;
+  try { const r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action,...data})}); return await r.json(); } catch(e){return null;}
+}
+async function apiGet(params) {
+  if (!SCRIPT_URL) return null;
+  try {
+    const qs = Object.entries(params).map(([k,v])=>encodeURIComponent(k)+'='+encodeURIComponent(v)).join('&');
+    const r=await fetch(SCRIPT_URL+'?'+qs+'&t='+Date.now(),{method:'GET',cache:'no-cache'});
+    return await r.json();
+  } catch(e){return null;}
+}
+async function syncEvents() {
+  const r=await api('getEvents');
+  if (r&&r.events){events=r.events;save();} else load();
+}
+function toast(msg) {
+  const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2800);
+}
+async function init() { await syncEvents(); renderTabs(); renderSpaces(); }
+
+// ── Escola changed (programa fixo) ──
+function progEscolaChanged() {
+  const escola = document.getElementById('prog-escola').value;
+  const anoEl = document.getElementById('prog-ano');
+  // Secundário só na Jácome
+  if (escola === 'Jácome Ratton') {
+    // Mostrar todos os anos
+    Array.from(anoEl.options).forEach(o => o.style.display = '');
+  } else if (escola) {
+    // 5.º-9.º apenas
+    Array.from(anoEl.options).forEach(o => {
+      const v = o.value;
+      o.style.display = (v===''||['5.º','6.º','7.º','8.º','9.º'].includes(v)) ? '' : 'none';
+    });
+    if (['10.º','11.º','12.º'].includes(anoEl.value)) anoEl.value = '';
+  }
+}
+
+// ── Carregar e renderizar programa fixo ──
+async function loadProgramaFixo() {
+  const escola = document.getElementById('prog-escola').value.trim();
+  const ano    = document.getElementById('prog-ano').value.trim();
+  const turma  = document.getElementById('prog-turma').value.trim().toUpperCase();
+  const area   = document.getElementById('prog-grid-area');
+
+  if (!escola || !ano) {
+    area.innerHTML = '<div class="prog-empty">Seleciona pelo menos a escola e o ano.</div>';
+    return;
+  }
+
+  area.innerHTML = '<div class="prog-loading">A carregar...</div>';
+
+  const r = await apiGet({ action:'getTurmaInscricoes', escola, year: ano, turma });
+  if (!r || !r.ok) {
+    area.innerHTML = '<div class="prog-empty">Erro ao carregar. Tenta novamente.</div>';
+    return;
+  }
+  programaFixo      = r.programaFixo  || [];
+  inscricoesLivres  = r.inscricoes    || [];
+  renderProgGrid(escola, ano, turma);
+}
+
+function renderProgGrid(escola, ano, turma) {
+  const area = document.getElementById('prog-grid-area');
+
+  const DAYS_GRID = ['d22','d23','d24'];
+
+  // Pré-calcular rowspan para cada evento em cada dia
+  // Para cada (day, slotIndex) → { ev, rowspan } ou null (slot consumido por rowspan anterior)
+  // estrutura: cellMap[day][slotIndex] = 'event'|'skip'|'empty'
+  const cellMap = {};
+  DAYS_GRID.forEach(day => {
+    cellMap[day] = {};
+    TIME_SLOTS.forEach((time, ti) => {
+      // Procurar evento fixo ou livre neste slot
+      const evFixo = programaFixo.find(p =>
+        String(p.day)===day && normalizeTime(String(p.time))===normalizeTime(time)
+      );
+      const evLivre = !evFixo && inscricoesLivres.find(p =>
+        String(p.day)===day && normalizeTime(String(p.time))===normalizeTime(time)
+      );
+      const ev = evFixo || evLivre;
+      if (ev) {
+        const dur = parseDuracao(ev.duracao || ev.duration || '');
+        const evStartMin = timeToMin(time);
+        const evEndMin = dur > 0 ? evStartMin + dur : evStartMin + 1; // sem duração: ocupa só 1 slot
+
+        // Calcular quantos slots cobre
+        let rowspan = 1;
+        if (dur > 0) {
+          for (let j = ti + 1; j < TIME_SLOTS.length; j++) {
+            const nextMin = timeToMin(TIME_SLOTS[j]);
+            if (nextMin < evEndMin) rowspan++;
+            else break;
+          }
+        }
+
+        cellMap[day][ti] = { type: ev === evFixo ? 'fixo' : 'livre', ev, rowspan };
+
+        // Marcar slots seguintes como consumidos
+        for (let j = ti + 1; j < ti + rowspan; j++) {
+          cellMap[day][j] = { type: 'skip' };
+        }
+      } else if (!cellMap[day][ti]) {
+        cellMap[day][ti] = { type: 'empty' };
+      }
+    });
+  });
+
+  let html = `
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot fixo"></div>Atividade fixa</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green-bg);border:1px solid rgba(46,125,94,0.3);"></div>Inscrição livre</div>
+    <span style="font-family:monospace;font-size:11px;color:var(--text3)">Clica num slot vazio para adicionar uma atividade</span>
+  </div>
+  <div class="prog-grid-wrap">
+  <table class="prog-grid">
+    <thead>
+      <tr>
+        <th>Hora</th>
+        <th class="day-col">22 março 2027</th>
+        <th class="day-col">23 março 2027</th>
+        <th class="day-col">24 março 2027</th>
+      </tr>
+    </thead>
+    <tbody>`;
+
+  TIME_SLOTS.forEach((time, ti) => {
+    html += `<tr><td class="time-cell">${TIME_LABELS[ti]}</td>`;
+    DAYS_GRID.forEach(day => {
+      const cell = cellMap[day][ti];
+      if (!cell || cell.type === 'skip') {
+        // Este slot está coberto por um rowspan acima — não renderizar <td>
+        return;
+      }
+      if (cell.type === 'fixo') {
+        const ev = cell.ev;
+        const rs = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : '';
+        const durLabel = ev.duracao ? `<span style="display:block;font-size:10px;color:var(--text3);font-family:monospace;margin-top:3px">${escHtml(formatDuracao(parseDuracao(ev.duracao)))}</span>` : '';
+        html += `<td${rs}><div class="slot-cell has-event" style="height:100%">
+          <div class="slot-event">
+            <div class="slot-event-name">${escHtml(String(ev.descricao||ev.name||''))}${durLabel}</div>
+            <button class="slot-event-del" onclick="delProgramaFixo('${escHtml(String(ev.id))}',event)" title="Remover">✕</button>
+          </div>
+        </div></td>`;
+      } else if (cell.type === 'livre') {
+        const ev = cell.ev;
+        const rs = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : '';
+        const durLabel = ev.duracao ? `<span style="display:block;font-size:10px;color:var(--text3);font-family:monospace;margin-top:3px">${escHtml(formatDuracao(parseDuracao(ev.duracao)))}</span>` : '';
+        html += `<td${rs}><div class="slot-cell has-event" style="height:100%">
+          <div class="slot-event" style="background:var(--green-bg);border-color:rgba(46,125,94,0.3);">
+            <div class="slot-event-name" style="color:var(--green);">${escHtml(String(ev.name||''))}${durLabel}</div>
+          </div>
+        </div></td>`;
+      } else {
+        // Slot vazio
+        html += `<td><div class="slot-cell" onclick="openModal('${escHtml(escola)}','${escHtml(ano)}','${escHtml(turma)}','${day}','${time}')">
+          <div class="slot-empty-hint">+ adicionar</div>
+        </div></td>`;
+      }
+    });
+    html += `</tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+  area.innerHTML = html;
+}
+
+function normalizeTime(t) {
+  // Normaliza "08:30", "8:30", "8h30" → "08:30"
+  if (!t) return '';
+  t = String(t).replace('h',':').trim();
+  const parts = t.split(':');
+  if (parts.length === 2) {
+    return parts[0].padStart(2,'0') + ':' + parts[1].padStart(2,'0');
+  }
+  return t;
+}
+
+function parseDuracao(dur) {
+  // Converte "2h00", "1h30", "45m", "90min" → minutos
+  // Corrige typos: o/b → 0
+  if (!dur) return 0;
+  const s = String(dur).trim().toLowerCase().replace(/[ob]/g, '0');
+  const hm = s.match(/^(\d+)h(\d+)?/);
+  if (hm) return parseInt(hm[1])*60 + parseInt(hm[2]||'0');
+  const m = s.match(/^(\d+)\s*m/);
+  if (m) return parseInt(m[1]);
+  const n = s.match(/^(\d+)$/);
+  if (n) return parseInt(n[1]);
+  return 0;
+}
+
+function formatDuracao(min) {
+  if (!min) return '';
+  const h = Math.floor(min/60), m = min%60;
+  return h > 0 ? `${h}h${String(m).padStart(2,'0')}` : `${m}m`;
+}
+
+function normalizeDuracaoInput(el) {
+  const min = parseDuracao(el.value);
+  if (min > 0) el.value = formatDuracao(min);
+}
+
+function timeToMin(t) {
+  // "08:30" → 510
+  const [h,m] = normalizeTime(t).split(':').map(Number);
+  return h*60 + m;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ── Modal ──
+function openModal(escola, ano, turma, day, time) {
+  modalPending = { escola, ano, turma, day, time };
+  const dayLabel = DAYS.find(d=>d.key===day)?.full || day;
+  const timeLabel = TIME_LABELS[TIME_SLOTS.indexOf(time)] || time;
+  document.getElementById('modal-sub').textContent =
+    (turma ? ano + ' ' + turma : ano) + ' · ' + escola + ' · ' + dayLabel + ' · ' + timeLabel;
+  document.getElementById('modal-descricao').value = '';
+  document.getElementById('modal-duracao').value = '';
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('modal-descricao').focus(), 80);
+}
+
+function modalClose() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  modalPending = null;
+}
+
+async function modalConfirm() {
+  if (!modalPending) return;
+  const descricao = document.getElementById('modal-descricao').value.trim();
+  if (!descricao) { document.getElementById('modal-descricao').focus(); return; }
+  const duracao = document.getElementById('modal-duracao').value.trim();
+
+  const item = {
+    id: 'pf_' + Date.now() + '_' + Math.random().toString(36).slice(2,5),
+    escola:    modalPending.escola,
+    ano:       modalPending.ano,
+    turma:     modalPending.turma,
+    day:       modalPending.day,
+    time:      modalPending.time,
+    descricao: descricao,
+    duracao:   duracao
+  };
+
+  modalClose();
+  programaFixo.push(item);
+  const escola = item.escola, ano = item.ano, turma = item.turma;
+  renderProgGrid(escola, ano, turma);
+
+  const r = await api('addProgramaFixo', { item });
+  if (!r || !r.ok) {
+    toast('⚠ Erro ao guardar. Recarrega e tenta novamente.');
+    programaFixo = programaFixo.filter(p=>p.id!==item.id);
+    renderProgGrid(escola, ano, turma);
+  } else {
+    toast('Atividade adicionada ✓');
+  }
+}
+
+async function delProgramaFixo(itemId, e) {
+  e.stopPropagation();
+  if (!confirm('Remover esta atividade?')) return;
+  const escola = document.getElementById('prog-escola').value;
+  const ano    = document.getElementById('prog-ano').value;
+  const turma  = document.getElementById('prog-turma').value.toUpperCase();
+  programaFixo = programaFixo.filter(p=>String(p.id)!==String(itemId));
+  renderProgGrid(escola, ano, turma);
+  await apiGet({ action:'deleteProgramaFixo', itemId });
+  toast('Atividade removida');
+}
+
+// Fechar modal com Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') modalClose();
+});
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) modalClose();
+});
+
+// ── SECÇÃO EVENTOS (código original) ──
+function renderTabs() {
+  const el=document.getElementById('day-tabs'); el.innerHTML='';
+  DAYS.forEach(d=>{
+    const b=document.createElement('button');
+    b.className='day-tab'+(d.key===activeDay?' active':'');
+    b.textContent=d.label;
+    b.onclick=()=>{activeDay=d.key;renderTabs();renderSpaces();};
+    el.appendChild(b);
+  });
+}
+
+function getTimeStr(spaceId) {
+  const hh=String(Math.min(23,Math.max(0,parseInt(document.getElementById('th-'+spaceId).value)||0))).padStart(2,'0');
+  const mm=String(Math.min(59,Math.max(0,parseInt(document.getElementById('tm-'+spaceId).value)||0))).padStart(2,'0');
+  return hh+':'+mm;
+}
+
+function checkConflict(spaceId) {
+  const time=getTimeStr(spaceId);
+  const alertEl=document.getElementById('conflict-'+spaceId);
+  const sameSpaceConflict=events.filter(e=>e.day===activeDay&&e.spaceId===spaceId&&e.time===time);
+  const otherSpaceConflict=events.filter(e=>e.day===activeDay&&e.spaceId!==spaceId&&e.time===time);
+  if (sameSpaceConflict.length>0) {
+    alertEl.textContent='🚫 Já existe um evento às '+time+' neste espaço: "'+sameSpaceConflict[0].name+'"';
+    alertEl.classList.add('show');
+  } else if (otherSpaceConflict.length>0) {
+    const names=otherSpaceConflict.map(e=>{const sp=SPACES.find(s=>s.id===e.spaceId);return '"'+e.name+'" ('+(sp?.name||'')+')';}).join(', ');
+    alertEl.textContent='⚠ Atenção: já existem eventos às '+time+' noutros espaços: '+names;
+    alertEl.classList.add('show');
+  } else {
+    alertEl.classList.remove('show');
+  }
+}
+
+function hasBlockingConflict(spaceId, time) {
+  return events.some(e=>e.day===activeDay&&e.spaceId===spaceId&&e.time===time);
+}
+
+function renderSpaces() {
+  const c=document.getElementById('spaces-container'); c.innerHTML='';
+  SPACES.forEach(space=>{
+    const evs=events.filter(e=>e.day===activeDay&&e.spaceId===space.id).sort((a,b)=>(a.order||0)-(b.order||0));
+    const totalReg=evs.reduce((s,e)=>s+(parseInt(e.registrations)||0),0);
+    const isOpen=openCards[space.id+activeDay];
+    const card=document.createElement('div');
+    card.className='space-card'+(isOpen?' open':'');
+
+    const head=document.createElement('div'); head.className='space-head';
+    head.innerHTML=`<span class="space-name">${space.name}</span><div class="space-right"><span class="space-stats">${evs.length} evento${evs.length!==1?'s':''} · ${totalReg} insc.</span><span class="space-cap-tag">${space.cap} pax</span><span class="chevron">▼</span></div>`;
+    head.onclick=()=>{openCards[space.id+activeDay]=!isOpen;renderSpaces();};
+    card.appendChild(head);
+
+    const body=document.createElement('div'); body.className='space-body';
+    const evSec=document.createElement('div'); evSec.className='events-section';
+
+    if (evs.length===0) {
+      evSec.innerHTML='<div class="no-events">// sem eventos para este dia</div>';
+    } else {
+      evSec.innerHTML='<div class="drag-hint">↕ arrasta para reordenar</div>';
+      evs.forEach(ev=>{
+        const reg=parseInt(ev.registrations)||0;
+        const pct=ev.maxPax>0?Math.round(reg/ev.maxPax*100):0;
+        const bc=pct>=100?'badge-full':pct>=80?'badge-warn':'badge-ok';
+        const bl=pct>=100?'ESGOTADO':`${reg}/${ev.maxPax}`;
+        const row=document.createElement('div');
+        row.className='ev-row'; row.draggable=true; row.dataset.evId=ev.id;
+
+        const topRow=document.createElement('div'); topRow.className='ev-row-top';
+        topRow.innerHTML=`<span class="drag-handle" title="Arrastar">⠿</span><span class="ev-time">${ev.time||'--:--'}${ev.duracao?`<span style="font-weight:400;font-size:10px;color:var(--text3);margin-left:4px">${formatDuracao(parseDuracao(ev.duracao))}</span>`:''}</span><span class="ev-name">${ev.name}</span><span class="ev-badge ${bc}">${bl}</span><button class="ev-del" onclick="delEvent('${ev.id}')">✕</button>`;
+        row.appendChild(topRow);
+
+        if (ev.synopsis) {
+          const syn=document.createElement('div'); syn.className='ev-synopsis';
+          syn.textContent=ev.synopsis;
+          row.appendChild(syn);
+        }
+
+        row.addEventListener('dragstart',e=>{dragSrcId=ev.id;e.dataTransfer.effectAllowed='move';setTimeout(()=>row.classList.add('dragging'),0);});
+        row.addEventListener('dragend',()=>row.classList.remove('dragging'));
+        row.addEventListener('dragover',e=>{e.preventDefault();row.classList.add('drag-over');});
+        row.addEventListener('dragleave',()=>row.classList.remove('drag-over'));
+        row.addEventListener('drop',e=>{e.preventDefault();row.classList.remove('drag-over');if(dragSrcId&&dragSrcId!==ev.id)reorderEvents(dragSrcId,ev.id,space.id);});
+        evSec.appendChild(row);
+      });
+    }
+    body.appendChild(evSec);
+
+    const totalEvPax=evs.reduce((s,e)=>s+(parseInt(e.maxPax)||0),0);
+    if (evs.length>0) {
+      const pct=Math.min(Math.round(totalReg/(totalEvPax||1)*100),100);
+      const fc=pct>=100?'fill-over':pct>=80?'fill-warn':'fill-ok';
+      const bar=document.createElement('div'); bar.className='occ-bar';
+      bar.innerHTML=`<div class="occ-fill ${fc}" style="width:${pct}%"></div>`;
+      body.appendChild(bar);
+    }
+
+    const form=document.createElement('div'); form.className='add-form';
+    form.innerHTML=`
+      <div class="add-form-title">→ Adicionar evento</div>
+      <div class="conflict-alert" id="conflict-${space.id}"></div>
+      <div class="form-row">
+        <div class="fg fg-xs"><label class="fl">Hora</label><input type="number" class="fi" placeholder="09" min="0" max="23" id="th-${space.id}" oninput="checkConflict('${space.id}')"></div>
+        <div class="time-sep">:</div>
+        <div class="fg fg-xs"><label class="fl">Min</label><input type="number" class="fi" placeholder="00" min="0" max="59" id="tm-${space.id}" oninput="checkConflict('${space.id}')"></div>
+        <div class="fg fg-lg"><label class="fl">Nome da atividade</label><input type="text" class="fi fi-text" placeholder="Ex: Visita guiada" id="n-${space.id}"></div>
+        <div class="fg fg-md"><label class="fl">Vagas máx.</label><input type="number" class="fi" placeholder="${space.cap}" min="1" max="${space.cap}" id="p-${space.id}"></div>
+        <div class="fg fg-xs"><label class="fl">Duração</label><input type="text" class="fi fi-text" placeholder="1h30" id="dur-${space.id}" style="text-align:center" onblur="normalizeDuracaoInput(this)"></div>
+        <div class="fg fg-md"><label class="fl">Ciclo</label><select class="fi fi-select" id="ciclo-${space.id}"><option value="">Todos</option><option value="2">2.º ciclo (5.º/6.º)</option><option value="3">3.º ciclo (7.º-9.º)</option><option value="sec">Secundário (10.º-12.º)</option></select></div>
+        <button class="btn-add" onclick="addEvent('${space.id}')">+ Adicionar</button>
+      </div>
+      <div class="form-row form-row-full">
+        <div class="fg fg-full">
+          <label class="fl">+ Informação / Sinopse (opcional)</label>
+          <textarea class="fi fi-area fi-text" placeholder="Descrição breve do evento, artistas, programa..." id="syn-${space.id}"></textarea>
+        </div>
+      </div>`;
+    body.appendChild(form);
+    card.appendChild(body);
+    c.appendChild(card);
+  });
+}
+
+async function addEvent(spaceId) {
+  const name=document.getElementById('n-'+spaceId).value.trim();
+  const time=getTimeStr(spaceId);
+  const synopsis=document.getElementById('syn-'+spaceId).value.trim();
+  const duracao=document.getElementById('dur-'+spaceId).value.trim();
+  const ciclo=document.getElementById('ciclo-'+spaceId).value;
+  const pax=parseInt(document.getElementById('p-'+spaceId).value)||SPACES.find(s=>s.id===spaceId).cap;
+  if (!name){toast('Escreve o nome da atividade');return;}
+  if (hasBlockingConflict(spaceId, time)) {
+    toast('🚫 Já existe um evento às '+time+' neste espaço!');
+    return;
+  }
+  const order=events.filter(e=>e.day===activeDay&&e.spaceId===spaceId).length;
+  const ev={id:'ev_'+Date.now()+'_'+Math.random().toString(36).slice(2,5),day:activeDay,spaceId,time,name,synopsis,duracao,ciclo,maxPax:pax,registrations:0,order};
+  events.push(ev); save(); openCards[spaceId+activeDay]=true;
+  await api('addEvent',{event:ev});
+  toast('Evento adicionado ✓'); renderSpaces();
+}
+
+async function delEvent(evId) {
+  if (!confirm('Remover este evento?')) return;
+  events=events.filter(e=>e.id!==evId); save();
+  await api('deleteEvent',{eventId:evId});
+  toast('Evento removido'); renderSpaces();
+}
+
+async function reorderEvents(srcId,targetId,spaceId) {
+  const dayEvs=events.filter(e=>e.day===activeDay&&e.spaceId===spaceId).sort((a,b)=>(a.order||0)-(b.order||0));
+  const si=dayEvs.findIndex(e=>e.id===srcId), ti=dayEvs.findIndex(e=>e.id===targetId);
+  if (si<0||ti<0) return;
+  const [moved]=dayEvs.splice(si,1); dayEvs.splice(ti,0,moved);
+  dayEvs.forEach((e,i)=>{const ev=events.find(ev=>ev.id===e.id);if(ev)ev.order=i;});
+  save(); await api('reorderEvents',{dayEvs:dayEvs.map((e,i)=>({id:e.id,order:i}))});
+  renderSpaces();
+}
+
+load();
+
+// ── PANORAMAS ──
+let panoramasInited = false;
+function initPanoramas() {
+  if (!panoramasInited) { panoramasInited = true; }
+}
+
+function switchPanTab(tab) {
+  document.getElementById('ptab-espaco').classList.toggle('active', tab==='espaco');
+  document.getElementById('ptab-escola').classList.toggle('active', tab==='escola');
+  document.getElementById('pan-espaco').style.display = tab==='espaco' ? 'block' : 'none';
+  document.getElementById('pan-escola').style.display = tab==='escola' ? 'block' : 'none';
+}
+
+async function loadPanoramaEspaco() {
+  const espaco = document.getElementById('pan-espaco-sel').value;
+  const res = document.getElementById('pan-espaco-result');
+  if (!espaco) { res.innerHTML=''; return; }
+  res.innerHTML = '<div class="pan-loading">A carregar…</div>';
+
+  // Filtrar eventos locais por espaço
+  const space = SPACES.find(s => s.name === espaco);
+  if (!space) { res.innerHTML='<div class="pan-empty">Espaço não encontrado.</div>'; return; }
+
+  let html = '';
+  let totalEvs = 0;
+  DAYS.forEach(day => {
+    const dayEvs = events.filter(e => e.spaceId === space.id && e.day === day.key)
+      .sort((a,b) => (a.time||'').localeCompare(b.time||''));
+    if (!dayEvs.length) return;
+    totalEvs += dayEvs.length;
+    html += `<div class="pan-day-block"><div class="pan-day-title">${day.full}</div>`;
+    dayEvs.forEach(ev => {
+      const reg = parseInt(ev.registrations)||0;
+      const pct = ev.maxPax>0 ? Math.round(reg/ev.maxPax*100) : 0;
+      const badge = pct>=100 ? 'ESGOTADO' : `${reg}/${ev.maxPax} pax`;
+      const badgeStyle = pct>=100 ? 'background:var(--red-bg);color:var(--red)' : pct>=80 ? 'background:var(--amber-bg);color:var(--amber)' : '';
+      html += `<div class="pan-ev-row">
+        <span class="pan-ev-time">${ev.time||'—'}</span>
+        <span class="pan-ev-name">${escHtml(ev.name||'')}${ev.synopsis?`<div style="font-size:11px;color:var(--text3);font-style:italic;margin-top:2px">${escHtml(ev.synopsis)}</div>`:''}</span>
+        ${ev.duracao?`<span class="pan-ev-dur">${escHtml(formatDuracao(parseDuracao(ev.duracao)))}</span>`:''}
+        <span class="pan-ev-badge" style="${badgeStyle}">${badge}</span>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  if (!totalEvs) html = '<div class="pan-empty">Nenhuma atividade registada neste espaço.</div>';
+  res.innerHTML = html;
+}
+
+async function loadPanoramaEscola() {
+  const escola = document.getElementById('pan-escola-sel').value;
+  const res = document.getElementById('pan-escola-result');
+  if (!escola) { res.innerHTML=''; return; }
+  res.innerHTML = '<div class="pan-loading">A carregar…</div>';
+
+  // Buscar todas as inscrições e programa fixo desta escola via API
+  const r = await apiGet({ action:'getEscolaPanorama', escola });
+  if (!r || !r.turmas) {
+    res.innerHTML = '<div class="pan-empty">Não foi possível carregar os dados.</div>';
+    return;
+  }
+
+  const turmas = r.turmas; // [{turma, ano, items:[{day,time,name,tipo,duracao}]}]
+  if (!turmas.length) {
+    res.innerHTML = '<div class="pan-empty">Nenhuma turma com atividades registadas.</div>';
+    return;
+  }
+
+  // Ordenar turmas por ano + turma
+  const anoOrder = ['5.º','6.º','7.º','8.º','9.º','10.º','11.º','12.º'];
+  turmas.sort((a,b) => {
+    const ai = anoOrder.indexOf(a.ano), bi = anoOrder.indexOf(b.ano);
+    if (ai !== bi) return ai - bi;
+    return (a.turma||'').localeCompare(b.turma||'');
+  });
+
+  let html = '<div class="escola-grid">';
+  turmas.forEach(t => {
+    const label = t.turma ? `${t.ano} ${t.turma}` : t.ano;
+    html += `<div class="turma-card"><div class="turma-card-head"><div class="turma-card-title">${escHtml(label)}</div></div><div class="turma-card-body">`;
+    if (!t.items || !t.items.length) {
+      html += `<div class="turma-no-ev">Sem atividades</div>`;
+    } else {
+      // Ordenar por dia + hora
+      const dayOrder = {'d22':0,'d23':1,'d24':2};
+      t.items.sort((a,b) => {
+        const dd = (dayOrder[a.day]||0)-(dayOrder[b.day]||0);
+        if (dd) return dd;
+        return (a.time||'').localeCompare(b.time||'');
+      });
+      t.items.forEach(ev => {
+        const dayLabel = DAYS.find(d=>d.key===ev.day)?.label || ev.day;
+        const dotClass = ev.tipo==='fixo' ? 'fixo' : 'livre';
+        html += `<div class="turma-ev-item">
+          <div class="turma-ev-dot ${dotClass}"></div>
+          <span class="turma-ev-day">${dayLabel}</span>
+          <span class="turma-ev-time">${ev.time||'—'}</span>
+          <span class="turma-ev-name">${escHtml(ev.name||ev.descricao||'')}${ev.duracao?`<span style="font-size:10px;color:var(--text3);margin-left:4px">${escHtml(formatDuracao(parseDuracao(ev.duracao)))}</span>`:''}</span>
+        </div>`;
+      });
+    }
+    html += `</div></div>`;
+  });
+  html += '</div>';
+  res.innerHTML = html;
+}
+</script>
+</body>
+</html>
