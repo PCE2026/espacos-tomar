@@ -147,11 +147,10 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .slot-cell { min-height: 52px; padding: 6px; position: relative; cursor: pointer; transition: background .15s; }
 .slot-cell:hover { background: var(--surface3); }
 .slot-cell.has-event { cursor: default; }
-.slot-cell.slot-blocked { background: repeating-linear-gradient(45deg, var(--surface2), var(--surface2) 4px, var(--surface3) 4px, var(--surface3) 8px); cursor: not-allowed; opacity: 0.6; }
 .slot-cell.has-event:hover { background: transparent; }
 .slot-empty-hint { font-family: monospace; font-size: 10px; color: var(--text3); opacity: 0; transition: opacity .15s; text-align: center; padding: 16px 0 10px; }
 .slot-cell:hover .slot-empty-hint { opacity: 1; }
-.slot-event { background: var(--blue-bg); border: 1px solid rgba(96,165,250,0.3); border-radius: 6px; padding: 6px 8px; position: relative; }
+.slot-event { background: var(--blue-bg); border: 1px solid rgba(96,165,250,0.3); border-radius: 6px; padding: 6px 8px; position: relative; height: 100%; }
 .slot-event-name { font-size: 12px; color: var(--blue); line-height: 1.4; }
 .slot-event-del { position: absolute; top: 4px; right: 4px; background: none; border: none; color: var(--text3); cursor: pointer; font-size: 11px; padding: 2px 4px; border-radius: 4px; transition: all .15s; line-height: 1; }
 .slot-event-del:hover { color: var(--red); background: var(--red-bg); }
@@ -482,6 +481,50 @@ async function loadProgramaFixo() {
 function renderProgGrid(escola, ano, turma) {
   const area = document.getElementById('prog-grid-area');
 
+  const DAYS_GRID = ['d22','d23','d24'];
+
+  // Pré-calcular rowspan para cada evento em cada dia
+  // Para cada (day, slotIndex) → { ev, rowspan } ou null (slot consumido por rowspan anterior)
+  // estrutura: cellMap[day][slotIndex] = 'event'|'skip'|'empty'
+  const cellMap = {};
+  DAYS_GRID.forEach(day => {
+    cellMap[day] = {};
+    TIME_SLOTS.forEach((time, ti) => {
+      // Procurar evento fixo ou livre neste slot
+      const evFixo = programaFixo.find(p =>
+        String(p.day)===day && normalizeTime(String(p.time))===normalizeTime(time)
+      );
+      const evLivre = !evFixo && inscricoesLivres.find(p =>
+        String(p.day)===day && normalizeTime(String(p.time))===normalizeTime(time)
+      );
+      const ev = evFixo || evLivre;
+      if (ev) {
+        const dur = parseDuracao(ev.duracao || ev.duration || '');
+        const evStartMin = timeToMin(time);
+        const evEndMin = dur > 0 ? evStartMin + dur : evStartMin + 1; // sem duração: ocupa só 1 slot
+
+        // Calcular quantos slots cobre
+        let rowspan = 1;
+        if (dur > 0) {
+          for (let j = ti + 1; j < TIME_SLOTS.length; j++) {
+            const nextMin = timeToMin(TIME_SLOTS[j]);
+            if (nextMin < evEndMin) rowspan++;
+            else break;
+          }
+        }
+
+        cellMap[day][ti] = { type: ev === evFixo ? 'fixo' : 'livre', ev, rowspan };
+
+        // Marcar slots seguintes como consumidos
+        for (let j = ti + 1; j < ti + rowspan; j++) {
+          cellMap[day][j] = { type: 'skip' };
+        }
+      } else if (!cellMap[day][ti]) {
+        cellMap[day][ti] = { type: 'empty' };
+      }
+    });
+  });
+
   let html = `
   <div class="legend">
     <div class="legend-item"><div class="legend-dot fixo"></div>Atividade fixa</div>
@@ -502,32 +545,33 @@ function renderProgGrid(escola, ano, turma) {
 
   TIME_SLOTS.forEach((time, ti) => {
     html += `<tr><td class="time-cell">${TIME_LABELS[ti]}</td>`;
-    ['d22','d23','d24'].forEach(day => {
-      // Procurar primeiro em atividades fixas, depois em inscrições livres
-      const evFixo = programaFixo.find(p =>
-        String(p.day)===day &&
-        normalizeTime(String(p.time))===normalizeTime(time)
-      );
-      const evLivre = inscricoesLivres.find(p =>
-        String(p.day)===day &&
-        normalizeTime(String(p.time))===normalizeTime(time)
-      );
-      if (evFixo) {
-        html += `<td><div class="slot-cell has-event">
+    DAYS_GRID.forEach(day => {
+      const cell = cellMap[day][ti];
+      if (!cell || cell.type === 'skip') {
+        // Este slot está coberto por um rowspan acima — não renderizar <td>
+        return;
+      }
+      if (cell.type === 'fixo') {
+        const ev = cell.ev;
+        const rs = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : '';
+        const durLabel = ev.duracao ? `<span style="display:block;font-size:10px;color:var(--text3);font-family:monospace;margin-top:3px">${escHtml(String(ev.duracao))}</span>` : '';
+        html += `<td${rs}><div class="slot-cell has-event" style="height:100%">
           <div class="slot-event">
-            <div class="slot-event-name">${escHtml(String(evFixo.descricao||evFixo.name||''))}${evFixo.duracao?`<span style="display:block;font-size:10px;color:var(--text3);font-family:monospace;margin-top:3px">${escHtml(String(evFixo.duracao))}</span>`:''}</div>
-            <button class="slot-event-del" onclick="delProgramaFixo('${escHtml(String(evFixo.id))}',event)" title="Remover">✕</button>
+            <div class="slot-event-name">${escHtml(String(ev.descricao||ev.name||''))}${durLabel}</div>
+            <button class="slot-event-del" onclick="delProgramaFixo('${escHtml(String(ev.id))}',event)" title="Remover">✕</button>
           </div>
         </div></td>`;
-      } else if (evLivre) {
-        html += `<td><div class="slot-cell has-event">
+      } else if (cell.type === 'livre') {
+        const ev = cell.ev;
+        const rs = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : '';
+        const durLabel = ev.duracao ? `<span style="display:block;font-size:10px;color:var(--text3);font-family:monospace;margin-top:3px">${escHtml(String(ev.duracao))}</span>` : '';
+        html += `<td${rs}><div class="slot-cell has-event" style="height:100%">
           <div class="slot-event" style="background:var(--green-bg);border-color:rgba(46,125,94,0.3);">
-            <div class="slot-event-name" style="color:var(--green);">${escHtml(String(evLivre.name||''))}${evLivre.duracao?`<span style="display:block;font-size:10px;color:var(--text3);font-family:monospace;margin-top:3px">${escHtml(String(evLivre.duracao))}</span>`:''}</div>
+            <div class="slot-event-name" style="color:var(--green);">${escHtml(String(ev.name||''))}${durLabel}</div>
           </div>
         </div></td>`;
-      } else if (isSlotBlocked(day, time, programaFixo) || isSlotBlocked(day, time, inscricoesLivres)) {
-        html += `<td><div class="slot-cell slot-blocked" title="Ocupado pela atividade anterior"></div></td>`;
       } else {
+        // Slot vazio
         html += `<td><div class="slot-cell" onclick="openModal('${escHtml(escola)}','${escHtml(ano)}','${escHtml(turma)}','${day}','${time}')">
           <div class="slot-empty-hint">+ adicionar</div>
         </div></td>`;
@@ -553,33 +597,33 @@ function normalizeTime(t) {
 
 function parseDuracao(dur) {
   // Converte "2h00", "1h30", "45m", "90min" → minutos
+  // Corrige typos: o/b → 0
   if (!dur) return 0;
-  const s = String(dur).trim().toLowerCase();
+  const s = String(dur).trim().toLowerCase().replace(/[ob]/g, '0');
   const hm = s.match(/^(\d+)h(\d+)?/);
   if (hm) return parseInt(hm[1])*60 + parseInt(hm[2]||'0');
   const m = s.match(/^(\d+)\s*m/);
   if (m) return parseInt(m[1]);
+  const n = s.match(/^(\d+)$/);
+  if (n) return parseInt(n[1]);
   return 0;
+}
+
+function formatDuracao(min) {
+  if (!min) return '';
+  const h = Math.floor(min/60), m = min%60;
+  return h > 0 ? `${h}h${String(m).padStart(2,'0')}` : `${m}m`;
+}
+
+function normalizeDuracaoInput(el) {
+  const min = parseDuracao(el.value);
+  if (min > 0) el.value = formatDuracao(min);
 }
 
 function timeToMin(t) {
   // "08:30" → 510
   const [h,m] = normalizeTime(t).split(':').map(Number);
   return h*60 + m;
-}
-
-// Devolve true se o slot `slotTime` está coberto por alguma atividade noutro slot do mesmo dia
-function isSlotBlocked(day, slotTime, fonte) {
-  return fonte.some(ev => {
-    if (String(ev.day) !== day) return false;
-    const dur = parseDuracao(ev.duracao || ev.duration || '');
-    if (!dur) return false;
-    const evStart = timeToMin(String(ev.time));
-    const evEnd   = evStart + dur;
-    const slotMin = timeToMin(slotTime);
-    // Bloqueia slots que comecem DENTRO do período da atividade (mas não o slot de início)
-    return slotMin > evStart && slotMin < evEnd;
-  });
 }
 
 function escHtml(s) {
@@ -763,7 +807,7 @@ function renderSpaces() {
         <div class="fg fg-xs"><label class="fl">Min</label><input type="number" class="fi" placeholder="00" min="0" max="59" id="tm-${space.id}" oninput="checkConflict('${space.id}')"></div>
         <div class="fg fg-lg"><label class="fl">Nome da atividade</label><input type="text" class="fi fi-text" placeholder="Ex: Visita guiada" id="n-${space.id}"></div>
         <div class="fg fg-md"><label class="fl">Vagas máx.</label><input type="number" class="fi" placeholder="${space.cap}" min="1" max="${space.cap}" id="p-${space.id}"></div>
-        <div class="fg fg-xs"><label class="fl">Duração</label><input type="text" class="fi fi-text" placeholder="1h30" id="dur-${space.id}" style="text-align:center"></div>
+        <div class="fg fg-xs"><label class="fl">Duração</label><input type="text" class="fi fi-text" placeholder="1h30" id="dur-${space.id}" style="text-align:center" onblur="normalizeDuracaoInput(this)"></div>
         <div class="fg fg-md"><label class="fl">Ciclo</label><select class="fi fi-select" id="ciclo-${space.id}"><option value="">Todos</option><option value="2">2.º ciclo (5.º/6.º)</option><option value="3">3.º ciclo (7.º-9.º)</option><option value="sec">Secundário (10.º-12.º)</option></select></div>
         <button class="btn-add" onclick="addEvent('${space.id}')">+ Adicionar</button>
       </div>
