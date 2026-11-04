@@ -554,7 +554,7 @@ function renderProgGrid(escola, ano, turma) {
       if (cell.type === 'fixo') {
         const ev = cell.ev;
         const rs = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : '';
-        const durLabel = ev.duracao ? `<span style="display:block;font-size:10px;color:var(--text3);font-family:monospace;margin-top:3px">${escHtml(String(ev.duracao))}</span>` : '';
+        const durLabel = ev.duracao ? `<span style="display:block;font-size:10px;color:var(--text3);font-family:monospace;margin-top:3px">${escHtml(formatDuracao(parseDuracao(ev.duracao)))}</span>` : '';
         html += `<td${rs}><div class="slot-cell has-event" style="height:100%">
           <div class="slot-event">
             <div class="slot-event-name">${escHtml(String(ev.descricao||ev.name||''))}${durLabel}</div>
@@ -564,7 +564,7 @@ function renderProgGrid(escola, ano, turma) {
       } else if (cell.type === 'livre') {
         const ev = cell.ev;
         const rs = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : '';
-        const durLabel = ev.duracao ? `<span style="display:block;font-size:10px;color:var(--text3);font-family:monospace;margin-top:3px">${escHtml(String(ev.duracao))}</span>` : '';
+        const durLabel = ev.duracao ? `<span style="display:block;font-size:10px;color:var(--text3);font-family:monospace;margin-top:3px">${escHtml(formatDuracao(parseDuracao(ev.duracao)))}</span>` : '';
         html += `<td${rs}><div class="slot-cell has-event" style="height:100%">
           <div class="slot-event" style="background:var(--green-bg);border-color:rgba(46,125,94,0.3);">
             <div class="slot-event-name" style="color:var(--green);">${escHtml(String(ev.name||''))}${durLabel}</div>
@@ -769,7 +769,7 @@ function renderSpaces() {
         row.className='ev-row'; row.draggable=true; row.dataset.evId=ev.id;
 
         const topRow=document.createElement('div'); topRow.className='ev-row-top';
-        topRow.innerHTML=`<span class="drag-handle" title="Arrastar">⠿</span><span class="ev-time">${ev.time||'--:--'}${ev.duracao?`<span style="font-weight:400;font-size:10px;color:var(--text3);margin-left:4px">${ev.duracao}</span>`:''}</span><span class="ev-name">${ev.name}</span><span class="ev-badge ${bc}">${bl}</span><button class="ev-del" onclick="delEvent('${ev.id}')">✕</button>`;
+        topRow.innerHTML=`<span class="drag-handle" title="Arrastar">⠿</span><span class="ev-time">${ev.time||'--:--'}${ev.duracao?`<span style="font-weight:400;font-size:10px;color:var(--text3);margin-left:4px">${formatDuracao(parseDuracao(ev.duracao))}</span>`:''}</span><span class="ev-name">${ev.name}</span><span class="ev-badge ${bc}">${bl}</span><button class="ev-del" onclick="delEvent('${ev.id}')">✕</button>`;
         row.appendChild(topRow);
 
         if (ev.synopsis) {
@@ -900,7 +900,7 @@ async function loadPanoramaEspaco() {
       html += `<div class="pan-ev-row">
         <span class="pan-ev-time">${ev.time||'—'}</span>
         <span class="pan-ev-name">${escHtml(ev.name||'')}${ev.synopsis?`<div style="font-size:11px;color:var(--text3);font-style:italic;margin-top:2px">${escHtml(ev.synopsis)}</div>`:''}</span>
-        ${ev.duracao?`<span class="pan-ev-dur">${escHtml(ev.duracao)}</span>`:''}
+        ${ev.duracao?`<span class="pan-ev-dur">${escHtml(formatDuracao(parseDuracao(ev.duracao)))}</span>`:''}
         <span class="pan-ev-badge" style="${badgeStyle}">${badge}</span>
       </div>`;
     });
@@ -958,7 +958,7 @@ async function loadPanoramaEscola() {
           <div class="turma-ev-dot ${dotClass}"></div>
           <span class="turma-ev-day">${dayLabel}</span>
           <span class="turma-ev-time">${ev.time||'—'}</span>
-          <span class="turma-ev-name">${escHtml(ev.name||ev.descricao||'')}${ev.duracao?`<span style="font-size:10px;color:var(--text3);margin-left:4px">${escHtml(ev.duracao)}</span>`:''}</span>
+          <span class="turma-ev-name">${escHtml(ev.name||ev.descricao||'')}${ev.duracao?`<span style="font-size:10px;color:var(--text3);margin-left:4px">${escHtml(formatDuracao(parseDuracao(ev.duracao)))}</span>`:''}</span>
         </div>`;
       });
     }
