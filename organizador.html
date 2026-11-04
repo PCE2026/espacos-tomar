@@ -150,7 +150,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .slot-cell.has-event:hover { background: transparent; }
 .slot-empty-hint { font-family: monospace; font-size: 10px; color: var(--text3); opacity: 0; transition: opacity .15s; text-align: center; padding: 16px 0 10px; }
 .slot-cell:hover .slot-empty-hint { opacity: 1; }
-.slot-event { background: var(--blue-bg); border: 1px solid rgba(96,165,250,0.3); border-radius: 6px; padding: 6px 8px; position: relative; height: 100%; }
+.slot-event { background: #c8dff0; border: 1px solid rgba(26,92,138,0.3); border-radius: 6px; padding: 6px 8px; position: relative; height: 100%; }
 .slot-event-name { font-size: 12px; color: var(--blue); line-height: 1.4; }
 .slot-event-del { position: absolute; top: 4px; right: 4px; background: none; border: none; color: var(--text3); cursor: pointer; font-size: 11px; padding: 2px 4px; border-radius: 4px; transition: all .15s; line-height: 1; }
 .slot-event-del:hover { color: var(--red); background: var(--red-bg); }
@@ -180,7 +180,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .legend { display: flex; gap: 16px; margin-bottom: 1rem; flex-wrap: wrap; }
 .legend-item { display: flex; align-items: center; gap: 6px; font-family: monospace; font-size: 11px; color: var(--text3); }
 .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
-.legend-dot.fixo { background: var(--blue-bg); border: 1px solid rgba(96,165,250,0.3); }
+.legend-dot.fixo { background: #c8dff0; border: 1px solid rgba(26,92,138,0.3); }
 
 @media (max-width:500px) { .form-row { flex-direction: column; } .fg-xs,.fg-md,.fg-lg { width:100%; } .prog-controls { flex-direction: column; } .prog-controls .fg, .prog-controls .fg-xs { min-width: 100%; } }
 
@@ -528,7 +528,7 @@ function renderProgGrid(escola, ano, turma) {
   let html = `
   <div class="legend">
     <div class="legend-item"><div class="legend-dot fixo"></div>Atividade fixa</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--green-bg);border:1px solid rgba(46,125,94,0.3);"></div>Inscrição livre</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fde8c8;border:1px solid rgba(180,100,20,0.3);"></div>Inscrição livre</div>
     <span style="font-family:monospace;font-size:11px;color:var(--text3)">Clica num slot vazio para adicionar uma atividade</span>
   </div>
   <div class="prog-grid-wrap">
@@ -566,8 +566,8 @@ function renderProgGrid(escola, ano, turma) {
         const rs = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : '';
         const durLabel = ev.duracao ? `<span style="display:block;font-size:10px;color:var(--text3);font-family:monospace;margin-top:3px">${escHtml(formatDuracao(parseDuracao(ev.duracao)))}</span>` : '';
         html += `<td${rs}><div class="slot-cell has-event" style="height:100%">
-          <div class="slot-event" style="background:var(--green-bg);border-color:rgba(46,125,94,0.3);">
-            <div class="slot-event-name" style="color:var(--green);">${escHtml(String(ev.name||''))}${durLabel}</div>
+          <div class="slot-event" style="background:#fde8c8;border-color:rgba(180,100,20,0.3);">
+            <div class="slot-event-name" style="color:#a05a10;">${escHtml(String(ev.name||''))}${durLabel}</div>
           </div>
         </div></td>`;
       } else {
