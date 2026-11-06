@@ -555,7 +555,7 @@ function renderProgGrid(escola, ano, turma) {
         const ev = cell.ev;
         const rs = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : '';
         const durLabel = ev.duracao ? `<span style="display:block;font-size:10px;color:var(--blue);font-family:monospace;margin-top:4px;font-weight:600">⏱ Duração: ${escHtml(formatDuracao(parseDuracao(ev.duracao)))}</span>` : '';
-        html += `<td${rs} style="background:#c8dff0;"><div class="slot-cell has-event" style="height:100%">
+        html += `<td${rs} style="background:#c8dff0;border:2px solid rgba(26,92,138,0.5);border-radius:6px;padding:4px;"><div class="slot-cell has-event" style="height:100%">
           <div class="slot-event">
             <div class="slot-event-name">${escHtml(String(ev.descricao||ev.name||''))}${durLabel}</div>
             <button class="slot-event-del" onclick="delProgramaFixo('${escHtml(String(ev.id))}',event)" title="Remover">✕</button>
@@ -565,7 +565,7 @@ function renderProgGrid(escola, ano, turma) {
         const ev = cell.ev;
         const rs = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : '';
         const durLabel = ev.duracao ? `<span style="display:block;font-size:10px;color:#a05a10;font-family:monospace;margin-top:4px;font-weight:600">⏱ Duração: ${escHtml(formatDuracao(parseDuracao(ev.duracao)))}</span>` : '';
-        html += `<td${rs} style="background:#fde8c8;"><div class="slot-cell has-event" style="height:100%">
+        html += `<td${rs} style="background:#fde8c8;border:2px solid rgba(180,100,20,0.5);border-radius:6px;padding:4px;"><div class="slot-cell has-event" style="height:100%">
           <div class="slot-event" style="background:#fde8c8;border:2px solid rgba(180,100,20,0.5);box-shadow:0 2px 6px rgba(180,100,20,0.15);">
             <div class="slot-event-name" style="color:#a05a10;">${escHtml(String(ev.name||''))}${durLabel}</div>
           </div>
