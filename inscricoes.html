@@ -632,7 +632,8 @@ function renderPrograma() {
     const livresEscola = livres.filter(e => {
       const ciclo = (e.ciclo || '').toString().trim().toLowerCase();
       if (ciclo === 'sec') return escola === secundarioEscola;
-      return true; // sem ciclo ou 2.º/3.º ciclo → todas
+      if (ciclo === '2' || ciclo === '3') return escola !== secundarioEscola;
+      return true; // sem ciclo → todas
     }).map(e => ({ ...e, _escola: escola }));
 
     // Atividades fixas desta escola (inclui wildcards sem escola específica)
@@ -662,7 +663,7 @@ function renderPrograma() {
         const cicloTag = !isFixo && ev.ciclo ? `<span style="font-size:11px;color:var(--text3);font-family:monospace;margin-left:6px">${ev.ciclo === 'sec' ? 'Secundário' : ev.ciclo + '.º ciclo'}</span>` : '';
         html += `<div class="prog-ev-row${isFixo?' fixo':''}">
           <span class="prog-ev-time">${ev.time || '—'}</span>
-          <span class="prog-ev-name">${ev.name}${cicloTag}${turmaInfo ? `<span style="font-size:12px;color:var(--text3);font-family:monospace"> ${turmaInfo}</span>` : ''}${ev.duracao ? `<span style="display:block;font-size:11px;color:var(--text3);font-family:monospace;margin-top:3px">⏱ Duração: ${formatDuracao(parseDuracao(ev.duracao))}</span>` : ''}</span>
+          <span class="prog-ev-name">${ev.name||ev.descricao||''}${cicloTag}${turmaInfo ? `<span style="font-size:12px;color:var(--text3);font-family:monospace"> ${turmaInfo}</span>` : ''}${ev.duracao ? `<span style="display:block;font-size:11px;color:var(--text3);font-family:monospace;margin-top:3px">⏱ Duração: ${formatDuracao(parseDuracao(ev.duracao))}</span>` : ''}</span>
           ${!isFixo && space ? `<span class="prog-ev-space">📍 ${space.name}</span>` : ''}
           <span class="prog-ev-tipo ${isFixo?'prog-tipo-fixo':'prog-tipo-livre'}">${isFixo?'Outras':'Lotação'}</span>
         </div>`;
@@ -794,7 +795,7 @@ async function consultarDT() {
         const isFixo = ev.tipo === 'fixo';
         html += `<div class="dt-event-row${isFixo?' fixo':''}">
           <span class="dt-event-time">${ev.time || '—'}</span>
-          <span class="dt-event-name">${ev.name}${ev.duracao ? `<span style="display:block;font-size:11px;color:var(--text3);font-family:monospace;margin-top:3px">⏱ Duração: ${formatDuracao(parseDuracao(ev.duracao))}</span>` : ''}</span>
+          <span class="dt-event-name">${ev.name||ev.descricao||''}${ev.duracao ? `<span style="display:block;font-size:11px;color:var(--text3);font-family:monospace;margin-top:3px">⏱ Duração: ${formatDuracao(parseDuracao(ev.duracao))}</span>` : ''}</span>
           ${!isFixo && space ? `<span class="dt-event-space">📍 ${space.name}</span>` : ''}
           <span class="dt-event-tipo ${isFixo?'tipo-fixo':'tipo-livre'}">${isFixo?'Outras':'Lotação'}</span>
         </div>`;
