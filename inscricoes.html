@@ -60,12 +60,19 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .site-title { font-size: 19px; font-weight: 400; color: var(--text); }
 .site-title strong { font-weight: 700; color: var(--accent); }
 .site-dates { font-size: 13px; color: var(--text3); font-family: monospace; margin-top: 3px; }
-.btn-programa { background: var(--green-bg); border: 2px solid var(--green); border-radius: var(--radius); padding: 9px 18px; font-size: 14px; font-family: monospace; color: var(--green-dark); cursor: pointer; transition: all .15s; white-space: nowrap; font-weight: 700; }
-.btn-programa:hover { background: var(--green); color: #fff; }
-.btn-programa.active { background: var(--green-dark); border-color: var(--green-dark); color: #fff; }
-.btn-consulta-dt { background: var(--yellow-bg); border: 2px solid var(--yellow); border-radius: var(--radius); padding: 9px 18px; font-size: 14px; font-family: monospace; color: var(--yellow-dark); cursor: pointer; transition: all .15s; white-space: nowrap; font-weight: 700; }
-.btn-consulta-dt:hover { background: var(--yellow); }
-.btn-consulta-dt.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+/* ── Menu inicial ── */
+.home-menu { display: flex; flex-direction: column; align-items: center; gap: 16px; max-width: 480px; margin: 3rem auto; padding: 0 1.5rem; }
+.home-menu-title { font-size: 15px; font-family: monospace; color: var(--text3); margin-bottom: 8px; text-align: center; }
+.home-btn { width: 100%; display: flex; align-items: center; gap: 18px; background: var(--surface); border: 2px solid var(--border2); border-radius: var(--radius-lg); padding: 20px 24px; cursor: pointer; transition: all .18s; text-align: left; }
+.home-btn:hover { border-color: var(--accent); background: var(--accent-light); transform: translateX(4px); }
+.home-btn-icon { font-size: 28px; flex-shrink: 0; }
+.home-btn-text { display: flex; flex-direction: column; gap: 3px; }
+.home-btn-label { font-size: 15px; font-family: monospace; font-weight: 700; color: var(--text); }
+.home-btn-desc { font-size: 12px; font-family: monospace; color: var(--text3); }
+/* ── Back button ── */
+.back-bar { max-width: 920px; margin: 1rem auto 0; padding: 0 1.5rem; }
+.back-btn { background: none; border: none; font-family: monospace; font-size: 13px; color: var(--text3); cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 6px 0; transition: color .15s; }
+.back-btn:hover { color: var(--accent); }
 
 /* Steps */
 .steps-wrap { background: var(--surface); border-bottom: 1px solid var(--border); }
@@ -282,15 +289,52 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
       <div class="site-title"><strong>12.ª Semana Cultural</strong> — Tomar</div>
       <div class="site-dates">22 · 23 · 24 de março de 2027</div>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn-programa" id="btn-toggle-prog" onclick="togglePrograma()">🗓️ Programa</button>
-      <button class="btn-programa" id="btn-toggle-perg" onclick="togglePergunta()">❓</button>
-      <button class="btn-consulta-dt" id="btn-toggle-dt" onclick="toggleConsultaDT()">📋 Consulta Turmas</button>
-    </div>
   </div>
 </div>
 
-<div class="steps-wrap" id="steps-wrap">
+<!-- ── Menu inicial ── -->
+<div id="home-menu">
+  <div class="home-menu">
+    <div class="home-menu-title">O que pretendes fazer?</div>
+    <button class="home-btn" onclick="showTab('programa')">
+      <span class="home-btn-icon">🗓️</span>
+      <span class="home-btn-text">
+        <span class="home-btn-label">Programa</span>
+        <span class="home-btn-desc">Ver todas as atividades da Semana Cultural</span>
+      </span>
+    </button>
+    <button class="home-btn" onclick="showTab('turmas')">
+      <span class="home-btn-icon">📋</span>
+      <span class="home-btn-text">
+        <span class="home-btn-label">Consulta por Turmas</span>
+        <span class="home-btn-desc">Ver o programa de uma turma específica</span>
+      </span>
+    </button>
+    <button class="home-btn" onclick="showTab('inscricao')">
+      <span class="home-btn-icon">✏️</span>
+      <span class="home-btn-text">
+        <span class="home-btn-label">Inscrição em Atividades</span>
+        <span class="home-btn-desc">Inscrever a tua turma em atividades com lotação limitada</span>
+      </span>
+    </button>
+    <button class="home-btn" onclick="showTab('duvidas')">
+      <span class="home-btn-icon">❓</span>
+      <span class="home-btn-text">
+        <span class="home-btn-label">Dúvidas — Contactar PCE</span>
+        <span class="home-btn-desc">Enviar uma pergunta ao Projeto Cultural de Escola</span>
+      </span>
+    </button>
+  </div>
+</div>
+
+<!-- ── Barra de voltar ── -->
+<div id="back-bar" style="display:none">
+  <div class="back-bar">
+    <button class="back-btn" onclick="showMenu()">← Voltar ao menu</button>
+  </div>
+</div>
+
+<div class="steps-wrap" id="steps-wrap" style="display:none">
   <div class="steps-inner">
     <div class="step-item active" id="si0"><div class="step-num">1</div><div class="step-label">Ano</div></div>
     <div class="step-line"></div>
@@ -358,7 +402,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 
 <!-- Step 1 -->
 <!-- Ecrã 0: escolha do ano -->
-<div id="step0-content">
+<div id="step0-content" style="display:none">
   <div class="loading-state" id="loading-state">A carregar atividades...</div>
   <div id="step0-layout" style="display:none;max-width:480px;margin:4rem auto;padding:0 1rem">
     <div class="form-card">
@@ -485,6 +529,64 @@ const SPACES = [
 
 let events=[], selected=[], activeFilter='d22';
 let dtMode = false, progMode = false;
+
+function showMenu() {
+  document.getElementById('home-menu').style.display = 'block';
+  document.getElementById('back-bar').style.display = 'none';
+  document.getElementById('programa-content').style.display = 'none';
+  document.getElementById('consulta-dt-content').style.display = 'none';
+  document.getElementById('form-pergunta').style.display = 'none';
+  document.getElementById('steps-wrap').style.display = 'none';
+  document.getElementById('step0-content').style.display = 'none';
+  const s1 = document.getElementById('step1-content');
+  const s2 = document.getElementById('step2-content');
+  const s3 = document.getElementById('step3-content');
+  const bb = document.getElementById('bottom-bar');
+  if (s1) s1.style.display = 'none';
+  if (s2) s2.style.display = 'none';
+  if (s3) s3.style.display = 'none';
+  if (bb) bb.style.display = 'none';
+  progMode = false; dtMode = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showTab(tab) {
+  // esconder menu, mostrar barra de voltar
+  document.getElementById('home-menu').style.display = 'none';
+  document.getElementById('back-bar').style.display = 'block';
+
+  // esconder tudo
+  document.getElementById('programa-content').style.display = 'none';
+  document.getElementById('consulta-dt-content').style.display = 'none';
+  document.getElementById('form-pergunta').style.display = 'none';
+  document.getElementById('steps-wrap').style.display = 'none';
+  document.getElementById('step0-content').style.display = 'none';
+  const s1 = document.getElementById('step1-content');
+  const s2 = document.getElementById('step2-content');
+  const s3 = document.getElementById('step3-content');
+  const bb = document.getElementById('bottom-bar');
+  if (s1) s1.style.display = 'none';
+  if (s2) s2.style.display = 'none';
+  if (s3) s3.style.display = 'none';
+  if (bb) bb.style.display = 'none';
+
+  if (tab === 'programa') {
+    document.getElementById('programa-content').style.display = 'block';
+    progMode = true; dtMode = false;
+    if (!progData) loadPrograma();
+  } else if (tab === 'turmas') {
+    document.getElementById('consulta-dt-content').style.display = 'block';
+    dtMode = true; progMode = false;
+  } else if (tab === 'inscricao') {
+    document.getElementById('steps-wrap').style.display = 'block';
+    document.getElementById('step0-content').style.display = 'block';
+    if (bb) bb.style.display = 'block';
+    progMode = false; dtMode = false;
+  } else if (tab === 'duvidas') {
+    document.getElementById('form-pergunta').style.display = 'block';
+    progMode = false; dtMode = false;
+  }
+}
 let progData = null, progEscolaFiltro = 'todas';
 
 const ESCOLAS = ['Jácome Ratton','Gualdim Pais','Santa Iria'];
@@ -1095,8 +1197,6 @@ async function submitForm() {
 function resetAll() {
   selected=[]; activeFilter='d22';
   ['step3-content','step2-content','step1-content'].forEach(id => document.getElementById(id).style.display='none');
-  document.getElementById('bottom-bar').style.display = 'none';
-  document.getElementById('step0-content').style.display = 'block';
   document.getElementById('si0').className = 'step-item active';
   document.getElementById('si1').className = 'step-item';
   document.getElementById('si2').className = 'step-item';
@@ -1106,6 +1206,7 @@ function resetAll() {
   document.getElementById('s1-year-hint').textContent = '';
   document.getElementById('step0-error').style.display = 'none';
   updateBottomBar();
+  showMenu();
 }
 
 function toggleInfo(e, id) {
