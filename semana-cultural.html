@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12.ª Semana Cultural — Tomar 2027</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #052e38;
+  --surface: #0a3d4a;
+  --surface2: #0e4d5c;
+  --surface3: #125f72;
+  --accent: #2bbfcc;
+  --accent2: #5dd8e2;
+  --gold: #f5c842;
+  --gold2: #fde98a;
+  --text: #e4f8fa;
+  --text2: #9adde4;
+  --text3: #5aabb5;
+  --green: #4ecb8d;
+  --orange: #f5a623;
+  --pink: #e06fa0;
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+
+body {
+  font-family: 'Georgia', serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  position: relative;
+  background: radial-gradient(ellipse at 50% 0%, #0e6070 0%, #052e38 65%);
+  overflow: hidden;
+}
+
+/* partículas decorativas */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(74,159,212,0.15) 1px, transparent 1px),
+    radial-gradient(circle, rgba(245,200,66,0.08) 1px, transparent 1px);
+  background-size: 60px 60px, 90px 90px;
+  background-position: 0 0, 30px 30px;
+  animation: drift 20s linear infinite;
+  pointer-events: none;
+}
+@keyframes drift { from { transform: translateY(0); } to { transform: translateY(-60px); } }
+
+.hero-badge {
+  display: inline-block;
+  background: rgba(74,159,212,0.15);
+  border: 1px solid rgba(74,159,212,0.4);
+  border-radius: 999px;
+  padding: 6px 18px;
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--accent2);
+  letter-spacing: 0.08em;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+}
+
+.hero-question {
+  font-size: clamp(28px, 6vw, 56px);
+  font-weight: normal;
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: 1rem;
+  opacity: 0;
+  animation: fadeUp .8s ease .3s forwards;
+}
+
+.hero-question em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.hero-answer {
+  font-size: clamp(14px, 2.5vw, 20px);
+  color: var(--text2);
+  max-width: 540px;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: fadeUp .8s ease .7s forwards;
+}
+
+.hero-answer strong {
+  color: var(--accent2);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── COUNTDOWN ── */
+.countdown-wrap {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: fadeUp .8s ease 1s forwards;
+  flex-wrap: wrap;
+}
+
+.countdown-box {
+  background: var(--surface2);
+  border: 1px solid rgba(74,159,212,0.25);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  min-width: 72px;
+  text-align: center;
+}
+
+.countdown-num {
+  font-family: monospace;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  display: block;
+}
+
+.countdown-label {
+  font-family: monospace;
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+  display: block;
+}
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--gold);
+  color: #0d1f35;
+  font-family: monospace;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 14px 32px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition: all .2s;
+  text-decoration: none;
+  opacity: 0;
+  animation: fadeUp .8s ease 1.3s forwards;
+}
+
+.hero-cta:hover {
+  background: var(--gold2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(245,200,66,0.3);
+}
+
+.hero-dates {
+  margin-top: 2rem;
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--text3);
+  opacity: 0;
+  animation: fadeUp .8s ease 1.5s forwards;
+}
+
+/* ── PROGRAMA ── */
+#programa-section {
+  display: none;
+  padding: 3rem 1rem 4rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.prog-back {
+  background: none;
+  border: 1px solid rgba(74,159,212,0.3);
+  color: var(--text2);
+  font-family: monospace;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2rem;
+  transition: all .15s;
+}
+.prog-back:hover { background: rgba(74,159,212,0.1); color: var(--accent2); }
+
+.prog-title {
+  font-size: 28px;
+  color: var(--text);
+  margin-bottom: .4rem;
+}
+.prog-sub {
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--text3);
+  margin-bottom: 2rem;
+}
+
+/* filtros escola */
+.prog-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+.pf-btn {
+  font-family: monospace;
+  font-size: 12px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(74,159,212,0.3);
+  background: var(--surface2);
+  color: var(--text2);
+  cursor: pointer;
+  transition: all .15s;
+}
+.pf-btn:hover { border-color: var(--accent); color: var(--accent2); }
+.pf-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* filtros dia */
+.day-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid rgba(74,159,212,0.15);
+}
+.day-tab {
+  font-family: monospace;
+  font-size: 13px;
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all .15s;
+  margin-bottom: -2px;
+}
+.day-tab:hover { color: var(--text2); }
+.day-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* escola block */
+.escola-block {
+  margin-bottom: 2rem;
+}
+.escola-title {
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent2);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(74,159,212,0.2);
+}
+
+/* cards atividade */
+.ev-card {
+  background: var(--surface2);
+  border: 1px solid rgba(74,159,212,0.15);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  transition: border-color .15s;
+}
+.ev-card:hover { border-color: rgba(74,159,212,0.4); }
+.ev-card.livre { border-left: 3px solid var(--orange); }
+.ev-card.fixo  { border-left: 3px solid var(--accent); }
+
+.ev-time {
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--gold);
+  white-space: nowrap;
+  min-width: 42px;
+  margin-top: 2px;
+}
+.ev-info { flex: 1; }
+.ev-name {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+.ev-meta {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--text3);
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ev-tag {
+  background: rgba(74,159,212,0.1);
+  border: 1px solid rgba(74,159,212,0.2);
+  border-radius: 4px;
+  padding: 2px 7px;
+}
+.ev-tag.livre { background: rgba(245,166,35,0.1); border-color: rgba(245,166,35,0.3); color: var(--orange); }
+.ev-tag.fixo  { background: rgba(74,159,212,0.1); border-color: rgba(74,159,212,0.3); color: var(--accent2); }
+
+.prog-loading {
+  text-align: center;
+  padding: 4rem;
+  font-family: monospace;
+  font-size: 14px;
+  color: var(--text3);
+}
+.prog-empty {
+  text-align: center;
+  padding: 3rem;
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--text3);
+  background: var(--surface2);
+  border-radius: var(--radius);
+}
+
+/* ── FOOTER ── */
+.site-footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--text3);
+  border-top: 1px solid rgba(74,159,212,0.1);
+}
+
+@media (max-width: 500px) {
+  .countdown-box { min-width: 60px; padding: 12px 14px; }
+  .countdown-num { font-size: 28px; }
+  .day-tab { padding: 10px 12px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<section class="hero" id="hero-section">
+  <div class="hero-badge">Agrupamento de Escolas Templários de Tomar</div>
+
+  <h1 class="hero-question">
+    E tu, <em>o que vais fazer?</em>
+  </h1>
+
+  <p class="hero-answer">
+    Na <strong>12.ª Semana Cultural</strong>, és tu que fazes a programação.<br>
+    3 dias. Dezenas de atividades com os teus convidados!
+  </p>
+
+  <div class="countdown-wrap">
+    <div class="countdown-box"><span class="countdown-num" id="cd-dias">--</span><span class="countdown-label">dias</span></div>
+    <div class="countdown-box"><span class="countdown-num" id="cd-horas">--</span><span class="countdown-label">horas</span></div>
+    <div class="countdown-box"><span class="countdown-num" id="cd-min">--</span><span class="countdown-label">minutos</span></div>
+    <div class="countdown-box"><span class="countdown-num" id="cd-seg">--</span><span class="countdown-label">segundos</span></div>
+  </div>
+
+  <button class="hero-cta" onclick="abrirPrograma()">
+    Ver o programa →
+  </button>
+
+  <p class="hero-dates">22 · 23 · 24 de março de 2027 &nbsp;·&nbsp; 2.º ciclo · 3.º ciclo · Secundário</p>
+</section>
+
+<!-- ── PROGRAMA ── -->
+<section id="programa-section">
+  <button class="prog-back" onclick="voltarHero()">← Voltar</button>
+
+  <div class="prog-title">🗓️ Programa da Semana Cultural</div>
+  <div class="prog-sub">Todas as atividades — por escola e por dia</div>
+
+  <div class="prog-filters" id="prog-filters">
+    <button class="pf-btn active" onclick="filtrarEscola('todas',this)">Todas as escolas</button>
+    <button class="pf-btn" onclick="filtrarEscola('Jácome Ratton',this)">Jácome Ratton</button>
+    <button class="pf-btn" onclick="filtrarEscola('Gualdim Pais',this)">Gualdim Pais</button>
+    <button class="pf-btn" onclick="filtrarEscola('Santa Iria',this)">Santa Iria</button>
+  </div>
+
+  <div class="day-tabs">
+    <button class="day-tab active" id="dt-d22" onclick="filtrarDia('d22',this)">22 mar</button>
+    <button class="day-tab" id="dt-d23" onclick="filtrarDia('d23',this)">23 mar</button>
+    <button class="day-tab" id="dt-d24" onclick="filtrarDia('d24',this)">24 mar</button>
+  </div>
+
+  <div id="prog-content"><div class="prog-loading">A carregar programa...</div></div>
+</section>
+
+<footer class="site-footer">
+  Agrupamento de Escolas Templários de Tomar<br>12.ª Semana Cultural 2027
+</footer>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP2hhejRgth5XYCqYGt58TLpip6PDHJihCZmXm4MfB1NPOXcqMqdOVtvsplj1iCfh-/exec";
+
+const DAYS = [
+  { key: 'd22', label: '22 de março de 2027' },
+  { key: 'd23', label: '23 de março de 2027' },
+  { key: 'd24', label: '24 de março de 2027' },
+];
+
+const ESCOLAS = ['Jácome Ratton', 'Gualdim Pais', 'Santa Iria'];
+const secundarioEscola = 'Jácome Ratton';
+
+let progData = null;
+let activeDay = 'd22';
+let activeEscola = 'todas';
+
+// ── Countdown ──
+function updateCountdown() {
+  const target = new Date('2027-03-22T08:30:00');
+  const now = new Date();
+  const diff = target - now;
+  if (diff <= 0) {
+    ['cd-dias','cd-horas','cd-min','cd-seg'].forEach(id => document.getElementById(id).textContent = '00');
+    return;
+  }
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cd-dias').textContent  = String(d).padStart(2,'0');
+  document.getElementById('cd-horas').textContent = String(h).padStart(2,'0');
+  document.getElementById('cd-min').textContent   = String(m).padStart(2,'0');
+  document.getElementById('cd-seg').textContent   = String(s).padStart(2,'0');
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+// ── Navegação ──
+function abrirPrograma() {
+  document.getElementById('hero-section').style.display = 'none';
+  document.getElementById('programa-section').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (!progData) carregarPrograma();
+  else renderPrograma();
+}
+
+function voltarHero() {
+  document.getElementById('programa-section').style.display = 'none';
+  document.getElementById('hero-section').style.display = 'flex';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Filtros ──
+function filtrarEscola(escola, btn) {
+  activeEscola = escola;
+  document.querySelectorAll('.pf-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPrograma();
+}
+
+function filtrarDia(dia, btn) {
+  activeDay = dia;
+  document.querySelectorAll('.day-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPrograma();
+}
+
+// ── Carregar dados ──
+async function carregarPrograma() {
+  try {
+    const [rEv, rProg] = await Promise.all([
+      fetch(SCRIPT_URL + '?action=getEvents&t=' + Date.now(), { cache:'no-cache' }),
+      fetch(SCRIPT_URL + '?action=getProgramaFixo&t=' + Date.now(), { cache:'no-cache' })
+    ]);
+    const dEv   = await rEv.json();
+    const dProg = await rProg.json();
+    progData = {
+      livres: (dEv.events || []),
+      fixos:  (dProg.programa || [])
+    };
+  } catch(e) {
+    document.getElementById('prog-content').innerHTML = '<div class="prog-empty">Não foi possível carregar o programa. Tenta mais tarde.</div>';
+    return;
+  }
+  renderPrograma();
+}
+
+// ── Helpers ──
+function parseDuracao(val) {
+  if (!val) return 0;
+  const s = String(val).trim();
+  const hm = s.match(/^(\d+)h(\d+)$/i);
+  if (hm) return parseInt(hm[1])*60 + parseInt(hm[2]);
+  const ho = s.match(/^(\d+)h$/i);
+  if (ho) return parseInt(ho[1])*60;
+  const mo = s.match(/^(\d+)m$/i);
+  if (mo) return parseInt(mo[1]);
+  const n = parseInt(s);
+  return isNaN(n) ? 0 : n;
+}
+function formatDuracao(min) {
+  if (!min) return '';
+  const h = Math.floor(min/60), m = min%60;
+  if (h && m) return h+'h'+String(m).padStart(2,'0');
+  if (h) return h+'h00';
+  return m+'m';
+}
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Render ──
+function renderPrograma() {
+  const el = document.getElementById('prog-content');
+  if (!progData) { el.innerHTML = '<div class="prog-loading">A carregar...</div>'; return; }
+
+  const { livres, fixos } = progData;
+
+  // filtrar por dia
+  const livresDia = livres.filter(e => e.day === activeDay);
+  const fixosDia  = fixos.filter(e => e.day === activeDay);
+
+  // escolas a mostrar
+  const escolasFiltro = activeEscola === 'todas' ? ESCOLAS : [activeEscola];
+
+  let html = '';
+
+  for (const escola of escolasFiltro) {
+    // filtrar livres por escola e ciclo
+    const livresEscola = livresDia.filter(e => {
+      const ciclo = (e.ciclo||'').toString().trim().toLowerCase();
+      if (ciclo === 'sec') return escola === secundarioEscola;
+      if (ciclo === '2' || ciclo === '3') return escola !== secundarioEscola;
+      return true;
+    });
+
+    // filtrar fixos por escola
+    const fixosEscola = fixosDia.filter(f =>
+      !f.escola || f.escola === escola
+    );
+
+    const todas = [
+      ...livresEscola.map(e => ({ ...e, _tipo: 'livre' })),
+      ...fixosEscola.map(e => ({ ...e, _tipo: 'fixo' }))
+    ].sort((a,b) => (a.time||'').localeCompare(b.time||''));
+
+    if (!todas.length) continue;
+
+    html += `<div class="escola-block">
+      <div class="escola-title">🏫 ${escHtml(escola)}</div>`;
+
+    for (const ev of todas) {
+      const nome = escHtml(ev.name || ev.descricao || '');
+      const dur  = parseDuracao(ev.duracao);
+      const durStr = dur ? `⏱ ${formatDuracao(dur)}` : '';
+      const tipo = ev._tipo;
+      const tipoLabel = tipo === 'livre' ? 'Lotação limitada' : 'Atividade do programa';
+      html += `<div class="ev-card ${tipo}">
+        <div class="ev-time">${escHtml(ev.time||'')}</div>
+        <div class="ev-info">
+          <div class="ev-name">${nome}</div>
+          <div class="ev-meta">
+            ${durStr ? `<span>${durStr}</span>` : ''}
+            <span class="ev-tag ${tipo}">${tipoLabel}</span>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    html += `</div>`;
+  }
+
+  el.innerHTML = html || '<div class="prog-empty">Sem atividades para este dia.</div>';
+}
+</script>
+</body>
+</html>
