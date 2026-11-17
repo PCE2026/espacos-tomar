@@ -1082,18 +1082,31 @@ async function loadPanoramaEscola() {
   let html = '<div class="escola-grid">';
   turmas.forEach(t => {
     const label = t.turma ? `${t.ano} ${t.turma}` : t.ano;
+    // Determinar ciclo desta turma pelo ano
+    const anoCiclo = (ano => {
+      if (['5.º','6.º'].includes(ano)) return '2';
+      if (['7.º','8.º','9.º'].includes(ano)) return '3';
+      if (['10.º','11.º','12.º'].includes(ano)) return 'sec';
+      return '';
+    })(t.ano);
     html += `<div class="turma-card"><div class="turma-card-head"><div class="turma-card-title">${escHtml(label)}</div></div><div class="turma-card-body">`;
-    if (!t.items || !t.items.length) {
+    // Filtrar items cujo ciclo não corresponde ao ano da turma
+    const itemsFiltrados = (t.items||[]).filter(ev => {
+      const ciclEv = (ev.ciclo||'').toString().trim().toLowerCase();
+      if (!ciclEv || ciclEv === 'todos' || ciclEv === 'all') return true;
+      return ciclEv === anoCiclo;
+    });
+    if (!itemsFiltrados.length) {
       html += `<div class="turma-no-ev">Sem atividades</div>`;
     } else {
       // Ordenar por dia + hora
       const dayOrder = {'d22':0,'d23':1,'d24':2};
-      t.items.sort((a,b) => {
+      itemsFiltrados.sort((a,b) => {
         const dd = (dayOrder[a.day]||0)-(dayOrder[b.day]||0);
         if (dd) return dd;
         return (a.time||'').localeCompare(b.time||'');
       });
-      t.items.forEach(ev => {
+      itemsFiltrados.forEach(ev => {
         const dayLabel = DAYS.find(d=>d.key===ev.day)?.label || ev.day;
         const dotClass = ev.tipo==='fixo' ? 'fixo' : 'livre';
         html += `<div class="turma-ev-item">
