@@ -1020,11 +1020,13 @@ function renderEvents() {
   const visible = events
     .filter(e => {
       if (e.day !== activeFilter) return false;
+      // excluir reservados/montagem — não são atividades para inscrição
+      if (e.tipo === 'reservado' || String(e.name||'').startsWith('🔧')) return false;
       const ciclEv = (e.ciclo || '').toString().trim().toLowerCase();
+      // evento com ciclo vazio ou "todos" → disponível para todos
+      if (!ciclEv || ciclEv === 'todos' || ciclEv === 'all') return true;
       // evento com ciclo definido → só mostrar se coincidir
-      if (ciclEv) return ciclEv === cicloDaTurma;
-      // evento sem ciclo → disponível para todos
-      return true;
+      return ciclEv === cicloDaTurma;
     })
     .sort((a,b) => {
       const ao=parseInt(a.order)||0, bo=parseInt(b.order)||0;
@@ -1043,7 +1045,7 @@ function renderEvents() {
     const pct = max>0 ? Math.round(reg/max*100) : 0;
     const isSelected = selected.includes(ev.id);
     const bc = isFull?'badge-full':pct>=80?'badge-warn':'badge-ok';
-    const bl = isFull?'ESGOTADO':`${max-reg} vagas`;
+    const bl = isFull ? (max===0 ? 'Indisponível' : 'ESGOTADO') : `${max-reg} vagas`;
 
     const card = document.createElement('div');
     card.className = 'event-card' + (isSelected?' ev-selected':'') + (isFull?' ev-full':'');
