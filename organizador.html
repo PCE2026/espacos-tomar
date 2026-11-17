@@ -157,7 +157,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .prog-loading { text-align: center; padding: 3rem; font-family: monospace; font-size: 13px; color: var(--text3); }
 .prog-empty { text-align: center; padding: 2rem; font-family: monospace; font-size: 12px; color: var(--text3); background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); }
 
-/* Modal para adicionar atividade fixa */
+/* Modal */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: none; align-items: center; justify-content: center; padding: 1rem; }
 .modal-overlay.open { display: flex; }
 .modal { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 1.5rem; width: 100%; max-width: 420px; }
@@ -172,6 +172,18 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
 .btn-modal-cancel:hover { border-color: var(--text2); }
 .btn-modal-ok { background: var(--accent); color: #0f0f0f; border: none; border-radius: var(--radius); padding: 9px 18px; font-size: 13px; font-weight: 700; font-family: monospace; cursor: pointer; }
 .btn-modal-ok:hover { background: var(--accent2); }
+/* Escolha de tipo no modal */
+.modal-type-btns { display: flex; gap: 10px; margin-bottom: 1.25rem; }
+.modal-type-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 10px; border-radius: var(--radius); border: 2px solid var(--border2); background: var(--surface2); cursor: pointer; transition: all .15s; font-family: monospace; font-size: 12px; color: var(--text2); }
+.modal-type-btn:hover { border-color: var(--accent); color: var(--text); }
+.modal-type-btn.selected-ativ { border-color: var(--accent); background: rgba(74,183,195,0.1); color: var(--text); }
+.modal-type-btn.selected-res { border-color: #e05555; background: rgba(224,85,85,0.1); color: var(--text); }
+.modal-type-btn-icon { font-size: 22px; }
+/* Célula reservada */
+.slot-reservado { background: #fde8e8; border: 2px solid rgba(192,57,43,0.5); border-radius: 6px; padding: 6px 8px; height: 100%; display: flex; align-items: center; gap: 6px; }
+.slot-reservado-label { font-size: 11px; color: #c0392b; font-family: monospace; font-weight: 600; line-height: 1.3; }
+.slot-reservado-del { margin-left: auto; background: none; border: none; color: rgba(192,57,43,0.5); cursor: pointer; font-size: 11px; padding: 2px 4px; border-radius: 4px; transition: all .15s; }
+.slot-reservado-del:hover { color: #c0392b; background: rgba(192,57,43,0.1); }
 
 .toast { position: fixed; bottom: 24px; right: 24px; background: var(--accent); color: #0f0f0f; padding: 10px 18px; border-radius: var(--radius); font-size: 12px; font-family: monospace; font-weight: 700; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 9999; }
 .toast.show { opacity: 1; }
@@ -333,22 +345,55 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
   </div>
 </div>
 
-<!-- Modal para adicionar atividade fixa -->
+<!-- Modal -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
-    <div class="modal-title">Adicionar atividade fixa</div>
+    <div class="modal-title" id="modal-title">O que queres fazer neste slot?</div>
     <div class="modal-sub" id="modal-sub"></div>
-    <div class="modal-field">
-      <label class="modal-label">Descrição da atividade *</label>
-      <input type="text" id="modal-descricao" class="modal-input" placeholder="Ex: Congresso do 9.º ano" onkeydown="if(event.key==='Enter')modalConfirm()">
+
+    <!-- escolha de tipo -->
+    <div id="modal-type-step">
+      <div class="modal-type-btns">
+        <button class="modal-type-btn" id="modal-btn-ativ" onclick="modalSelectType('atividade')">
+          <span class="modal-type-btn-icon">📌</span>
+          Adicionar atividade
+        </button>
+        <button class="modal-type-btn" id="modal-btn-res" onclick="modalSelectType('reservado')">
+          <span class="modal-type-btn-icon">🔧</span>
+          Reservado / montagem
+        </button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="modalClose()">Cancelar</button>
+      </div>
     </div>
-    <div class="modal-field">
-      <label class="modal-label">Duração (opcional)</label>
-      <input type="text" id="modal-duracao" class="modal-input" placeholder="Ex: 1h30" style="max-width:120px">
+
+    <!-- formulário atividade -->
+    <div id="modal-ativ-step" style="display:none">
+      <div class="modal-field">
+        <label class="modal-label">Descrição da atividade *</label>
+        <input type="text" id="modal-descricao" class="modal-input" placeholder="Ex: Congresso do 9.º ano" onkeydown="if(event.key==='Enter')modalConfirm()">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Duração (opcional)</label>
+        <input type="text" id="modal-duracao" class="modal-input" placeholder="Ex: 1h30" style="max-width:120px">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="modalBackToType()">← Voltar</button>
+        <button class="btn-modal-ok" onclick="modalConfirm()">Adicionar ✓</button>
+      </div>
     </div>
-    <div class="modal-actions">
-      <button class="btn-modal-cancel" onclick="modalClose()">Cancelar</button>
-      <button class="btn-modal-ok" onclick="modalConfirm()">Adicionar ✓</button>
+
+    <!-- formulário reservado -->
+    <div id="modal-res-step" style="display:none">
+      <div class="modal-field">
+        <label class="modal-label">Motivo (opcional)</label>
+        <input type="text" id="modal-res-motivo" class="modal-input" placeholder="Ex: Montagem de som" onkeydown="if(event.key==='Enter')modalConfirmReservado()">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="modalBackToType()">← Voltar</button>
+        <button class="btn-modal-ok" style="background:#e05555;" onclick="modalConfirmReservado()">Marcar como reservado 🔧</button>
+      </div>
     </div>
   </div>
 </div>
@@ -382,6 +427,7 @@ let events=[], activeDay='d22', openCards={}, dragSrcId=null;
 let activeTab = 'eventos';
 let programaFixo = [];
 let inscricoesLivres = [];
+let reservados = [];
 let modalPending = null; // {escola, ano, turma, day, time}
 
 // ── Autenticação ──
@@ -529,6 +575,7 @@ function renderProgGrid(escola, ano, turma) {
   <div class="legend">
     <div class="legend-item"><div class="legend-dot fixo"></div>Atividade fixa</div>
     <div class="legend-item"><div class="legend-dot" style="background:#fde8c8;border:1px solid rgba(180,100,20,0.3);"></div>Inscrição livre</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fde8e8;border:1px solid rgba(192,57,43,0.4);"></div>Reservado / montagem</div>
     <span style="font-family:monospace;font-size:11px;color:var(--text3)">Clica num slot vazio para adicionar uma atividade</span>
   </div>
   <div class="prog-grid-wrap">
@@ -554,6 +601,17 @@ function renderProgGrid(escola, ano, turma) {
       if (cell.type === 'fixo') {
         const ev = cell.ev;
         const rs = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : '';
+        const isReservado = ev.tipo === 'reservado' || String(ev.descricao||'').startsWith('🔧');
+        if (isReservado) {
+          const motivo = escHtml(String(ev.descricao||'').replace(/^🔧\s*/,'') || ev.motivo || 'Reservado / Em montagem');
+          html += `<td${rs} style="background:#fde8e8;border:2px solid rgba(192,57,43,0.5);border-radius:6px;padding:4px;"><div class="slot-cell has-event" style="height:100%">
+            <div class="slot-reservado">
+              <span style="font-size:16px">🔧</span>
+              <span class="slot-reservado-label">${motivo}</span>
+              <button class="slot-reservado-del" onclick="delProgramaFixo('${escHtml(String(ev.id))}',event)" title="Remover">✕</button>
+            </div>
+          </div></td>`;
+        } else {
         const durLabel = ev.duracao ? `<span style="display:block;font-size:10px;color:var(--blue);font-family:monospace;margin-top:4px;font-weight:600">⏱ Duração: ${escHtml(formatDuracao(parseDuracao(ev.duracao)))}</span>` : '';
         html += `<td${rs} style="background:#c8dff0;border:2px solid rgba(26,92,138,0.5);border-radius:6px;padding:4px;"><div class="slot-cell has-event" style="height:100%">
           <div class="slot-event">
@@ -561,6 +619,7 @@ function renderProgGrid(escola, ano, turma) {
             <button class="slot-event-del" onclick="delProgramaFixo('${escHtml(String(ev.id))}',event)" title="Remover">✕</button>
           </div>
         </div></td>`;
+        }
       } else if (cell.type === 'livre') {
         const ev = cell.ev;
         const rs = cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : '';
@@ -637,10 +696,36 @@ function openModal(escola, ano, turma, day, time) {
   const timeLabel = TIME_LABELS[TIME_SLOTS.indexOf(time)] || time;
   document.getElementById('modal-sub').textContent =
     (turma ? ano + ' ' + turma : ano) + ' · ' + escola + ' · ' + dayLabel + ' · ' + timeLabel;
+  document.getElementById('modal-title').textContent = 'O que queres fazer neste slot?';
+  document.getElementById('modal-type-step').style.display = 'block';
+  document.getElementById('modal-ativ-step').style.display = 'none';
+  document.getElementById('modal-res-step').style.display = 'none';
+  document.getElementById('modal-btn-ativ').className = 'modal-type-btn';
+  document.getElementById('modal-btn-res').className = 'modal-type-btn';
   document.getElementById('modal-descricao').value = '';
   document.getElementById('modal-duracao').value = '';
+  document.getElementById('modal-res-motivo').value = '';
   document.getElementById('modal-overlay').classList.add('open');
-  setTimeout(()=>document.getElementById('modal-descricao').focus(), 80);
+}
+
+function modalSelectType(tipo) {
+  document.getElementById('modal-type-step').style.display = 'none';
+  if (tipo === 'atividade') {
+    document.getElementById('modal-title').textContent = 'Adicionar atividade fixa';
+    document.getElementById('modal-ativ-step').style.display = 'block';
+    setTimeout(()=>document.getElementById('modal-descricao').focus(), 80);
+  } else {
+    document.getElementById('modal-title').textContent = '🔧 Reservado / Em montagem';
+    document.getElementById('modal-res-step').style.display = 'block';
+    setTimeout(()=>document.getElementById('modal-res-motivo').focus(), 80);
+  }
+}
+
+function modalBackToType() {
+  document.getElementById('modal-title').textContent = 'O que queres fazer neste slot?';
+  document.getElementById('modal-type-step').style.display = 'block';
+  document.getElementById('modal-ativ-step').style.display = 'none';
+  document.getElementById('modal-res-step').style.display = 'none';
 }
 
 function modalClose() {
@@ -677,6 +762,33 @@ async function modalConfirm() {
     renderProgGrid(escola, ano, turma);
   } else {
     toast('Atividade adicionada ✓');
+  }
+}
+
+async function modalConfirmReservado() {
+  if (!modalPending) return;
+  const motivo = document.getElementById('modal-res-motivo').value.trim() || 'Reservado / Em montagem';
+  const item = {
+    id: 'res_' + Date.now() + '_' + Math.random().toString(36).slice(2,5),
+    escola:  modalPending.escola,
+    ano:     modalPending.ano,
+    turma:   modalPending.turma,
+    day:     modalPending.day,
+    time:    modalPending.time,
+    motivo:  motivo,
+    tipo:    'reservado'
+  };
+  modalClose();
+  reservados.push(item);
+  const { escola, ano, turma } = item;
+  renderProgGrid(escola, ano, turma);
+  const r = await api('addProgramaFixo', { item: { ...item, descricao: '🔧 ' + motivo } });
+  if (!r || !r.ok) {
+    toast('⚠ Erro ao guardar. Recarrega e tenta novamente.');
+    reservados = reservados.filter(p=>p.id!==item.id);
+    renderProgGrid(escola, ano, turma);
+  } else {
+    toast('Slot marcado como reservado 🔧');
   }
 }
 
