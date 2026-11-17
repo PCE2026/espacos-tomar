@@ -1091,8 +1091,10 @@ async function loadPanoramaEscola() {
     })(t.ano);
     html += `<div class="turma-card"><div class="turma-card-head"><div class="turma-card-title">${escHtml(label)}</div></div><div class="turma-card-body">`;
     // Filtrar items cujo ciclo não corresponde ao ano da turma
+    // O ciclo não vem na API, por isso cruzamos com os events locais pelo day+time+name
     const itemsFiltrados = (t.items||[]).filter(ev => {
-      const ciclEv = (ev.ciclo||'').toString().trim().toLowerCase();
+      const evLocal = events.find(e => e.day === ev.day && e.time === ev.time && e.name === ev.name);
+      const ciclEv = (evLocal?.ciclo || ev.ciclo || '').toString().trim().toLowerCase();
       if (!ciclEv || ciclEv === 'todos' || ciclEv === 'all') return true;
       return ciclEv === anoCiclo;
     });
