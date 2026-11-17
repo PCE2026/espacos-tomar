@@ -1081,8 +1081,11 @@ function updateBottomBar() {
 
 function goToStep2() {
   if (!selected.length) return;
-  // Copiar ano do passo 1 para o campo readonly do passo 2
+  // Copiar ano e turma do passo 0 para os campos do passo 2
   document.getElementById('r-year').value = document.getElementById('s1-year').value;
+  const turmaVal = (document.getElementById('s1-turma').value || '').trim().toUpperCase();
+  const rClass = document.getElementById('r-class');
+  if (turmaVal) { rClass.value = turmaVal; rClass.readOnly = true; rClass.style.background='var(--surface2)'; rClass.style.color='var(--text2)'; rClass.style.cursor='default'; }
   document.getElementById('step1-content').style.display = 'none';
   document.getElementById('bottom-bar').style.display = 'none';
   document.getElementById('step2-content').style.display = 'block';
@@ -1215,8 +1218,9 @@ function resetAll() {
   document.getElementById('si1').className = 'step-item';
   document.getElementById('si2').className = 'step-item';
   document.getElementById('si3').className = 'step-item';
-  ['r-name','r-email','r-companion','r-school','r-year','r-class','r-students'].forEach(id => document.getElementById(id).value='');
+  ['r-name','r-email','r-companion','r-school','r-year','r-class','r-students'].forEach(id => { const el=document.getElementById(id); el.value=''; el.readOnly=false; el.style.background=''; el.style.color=''; el.style.cursor=''; });
   document.getElementById('s1-year').value = '';
+  document.getElementById('s1-turma').value = '';
   document.getElementById('s1-year-hint').textContent = '';
   document.getElementById('step0-error').style.display = 'none';
   updateBottomBar();
