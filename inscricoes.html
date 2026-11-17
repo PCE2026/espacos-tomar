@@ -288,6 +288,7 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
     <div class="site-header-left">
       <div class="site-title"><strong>12.ª Semana Cultural</strong> — Tomar</div>
       <div class="site-dates">22 · 23 · 24 de março de 2027</div>
+      <div style="font-family:monospace;font-size:12px;color:var(--text2);margin-top:3px;font-weight:600;letter-spacing:0.03em;">2.º ciclo · 3.º ciclo · Secundário</div>
     </div>
   </div>
 </div>
@@ -407,17 +408,23 @@ body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text);
   <div id="step0-layout" style="display:none;max-width:480px;margin:4rem auto;padding:0 1rem">
     <div class="form-card">
       <div class="form-card-title">Inscrição de turma</div>
-      <div class="form-card-sub">Começa por indicar o ano escolar da tua turma</div>
-      <div style="margin:1.5rem 0">
-        <label class="fl" style="margin-bottom:.5rem;display:block">Ano escolar *</label>
-        <select id="s1-year" class="fi fi-select" style="font-size:16px">
-          <option value="">Selecionar ano...</option>
-          <option>5.º</option><option>6.º</option><option>7.º</option>
-          <option>8.º</option><option>9.º</option><option>10.º</option>
-          <option>11.º</option><option>12.º</option>
-        </select>
-        <div id="s1-year-hint" style="margin-top:.6rem;font-size:13px;color:var(--text3);font-family:monospace;min-height:1.2em"></div>
+      <div class="form-card-sub">Indica o ano escolar e a turma</div>
+      <div style="margin:1.5rem 0;display:flex;gap:12px;align-items:flex-end">
+        <div style="flex:1">
+          <label class="fl" style="margin-bottom:.5rem;display:block">Ano escolar *</label>
+          <select id="s1-year" class="fi fi-select" style="font-size:16px" onchange="onS1YearChange()">
+            <option value="">Selecionar ano...</option>
+            <option>5.º</option><option>6.º</option><option>7.º</option>
+            <option>8.º</option><option>9.º</option><option>10.º</option>
+            <option>11.º</option><option>12.º</option>
+          </select>
+        </div>
+        <div style="width:80px">
+          <label class="fl" style="margin-bottom:.5rem;display:block">Turma *</label>
+          <input type="text" id="s1-turma" class="fi" placeholder="A" maxlength="2" style="text-transform:uppercase;text-align:center;font-size:16px">
+        </div>
       </div>
+      <div id="s1-year-hint" style="margin-top:-.6rem;margin-bottom:.8rem;font-size:13px;color:var(--text3);font-family:monospace;min-height:1.2em"></div>
       <div id="step0-error" style="display:none;color:#c0392b;font-size:13px;font-family:monospace;margin-bottom:.8rem"></div>
       <button class="btn-submit" onclick="goToStep1()">Ver atividades disponíveis →</button>
     </div>
@@ -969,17 +976,24 @@ function onS1YearChange() {
 
 function goToStep1() {
   const year = document.getElementById('s1-year').value;
+  const turma = (document.getElementById('s1-turma').value || '').trim().toUpperCase();
+  const err = document.getElementById('step0-error');
   if (!year) {
-    const err = document.getElementById('step0-error');
     err.textContent = 'Por favor seleciona o ano escolar.';
     err.style.display = 'block';
     return;
   }
+  if (!turma) {
+    err.textContent = 'Por favor indica a turma (ex: A, B...).';
+    err.style.display = 'block';
+    document.getElementById('s1-turma').focus();
+    return;
+  }
   document.getElementById('step0-error').style.display = 'none';
-  // badge no passo 1 com o ano
+  // badge no passo 1 com o ano e turma
   const ciclo = getCicloDaTurma();
   const badge = document.getElementById('s1-year-badge');
-  if (badge) badge.textContent = year + (ciclo === 'sec' ? ' · Ensino Secundário' : ciclo ? ' · ' + ciclo + '.º ciclo' : '');
+  if (badge) badge.textContent = year + ' ' + turma + (ciclo === 'sec' ? ' · Ensino Secundário' : ciclo ? ' · ' + ciclo + '.º ciclo' : '');
   // mostrar passo 1
   document.getElementById('step0-content').style.display = 'none';
   document.getElementById('step1-content').style.display = 'block';
